@@ -1,0 +1,3184 @@
+title: Home Claude
+button_card_templates:
+  hm_base:
+    variables:
+      devices:
+        - name: Garage Lights
+          group: outside
+          icon: mdi:garage
+          entity: light.shellydimmerg4_e8f60a7c01d4
+          stats: sensor.shelly_stats_garage
+          clock: sensor.shelly_ntp_garage_status
+          power: sensor.shellydimmerg4_e8f60a7c01d4_power
+          temp: sensor.shellydimmerg4_e8f60a7c01d4_temperature
+          wifi: sensor.shellydimmerg4_e8f60a7c01d4_signal_strength
+        - name: Front Door
+          group: outside
+          icon: mdi:door
+          entity: light.shellydimmerg4_e8f60a7c5ffc
+          stats: sensor.shelly_stats_front_door
+          clock: sensor.shelly_ntp_front_door_status
+          power: sensor.shellydimmerg4_e8f60a7c5ffc_power
+          temp: sensor.shellydimmerg4_e8f60a7c5ffc_temperature
+          wifi: sensor.shellydimmerg4_e8f60a7c5ffc_signal_strength
+        - name: Entry Light
+          group: outside
+          icon: mdi:door-open
+          entity: light.shellydimmerg4_acebe6f7211c
+          stats: sensor.shelly_stats_entry
+          clock: sensor.shelly_ntp_entry_status
+          power: sensor.shellydimmerg4_acebe6f7211c_power
+          temp: sensor.shellydimmerg4_acebe6f7211c_temperature
+          wifi: sensor.shellydimmerg4_acebe6f7211c_signal_strength
+        - name: Painting Light
+          group: outside
+          icon: mdi:palette
+          entity: light.entry_painting_light
+          stats: sensor.shelly_stats_painting
+          clock: sensor.shelly_ntp_painting_dimmer_status
+          power: sensor.entry_painting_light_power
+          temp: sensor.shellydimmerg4_e83dc1a20f98_temperature
+          wifi: sensor.shellydimmerg4_e83dc1a20f98_signal_strength
+        - name: Hallway
+          group: kitchen
+          icon: mdi:wall-sconce-flat
+          entity: light.shellydimmerg4_e8f60a79a410
+          stats: sensor.shelly_stats_hallway
+          clock: sensor.shelly_ntp_hallway_dimmer_status
+          power: sensor.shellydimmerg4_e8f60a79a410_power
+          temp: sensor.shellydimmerg4_e8f60a79a410_temperature
+          wifi: sensor.shellydimmerg4_e8f60a79a410_signal_strength
+        - name: Kitchen Sink
+          group: kitchen
+          icon: mdi:water-pump
+          entity: light.shellydimmerg4_e8f60a7dc7b0
+          stats: sensor.shelly_stats_kitchen_sink
+          clock: sensor.shelly_ntp_kitchen_sink_status
+          power: sensor.shellydimmerg4_e8f60a7dc7b0_power
+          temp: sensor.shellydimmerg4_e8f60a7dc7b0_temperature
+          wifi: sensor.shellydimmerg4_e8f60a7dc7b0_signal_strength
+        - name: Kitchen Stove
+          group: kitchen
+          icon: mdi:stove
+          entity: light.shellydimmerg4_e8f60a7c0940
+          stats: sensor.shelly_stats_kitchen_stove
+          clock: sensor.shelly_ntp_kitchen_stove_status
+          power: sensor.shellydimmerg4_e8f60a7c0940_power
+          temp: sensor.shellydimmerg4_e8f60a7c0940_temperature
+          wifi: sensor.shellydimmerg4_e8f60a7c0940_signal_strength
+        - name: Ensuite Main
+          group: ensuite
+          icon: mdi:ceiling-light
+          entity: light.shellydimmerg4_acebe6f60b34
+          stats: sensor.shelly_stats_ensuite_main
+          clock: sensor.shelly_ntp_ensuite_main_lights_status
+          power: sensor.shellydimmerg4_acebe6f60b34_power
+          temp: sensor.shellydimmerg4_acebe6f60b34_temperature
+          wifi: sensor.shellydimmerg4_acebe6f60b34_signal_strength
+        - name: Ensuite Shower
+          group: ensuite
+          icon: mdi:shower-head
+          entity: light.shellydimmerg4_e8f60a7d87bc
+          stats: sensor.shelly_stats_ensuite_shower
+          clock: sensor.shelly_ntp_ensuite_shower_status
+          power: sensor.shellydimmerg4_e8f60a7d87bc_power
+          temp: sensor.shellydimmerg4_e8f60a7d87bc_temperature
+          wifi: sensor.shellydimmerg4_e8f60a7d87bc_signal_strength
+        - name: Ensuite Toilet
+          group: ensuite
+          icon: mdi:lightbulb
+          entity: light.shellydimmerg4_e8f60a7cabbc
+          stats: sensor.shelly_stats_ensuite_toilet
+          clock: sensor.shelly_ntp_ensuite_toilet_status
+          power: sensor.shellydimmerg4_e8f60a7cabbc_power
+          temp: sensor.shellydimmerg4_e8f60a7cabbc_temperature
+          wifi: sensor.shellydimmerg4_e8f60a7cabbc_signal_strength
+        - name: Ensuite Fan
+          group: ensuite
+          icon: mdi:fan
+          entity: switch.shelly1pmminig4_98c37700c828
+          stats: sensor.shelly_stats_ensuite_fan
+          clock: sensor.shelly_ntp_ensuite_fan_status
+          power: sensor.shelly1pmminig4_98c37700c828_power
+          temp: sensor.shelly1pmminig4_98c37700c828_temperature
+          wifi: sensor.shelly1pmminig4_98c37700c828_signal_strength
+        - name: Theater Lights
+          group: theater
+          icon: mdi:theater
+          entity: light.shellydimmerg4_e8f60a7c1d30
+          stats: sensor.shelly_stats_theater
+          clock: sensor.shelly_ntp_theater_status
+          power: sensor.shellydimmerg4_e8f60a7c1d30_power
+          temp: sensor.shellydimmerg4_e8f60a7c1d30_temperature
+          wifi: sensor.shellydimmerg4_e8f60a7c1d30_signal_strength
+        - name: BBQ Area
+          group: outside
+          icon: mdi:grill
+          entity: light.shellydimmerg4_d885aced2060
+          stats: sensor.shelly_stats_bbq
+          clock: sensor.shelly_ntp_bbq_status
+          power: sensor.shellydimmerg4_d885aced2060_power
+          temp: sensor.shellydimmerg4_d885aced2060_temperature
+          wifi: sensor.shellydimmerg4_d885aced2060_signal_strength
+        - name: Back Yard / Gate
+          group: outside
+          icon: mdi:gate
+          entity: light.shellydimmerg4_e8f60a7c4ef8
+          stats: sensor.shelly_stats_back_yard
+          clock: sensor.shelly_ntp_back_yard_status
+          power: sensor.shellydimmerg4_e8f60a7c4ef8_power
+          temp: sensor.shellydimmerg4_e8f60a7c4ef8_temperature
+          wifi: sensor.shellydimmerg4_e8f60a7c4ef8_signal_strength
+        - name: Main Bathroom Lights
+          group: main_bathroom
+          icon: mdi:ceiling-light
+          entity: light.shellydimmerg4_e8f60a7c1bec
+          stats: sensor.shelly_stats_main_bathroom_lights
+          clock: sensor.shelly_ntp_main_bathroom_lights_status
+          power: sensor.shellydimmerg4_e8f60a7c1bec_power
+          temp: sensor.shellydimmerg4_e8f60a7c1bec_temperature
+          wifi: sensor.shellydimmerg4_e8f60a7c1bec_signal_strength
+        - name: Main Bathroom Fan
+          group: main_bathroom
+          icon: mdi:fan
+          entity: switch.shelly1pmminig4_98c37700ba58
+          stats: sensor.shelly_stats_main_bathroom_fan
+          clock: sensor.shelly_ntp_main_bathroom_fan_status
+          power: sensor.shelly1pmminig4_98c37700ba58_power
+          temp: sensor.shelly1pmminig4_98c37700ba58_temperature
+          wifi: sensor.shelly1pmminig4_98c37700ba58_signal_strength
+      version: v1.0.4
+    show_icon: false
+    show_name: false
+    show_state: false
+    show_label: false
+    tap_action:
+      action: none
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+    styles:
+      card:
+        - border-radius: 26px
+        - padding: '0'
+        - background: linear-gradient(160deg, rgba(22,30,48,.78), rgba(12,17,30,.86))
+        - backdrop-filter: blur(18px)
+        - -webkit-backdrop-filter: blur(18px)
+        - border: 1px solid rgba(255,255,255,.07)
+        - box-shadow: 0 18px 40px rgba(0,0,0,.35)
+        - color: '#eef3fb'
+        - overflow: hidden
+      grid:
+        - grid-template-areas: '"body"'
+        - grid-template-columns: 1fr
+      custom_fields:
+        body:
+          - justify-self: stretch
+          - width: 100%
+          - text-align: left
+  hm_hero:
+    template: hm_base
+    custom_fields:
+      body: >-
+        [[[
+
+        const NA=['unknown','unavailable','none',''];
+
+        const num=(id)=>{if(!id)return null;const
+        o=states[id];if(!o||NA.includes(String(o.state).toLowerCase()))return
+        null;const n=Number(o.state);return Number.isFinite(n)?n:null;};
+
+        const reg=(typeof
+        hass!=='undefined'&&hass&&hass.entities)?hass.entities:{};
+
+        const devOf=(id)=>id&&reg[id]?reg[id].device_id:null;
+
+        const find=(d,dom,test,diag)=>{const
+        did=devOf(d.temp)||devOf(d.wifi)||devOf(d.power)||devOf(d.entity)||devOf(d.stats);if(!did)return
+        null;return
+        Object.keys(reg).find(k=>reg[k].device_id===did&&k.startsWith(dom+'.')&&(diag||!reg[k].entity_category)&&states[k]&&test(states[k]))||null;};
+
+        const resolve=(d)=>{const
+        r=Object.assign({},d);if(!states[d.entity]){const
+        dom=d.entity.split('.')[0];const
+        f=find(d,dom,()=>true,false);if(f)r.entity=f;}const
+        dc=(o)=>o.attributes.device_class;if(d.power&&!states[d.power]){const
+        f=find(d,'sensor',(o)=>dc(o)==='power',true);if(f)r.power=f;}if(d.temp&&!states[d.temp]){const
+        f=find(d,'sensor',(o)=>dc(o)==='temperature',true);if(f)r.temp=f;}if(d.wifi&&!states[d.wifi]){const
+        f=find(d,'sensor',(o)=>dc(o)==='signal_strength',true);if(f)r.wifi=f;}return
+        r;};
+
+        const dev=(d0)=>{const d=resolve(d0);const e=states[d.entity];const
+        missing=!e;const s=e?e.state:'missing';const
+        pw=num(d.power),tc=num(d.temp),db=num(d.wifi);const
+        silent=(d.temp||d.wifi)?(tc===null&&db===null):true;const
+        offline=(missing&&silent)||(!missing&&NA.includes(String(s).toLowerCase()));const
+        sx=states[d.stats];const
+        a=sx&&!NA.includes(String(sx.state).toLowerCase())?sx.attributes:null;const
+        an=(k)=>a&&a[k]!==undefined&&a[k]!==null&&a[k]!==''&&Number.isFinite(Number(a[k]))?Number(a[k]):null;const
+        clk=states[d.clock]?states[d.clock].state:'unavailable';const
+        starts=an('onCount');const rt=an('runtimeSeconds');const
+        clockOk=clk==='Healthy';let issue=null;if(offline)issue='offline';else
+        if(missing)issue='entity missing';else if(starts===null)issue='no
+        stats';else if(!clockOk)issue='clock '+String(clk).toLowerCase();return
+        Object.assign({},d,{s,on:s==='on',offline,missing:missing&&!offline,starts,rt,in0:an('input0'),in1:an('input1'),pw,tc,db,clk,clockOk,reporting:!offline&&starts!==null,healthy:issue===null,issue});};
+
+        const all=variables.devices.map(dev);
+
+        const fmt=(n)=>n===null?'—':n.toLocaleString();
+
+        const hrs=(s)=>s===null?'—':(s/3600).toFixed(1)+' h';
+
+        const v=(id)=>{const n=num(id);return n===null?0:n;};
+
+        const pv=v('sensor.sigen_plant_pv_power');
+
+        const gi=v('sensor.sigen_plant_grid_import_power');
+
+        const ge=v('sensor.sigen_plant_grid_export_power');
+
+        const soc=num('sensor.sigen_plant_battery_state_of_charge');
+
+        const bp=Math.abs(v('sensor.sigen_plant_battery_power'));
+
+        const
+        chg=states['binary_sensor.sigen_plant_battery_charging']?.state==='on';
+
+        const
+        dis=states['binary_sensor.sigen_plant_battery_discharging']?.state==='on';
+
+        const home=Math.max(0,pv+gi-ge+(chg?-bp:dis?bp:0));
+
+        const PVMAX=variables.pv_max||30;
+
+        const kw=(x)=>x>=10?x.toFixed(1):x.toFixed(2);
+
+        const T=0.05;
+
+        const mode=gi>0.2?'grid':pv>0.1?'solar':'battery';
+
+
+        const now=Date.now(),secs=now/1000;
+
+        const ph=(d,off)=>'-'+((((secs-(off||0))%d)+d)%d).toFixed(2)+'s';
+
+        const kwt=(x)=>(x>=10?x.toFixed(1):x.toFixed(2))+' kW';
+
+        const
+        C={solar:'#ffc24a',battery:'#3ee08f',home:'#e6edff',gridOut:'#8ea6ff',gridIn:'#ff6b6b'};
+
+        // ---- sun position from Home Assistant's sun.sun
+
+        const sunE=states['sun.sun'];const A=sunE?sunE.attributes:{};
+
+        const elRaw=Number(A.elevation);const
+        el=Number.isFinite(elRaw)?elRaw:(pv>0.1?35:-20);
+
+        const up=sunE?sunE.state==='above_horizon':pv>0.1;
+
+        const
+        nr=A.next_rising?Date.parse(A.next_rising):NaN,ns=A.next_setting?Date.parse(A.next_setting):NaN,DAY=864e5;
+
+        let p=0.5;
+
+        if(Number.isFinite(nr)&&Number.isFinite(ns)){if(up){const
+        r=nr-DAY;p=(now-r)/Math.max(1,ns-r);}else{const
+        s=ns-DAY;p=(now-s)/Math.max(1,nr-s);}}
+
+        p=Math.max(0.03,Math.min(0.97,p));
+
+        // arc: quadratic from (6,70) via (50,-42) to (94,70) in % of the stage,
+        peak at 14%
+
+        const GEO={d:[[6,70],[50,-42],[94,70]],m:[[5,82],[50,26],[95,82]]};
+
+        const at=(g,t)=>{const [A,B,Cc]=GEO[g];const
+        a=[A[0]+(B[0]-A[0])*t,A[1]+(B[1]-A[1])*t],b=[B[0]+(Cc[0]-B[0])*t,B[1]+(Cc[1]-B[1])*t];return
+        {q1:a,pt:[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]};};
+
+        const SD=at('d',p),SM=at('m',p);
+
+        const P0=GEO.d[0],P1=GEO.d[1],P2=GEO.d[2];
+
+        const lerp=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
+
+        const Q1=lerp(P0,P1,p),Q2=lerp(lerp(P0,P1,p),lerp(P1,P2,p),p);
+
+        const sx=Q2[0],sy=Q2[1];
+
+        // ---- sky colours by sun elevation
+
+        const
+        ST=[[-18,'#02050d','#060b1c'],[-10,'#040a1b','#121a3b'],[-4,'#0a1430','#3a2a57'],[0,'#12234f','#b8584a'],[5,'#183872','#f09a5c'],[12,'#16407f','#82b4e0'],[40,'#123f88','#a3cdf2']];
+
+        const
+        hx=(h)=>h.startsWith('rgb')?h.match(/\d+/g).slice(0,3).map(Number):[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+
+        const mix=(a,b,t)=>{const A1=hx(a),B1=hx(b);return
+        'rgb('+A1.map((v,i)=>Math.round(v+(B1[i]-v)*t)).join(',')+')';};
+
+        let top=ST[0][1],hor=ST[0][2];
+
+        for(let i=0;i<ST.length-1;i++){const
+        [e0,t0,h0]=ST[i],[e1,t1,h1]=ST[i+1];if(el>=e0&&el<=e1){const
+        t=(el-e0)/(e1-e0);top=mix(t0,t1,t);hor=mix(h0,h1,t);}}
+
+        if(el>ST[ST.length-1][0]){top=ST[ST.length-1][1];hor=ST[ST.length-1][2];}
+
+        const night=Math.max(0,Math.min(1,(-el-2)/8));
+
+        const golden=up&&el<12?Math.max(0,1-Math.abs(el-3)/9):0;
+
+
+        const expect=PVMAX*Math.sin(Math.max(el,3)*Math.PI/180)*0.9;
+
+        const
+        solarCloud=up?Math.max(0,Math.min(1,1-pv/Math.max(0.5,expect))):null;
+
+        const WE=variables.weather||'weather.forecast_home';const
+        wx=states[WE];const wc=wx?String(wx.state):'';const
+        wa=wx?wx.attributes:{};
+
+        const
+        COND={'cloudy':.9,'fog':.8,'rainy':.85,'pouring':1,'lightning':.9,'lightning-rainy':1,'snowy':.85,'snowy-rainy':.9,'hail':.95,'partlycloudy':.45,'windy-variant':.5,'exceptional':.8,'sunny':.05,'clear-night':.05,'windy':.2};
+
+        const covA=Number(wa.cloud_coverage);
+
+        let
+        wcov=Number.isFinite(covA)?covA/100:(COND[wc]!==undefined?COND[wc]:null);
+
+        if(wcov!==null&&COND[wc]!==undefined&&COND[wc]>=.85)wcov=Math.max(wcov,COND[wc]);
+
+        const
+        cloud=Math.max(0,Math.min(1,wcov===null?(solarCloud===null?0.25:solarCloud):(solarCloud===null?wcov:Math.max(wcov,solarCloud*0.7))));
+
+        const wind=Number(wa.wind_speed)||0;const tempW=Number(wa.temperature);
+
+        const sunI=up?Math.max(0.3,Math.min(1,pv/(PVMAX*0.55)))*(1-0.6*cloud):0;
+
+        const
+        stormy=['lightning','lightning-rainy','pouring','hail'].includes(wc);
+
+        top=mix(top,night>0.5?'#1a1f2b':(stormy?'#3a414f':'#6b7686'),cloud*(stormy?0.7:0.55));hor=mix(hor,night>0.5?'#232a38':(stormy?'#565e6d':'#8d97a6'),cloud*(stormy?0.7:0.6));
+
+        // ---- stars (deterministic), shooting star
+
+        let stars='';
+
+        if(night>0.05){for(let i=0;i<46;i++){const
+        x=(i*61.8+17)%100,y=((i*37.3+11)%62),s=1+(i%3)*0.6,d=2.5+(i%5);stars+=`<i
+        class="star"
+        style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;width:${s}px;height:${s}px;animation-duration:${d}s;animation-delay:${ph(d,i*0.7)}"></i>`;}
+         stars+=`<i class="shoot" style="animation-delay:${ph(14)}"></i>`;}
+        // ---- clouds
+
+        const
+        CL=[[8,18,190,7,90],[34,10,240,5,140],[62,22,200,6,110],[80,8,260,4,170],[18,4,280,6,120],[50,14,300,7,150],[72,26,240,6,100],[2,28,220,5,130],[40,24,260,6,160],[88,16,230,5,115]];
+
+        const ncl=4+Math.round(cloud*6);const spd=1+Math.min(wind,60)/25;
+
+        const cl=CL.slice(0,ncl).map((c,i)=>{const
+        d=+(c[4]/spd).toFixed(1);return `<i class="cloud"
+        style="left:${c[0]}%;top:${c[1]}%;width:${c[2]}px;height:${c[3]*10}px;animation-duration:${d}s;animation-delay:${ph(d,i*31)};opacity:${(0.12+0.6*cloud).toFixed(2)};background:${up?(cloud>0.7?'rgba(200,206,216,.8)':'rgba(255,255,255,.75)'):'rgba(80,92,125,.6)'}"></i>`;}).join('')+(cloud>0.75?`<i
+        class="veil"
+        style="opacity:${((cloud-0.75)*2.4).toFixed(2)};background:${up?'rgba(120,128,142,.55)':'rgba(8,11,20,.6)'}"></i>`:'');
+
+        // precipitation, lightning, fog
+
+        const
+        RAIN={'rainy':45,'pouring':100,'lightning-rainy':80,'snowy-rainy':35,'hail':55};const
+        SNOW={'snowy':55,'snowy-rainy':18};
+
+        const tilt=Math.min(wind,60)/60*30;let wxfx='';
+
+        const nR=RAIN[wc]||0;for(let i=0;i<nR;i++){const
+        d=(wc==='hail'?0.55:0.7)+(i%5)*0.08;wxfx+=`<i class="drop
+        ${wc==='hail'?'hail':''}"
+        style="left:${((i*37.7)%110-5).toFixed(1)}%;--dx:${(tilt*-6).toFixed(0)}px;rotate:${tilt.toFixed(0)}deg;animation-duration:${d.toFixed(2)}s;animation-delay:${ph(d,i*0.137)}"></i>`;}
+
+        const nS=SNOW[wc]||0;for(let i=0;i<nS;i++){const d=5+(i%6)*0.9;wxfx+=`<i
+        class="flake"
+        style="left:${((i*29.3)%100).toFixed(1)}%;width:${3+(i%3)}px;height:${3+(i%3)}px;animation-duration:${d.toFixed(1)}s;animation-delay:${ph(d,i*0.41)}"></i>`;}
+
+        if(wc==='lightning'||wc==='lightning-rainy')wxfx+=`<i class="flash"
+        style="animation-delay:${ph(9)}"></i>`;
+
+        if(wc==='fog')wxfx+=`<i class="fog"></i>`;
+
+        const
+        WL={'sunny':['Sunny','mdi:weather-sunny'],'clear-night':['Clear','mdi:weather-night'],'partlycloudy':['Partly
+        cloudy','mdi:weather-partly-cloudy'],'cloudy':['Cloudy','mdi:weather-cloudy'],'rainy':['Rain','mdi:weather-rainy'],'pouring':['Heavy
+        rain','mdi:weather-pouring'],'lightning':['Storms','mdi:weather-lightning'],'lightning-rainy':['Thunderstorms','mdi:weather-lightning-rainy'],'fog':['Fog','mdi:weather-fog'],'snowy':['Snow','mdi:weather-snowy'],'snowy-rainy':['Sleet','mdi:weather-snowy-rainy'],'hail':['Hail','mdi:weather-hail'],'windy':['Windy','mdi:weather-windy'],'windy-variant':['Windy','mdi:weather-windy-variant'],'exceptional':['Severe
+        weather','mdi:alert-outline']};
+
+        const wl=WL[wc];const wxLine=wx&&wl?`<div class="wx"><ha-icon
+        icon="${wl[1]}"></ha-icon>${Number.isFinite(tempW)?Math.round(tempW)+'°
+        · ':''}${wl[0]}${wind>=1?' · wind '+Math.round(wind)+'
+        km/h':''}</div>`:'';
+
+        // ---- energy particles: sun -> roof; house <-> pylon
+
+        let parts='';
+
+        if(up&&pv>T){const f=Math.min(pv/PVMAX,1);const
+        n=Math.round(6+f*14);const d=+(2.8-f*1.3).toFixed(2);
+         for(let i=0;i<n;i++){const j=((i*29)%11-5)*0.6;parts+=`<i class="pt sun" style="--x0:calc(var(--sx) + ${(j*0.3).toFixed(2)}%);--y0:calc(var(--sy) + 3%);--xm:calc((var(--sx) + var(--hx)) / 2 + ${j.toFixed(2)}%);--ym:calc(min(var(--sy) + 18%, 100% - var(--ry) - 36px) + ${j.toFixed(2)}%);--x1:calc(var(--hx) + var(--rx) + ${(j*4).toFixed(0)}px);--y1:calc(100% - var(--ry));animation-duration:${d}s;animation-delay:${ph(d,i*d/n)}"></i>`;}}
+        // battery flow: house -> battery while charging, battery -> house while
+        discharging
+
+        if((chg||dis)&&bp>T){const f2=Math.min(bp/10,1);const
+        nb=Math.round(4+f2*6);const d=bp<2?2.2:bp<6?1.6:1.15;const toBat=chg;
+         const H0='calc(var(--hx) - var(--lx))',H1='calc(100% - var(--ly))',B0='calc(var(--tx) + var(--bx))',B1='calc(100% - var(--by))';
+         for(let i=0;i<nb;i++){parts+=`<i class="pt batf" style="--x0:${toBat?H0:B0};--y0:${toBat?H1:B1};--xm:calc((var(--hx) - var(--lx) + var(--tx) + var(--bx)) / 2);--ym:calc(100% - max(var(--ly), var(--by)) - 14px);--x1:${toBat?B0:H0};--y1:${toBat?B1:H1};animation-duration:${d}s;animation-delay:${ph(d,i*d/nb)}"></i>`;}}
+        const gk=gi>T?gi:ge;
+
+        if(gi>T||ge>T){const d=gk<2?2.2:gk<8?1.6:1.1;const imp=gi>T;for(let
+        i=0;i<6;i++){parts+=`<i class="pt ${imp?'imp':'exp'}"
+        style="--x0:${imp?'var(--px)':'calc(var(--hx) +
+        var(--wx))'};--y0:${imp?'calc(100% - var(--py))':'calc(100% -
+        var(--wy))'};--xm:calc((var(--hx) + var(--px)) / 2 +
+        20px);--ym:calc(100% - var(--py) + 4px);--x1:${imp?'calc(var(--hx) +
+        var(--wx))':'var(--px)'};--y1:${imp?'calc(100% - var(--wy))':'calc(100%
+        -
+        var(--py))'};animation-duration:${d}s;animation-delay:${ph(d,i*d/6)}"></i>`;}}
+
+        // ---- scene pieces
+
+        const total=all.length;const lon=all.filter(x=>x.on).length;const
+        lw=all.filter(x=>x.pw!==null).reduce((t,x)=>t+x.pw,0);const
+        healthy=all.filter(x=>x.healthy).length;
+
+        const lit=(!up||lon>0)?(up?0.55:0.95):0.12;
+
+        const socv=soc===null?0:Math.max(0,Math.min(100,soc));
+
+        const bcol=socv<20?C.gridIn:C.battery;
+
+        const house=`<svg class="house" viewBox="0 0 120 80"
+        aria-hidden="true"><path d="M8,40 L60,14 L112,40 L112,78 L8,78 Z"
+        fill="#0a1020"></path><path d="M60,14 L112,40 L104,40 L60,18 Z"
+        fill="#121a30"></path>
+
+        <path d="M66,22 L104,41 L100,43 L62,24 Z"
+        fill="${up?'#2c4f8f':'#1a2a4a'}" class="${up?'glint':''}"
+        style="animation-delay:${ph(5)}"></path><path d="M64,27 L98,44 L94,46
+        L60,29 Z" fill="${up?'#2c4f8f':'#1a2a4a'}" class="${up?'glint':''}"
+        style="animation-delay:${ph(5,0.4)}"></path>
+
+        <rect x="20" y="50" width="16" height="14" rx="1.5" fill="#ffcf85"
+        opacity="${lit}"></rect><rect x="46" y="50" width="16" height="14"
+        rx="1.5" fill="#ffcf85" opacity="${lit}"></rect><rect x="76" y="52"
+        width="12" height="26" rx="1.5" fill="#ffcf85"
+        opacity="${(lit*0.8).toFixed(2)}"></rect><rect x="94" y="50" width="12"
+        height="14" rx="1.5" fill="#ffcf85" opacity="${lit}"></rect></svg>`;
+
+        const NM=5;const lvl=socv/100*NM;
+
+        const busy=chg&&bp>T?'chg':dis&&bp>T?'dis':'';
+
+        const
+        act=busy==='chg'?Math.min(NM-1,Math.floor(lvl)):busy==='dis'?Math.max(0,Math.ceil(lvl)-1):-1;
+
+        let segs='';for(let m=NM-1;m>=0;m--){const
+        fill=Math.max(0,Math.min(1,lvl-m));segs+=`<i class="seg
+        ${m===act?'act':''}"
+        style="--f:${fill.toFixed(2)};animation-delay:${ph(1.6)}"></i>`;}
+
+        const batt=`<div class="wall"
+        style="--bc:${bcol};filter:brightness(${(1-0.35*night).toFixed(2)})"
+        title="Battery ${Math.round(socv)}%"><i class="led"></i><div
+        class="wbar">${segs}</div></div>`;
+
+        const pylon=`<svg class="pylon" viewBox="0 0 40 90"
+        aria-hidden="true"><path d="M20,2 L8,88 M20,2 L32,88 M10,74 L30,74
+        M13,52 L27,52 M15,32 L25,32 M4,14 L36,14 M8,24 L32,24"
+        stroke="${mix('#0b1222','#55658a',night)}" stroke-width="3.2"
+        fill="none" stroke-linecap="round"></path></svg>`;
+
+        const hills=`<svg class="hills" viewBox="0 0 1000 100"
+        preserveAspectRatio="none" aria-hidden="true"><path d="M0,46 C120,20
+        220,30 330,40 C450,52 520,14 640,22 C760,30 860,8 1000,30 L1000,100
+        L0,100 Z" fill="${mix('#2a3a66','#0f1a33',night)}"
+        opacity=".75"></path><path d="M0,70 C150,46 260,60 400,58 C540,56 600,40
+        720,48 C840,56 920,44 1000,52 L1000,100 L0,100 Z"
+        fill="${mix('#16233f','#080e1d',night)}"></path></svg>`;
+
+        const arcSvg=(g,S,cls)=>{const [A,B,Cc]=GEO[g];return `<svg class="arc
+        ${cls}" viewBox="0 0 100 100" preserveAspectRatio="none"
+        aria-hidden="true"><path d="M${A[0]},${A[1]} Q${B[0]},${B[1]}
+        ${Cc[0]},${Cc[1]}" fill="none" stroke="rgba(255,255,255,.16)"
+        stroke-width="1.2" vector-effect="non-scaling-stroke"></path><path
+        d="M${A[0]},${A[1]} Q${S.q1[0].toFixed(2)},${S.q1[1].toFixed(2)}
+        ${S.pt[0].toFixed(2)},${S.pt[1].toFixed(2)}" fill="none"
+        stroke="${up?'rgba(255,214,140,.75)':'rgba(200,215,255,.45)'}"
+        stroke-width="2" vector-effect="non-scaling-stroke"></path></svg>`;};
+
+        const arc=arcSvg('d',SD,'ad')+arcSvg('m',SM,'am');
+
+        const bigEl=(cls)=>`<div class="big
+        ${cls}"><b>${up||pv>0.05?(pv>=10?pv.toFixed(1):pv.toFixed(2)):'0'}</b><span>kW
+        solar<br>right now</span></div>`;
+
+        const sunLbl=up&&pv>0.05?`<div class="sunlbl ${SD.pt[1]<30?'bd':''}
+        "><b>${pv>=10?pv.toFixed(1):pv.toFixed(2)}</b><span>kW solar<br>right
+        now</span></div>`:'';
+
+        const orb=up?`<div class="sun"
+        style="left:var(--sx);top:var(--sy);--i:${sunI.toFixed(2)};opacity:${(1-0.7*Math.max(0,cloud-0.3)/0.7).toFixed(2)}"><i
+        class="rays" style="animation-delay:${ph(60)}"></i><i class="halo"
+        style="animation-delay:${ph(5)}"></i><i class="disc"></i></div>`
+         :`<div class="moon" style="left:var(--sx);top:var(--sy);opacity:${(1-0.75*cloud).toFixed(2)}"><i class="mglow"></i><i class="mdisc"></i></div>`;
+        const glow=`<i class="glow"
+        style="left:var(--sx);top:var(--sy);background:radial-gradient(circle,
+        ${up?`rgba(255,214,150,${(0.25+0.35*sunI).toFixed(2)})`:'rgba(190,205,255,.10)'}
+        0, transparent 70%)"></i>`;
+
+        const skyBg=`radial-gradient(120% 60% at 50% 100%,
+        rgba(255,150,90,${(golden*0.55).toFixed(2)}), transparent 70%),
+        linear-gradient(180deg, ${top} 0%, ${hor} 82%, ${hor} 100%)`;
+
+        // ---- text
+
+        const hr=new Date(now).getHours();
+
+        const greet=hr<5?'Good evening':hr<12?'Good morning':hr<18?'Good
+        afternoon':'Good evening';
+
+        const date=new
+        Date(now).toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'});
+
+        const line=gi>0.2?`Drawing ${kwt(gi)} from the grid`:pv>0.1?`Running on
+        sunshine${['rainy','pouring','lightning-rainy','snowy-rainy','hail'].includes(wc)?'
+        through the rain':cloud>0.55?' through the clouds':''}`:`Running on
+        battery${soc!==null?', '+Math.round(socv)+'% left':''}`;
+
+        const W=(typeof window!=='undefined')?window:{};const
+        ENT='sensor.sigen_plant_pv_power';
+
+        const dz=new Date(now);dz.setHours(0,0,0,0);const t0=dz.getTime();
+
+        const hc=W.__hmSolarHist;const
+        hfresh=hc&&hc.day===t0&&(now-hc.at<300000);
+
+        if(!hfresh&&typeof
+        hass!=='undefined'&&hass&&hass.callWS&&!W.__hmSolarBusy){W.__hmSolarBusy=true;
+         const q=(a,b)=>hass.callWS({type:'history/history_during_period',start_time:new Date(a).toISOString(),end_time:new Date(b).toISOString(),entity_ids:[ENT],minimal_response:true,no_attributes:true,significant_changes_only:false});
+         Promise.all([q(t0,now),q(t0-864e5,t0)]).then(([a,b])=>{W.__hmSolarHist={day:t0,at:Date.now(),today:(a&&a[ENT])||[],yday:(b&&b[ENT])||[]};}).catch(()=>{W.__hmSolarHist={day:t0,at:Date.now(),today:[],yday:[],err:true};}).finally(()=>{W.__hmSolarBusy=false;});}
+        const hh=W.__hmSolarHist&&W.__hmSolarHist.day===t0?W.__hmSolarHist:null;
+
+        let pk=[0,0];
+
+        if(hh){hh.today.forEach(e=>{const
+        v=parseFloat(e.s!==undefined?e.s:e.state);const
+        ts=(e.lu!==undefined?e.lu:e.lc!==undefined?e.lc:Date.parse(e.last_updated||e.last_changed)/1000)*1000;if(Number.isFinite(v)&&v>pk[1])pk=[ts,v];});}
+
+        if(pv>pk[1])pk=[now,pv];
+
+        const peakTxt=pk[1]>0.05?kwt(pk[1])+' · '+new
+        Date(pk[0]).toLocaleTimeString([],
+        {hour:'numeric',minute:'2-digit'}):(hh?'—':'loading…');
+
+        const
+        today=num('sensor.sigen_plant_pv_daily_generation'),yday=num('sensor.sigen_plant_pv_previous_day_generation');
+
+        const tp=today!==null&&yday?Math.min(100,today/yday*100):null;
+
+        const vs=today!==null&&yday?(today>=yday?`Ahead of yesterday’s
+        ${yday.toFixed(0)} kWh`:`${Math.round(tp)}% of yesterday’s
+        ${yday.toFixed(0)} kWh`):'';
+
+        const self=home>0?Math.max(0,Math.min(100,(1-gi/home)*100)):100;
+
+        const row=(icon,label,val,col,extra)=>`<div class="row"><ha-icon
+        icon="${icon}" style="color:${col}"></ha-icon><span
+        class="rl">${label}</span><span class="rv"
+        style="color:${col}">${val}</span>${extra||''}</div>`;
+
+        const bstate=chg&&bp>T?'charging '+kwt(bp):dis&&bp>T?'supplying
+        '+kwt(bp):'standby';
+
+        const panel=`<div class="panel"><div
+        class="today"><b>${today!==null?today.toFixed(1):'—'}</b><span>kWh solar
+        today</span></div>${tp!==null?`<div class="bar"><i
+        style="width:${tp.toFixed(1)}%"></i></div><small
+        class="vs">${vs}</small>`:''}
+
+        <div class="rows">${row('mdi:summit','Peak
+        today',peakTxt,'#ffe29a')}${row('mdi:home-variant-outline','Home',kwt(home),C.home)}${row(socv<20?'mdi:battery-low':'mdi:home-battery-outline','Battery',(soc!==null?Math.round(socv)+'%':'—')+'
+        · '+bstate,bcol)}${row('mdi:transmission-tower','Grid',gi>T?'importing
+        '+kwt(gi):ge>T?'exporting
+        '+kwt(ge):'idle',gi>T?C.gridIn:C.gridOut)}${row('mdi:leaf','Self-powered',Math.round(self)+'%','#7fd39a')}${row('mdi:lightbulb-group-outline','Lights',lon+'
+        of '+total+' on · '+lw.toFixed(0)+'
+        W','#ffcf85')}${row(healthy===total?'mdi:shield-check-outline':'mdi:alert-outline','Shelly',healthy+'/'+total+'
+        healthy',healthy===total?'#7fd39a':'#ffb547')}</div></div>`;
+
+        const txt=`<div class="txt"><div
+        class="when">${date}</div><h1>${greet}</h1><p><span class="dot"
+        style="background:${gi>0.2?C.gridIn:pv>0.1?C.solar:C.battery}"></span>${line}</p>${wxLine}${bigEl('bigl')}</div>`;
+
+        return `<div class="sw"><div class="sky"
+        style="background:${skyBg}"><div class="stars"
+        style="opacity:${(night*(1-0.95*cloud)).toFixed(2)}">${stars}</div>${cl}${hills}<div
+        class="scene"
+        style="--sxd:${SD.pt[0].toFixed(2)}%;--syd:${SD.pt[1].toFixed(2)}%;--sxm:${SM.pt[0].toFixed(2)}%;--sym:${SM.pt[1].toFixed(2)}%">${glow}${arc}${orb}${bigEl('bigr')}${pylon}${batt}${house}${parts}</div><div
+        class="wxfx">${wxfx}</div>${txt}</div>${panel}</div>`;
+
+        ]]]
+    styles:
+      card:
+        - background: none
+        - border: none
+        - box-shadow: none
+        - overflow: visible
+    extra_styles: >-
+      ha-card{min-height:380px}
+
+      @media (max-width:760px){ha-card{min-height:356px}}
+
+      .sw{container-type:inline-size;width:100%;position:relative;text-align:left}
+
+      .sky{position:relative;height:380px;overflow:hidden;border-radius:26px;isolation:isolate}
+
+      .stars,.arc,.hills{position:absolute;inset:0;pointer-events:none}
+
+      .scene{position:absolute;left:0;top:0;bottom:0;right:332px;pointer-events:none;--sx:var(--sxd);--sy:var(--syd);--hx:68%;--rx:36px;--ry:139px;--wx:94px;--wy:130px;--px:90%;--py:132px;--tx:calc(60%
+      - 164px);--lx:96px;--ly:100px;--bx:44px;--by:104px}
+
+      .glow{position:absolute;width:520px;height:520px;translate:-50%
+      -50%;border-radius:50%}
+
+      .arc{width:100%;height:100%}
+
+      .arc.am{display:none}
+
+      .hills{top:auto;bottom:0;height:120px;width:100%}
+
+      .star{position:absolute;border-radius:50%;background:#fff;box-shadow:0 0
+      4px #fff;animation:tw ease-in-out infinite}
+
+      @keyframes tw{50%{opacity:.25}}
+
+      .shoot{position:absolute;top:12%;left:18%;width:90px;height:1.5px;background:linear-gradient(90deg,#fff,transparent);transform:rotate(-18deg);opacity:0;animation:shoot
+      14s linear infinite}
+
+      @keyframes shoot{0%{opacity:0;translate:0
+      0}2%{opacity:1}7%{opacity:0;translate:260px
+      90px}100%{opacity:0;translate:260px 90px}}
+
+      .cloud{position:absolute;border-radius:999px;filter:blur(14px);animation:drift
+      linear infinite}
+
+      .veil{position:absolute;inset:0;pointer-events:none}
+
+      .wxfx{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+
+      .drop{position:absolute;top:-12%;width:1.5px;height:20px;border-radius:1px;background:linear-gradient(180deg,transparent,rgba(205,220,255,.8));animation:rainfall
+      linear infinite}
+
+      .drop.hail{width:4px;height:4px;border-radius:50%;background:#e8eef8}
+
+      @keyframes rainfall{from{top:-12%;translate:0
+      0}to{top:108%;translate:var(--dx) 0}}
+
+      .flake{position:absolute;top:-6%;border-radius:50%;background:#f4f7ff;opacity:.9;animation:snowfall
+      linear infinite}
+
+      @keyframes snowfall{0%{top:-6%;translate:0 0}50%{translate:14px
+      0}100%{top:104%;translate:-8px 0}}
+
+      .flash{position:absolute;inset:0;background:#dfe8ff;opacity:0;animation:flash
+      9s linear infinite;mix-blend-mode:screen}
+
+      @keyframes
+      flash{0%,91%,100%{opacity:0}92%{opacity:.55}93%{opacity:.08}94.5%{opacity:.4}96%{opacity:0}}
+
+      .fog{position:absolute;left:-5%;right:-5%;bottom:0;height:60%;background:linear-gradient(180deg,transparent,rgba(190,198,212,.55)
+      55%,rgba(190,198,212,.7));filter:blur(6px)}
+
+      .wx{display:flex;align-items:center;gap:7px;margin-top:6px;font-size:13px;opacity:.9}
+
+      .wx ha-icon{flex:none !important;width:18px !important;height:18px
+      !important;--mdc-icon-size:18px !important}
+
+      @keyframes drift{from{translate:-30vw 0}to{translate:30vw 0}}
+
+      .txt .bigl{display:none}
+
+      .bigr{position:absolute;top:26px;right:30px;margin:0;color:#fff;text-shadow:0
+      2px 14px rgba(0,0,0,.45)}
+
+      .sunlbl{position:absolute;left:clamp(90px,var(--sx),calc(100% -
+      90px));top:var(--sy);translate:-50% calc(-100% -
+      40px);display:flex;align-items:flex-end;gap:8px;color:#fff;text-shadow:0
+      2px 14px rgba(0,0,0,.45);white-space:nowrap;pointer-events:none}
+
+      .sunlbl.bd{translate:calc(-100% - 46px) -50%}
+
+      .sunlbl
+      b{font-size:46px;line-height:.9;font-weight:200;letter-spacing:-1.5px;font-variant-numeric:tabular-nums}
+
+      .sunlbl
+      span{font-size:11px;line-height:1.25;opacity:.85;padding-bottom:3px}
+
+      .sun,.moon{position:absolute;width:0;height:0}
+
+      .sun i,.moon
+      i{position:absolute;border-radius:50%;transform:translate(-50%,-50%)}
+
+      .sun .disc{width:46px;height:46px;background:radial-gradient(circle at 40%
+      38%,#fffaf0,#ffe29a 45%,#ffbf4d 75%);box-shadow:0 0 30px 8px
+      rgba(255,200,110,calc(.45*var(--i))),0 0 90px 30px
+      rgba(255,170,70,calc(.35*var(--i)))}
+
+      .sun
+      .halo{width:150px;height:150px;background:radial-gradient(circle,rgba(255,220,150,calc(.45*var(--i))),transparent
+      65%);animation:breathe 5s ease-in-out infinite}
+
+      @keyframes breathe{50%{scale:1.15;opacity:.75}}
+
+      .sun
+      .rays{width:260px;height:260px;background:repeating-conic-gradient(from
+      0deg,rgba(255,230,170,calc(.16*var(--i))) 0 4deg,transparent 4deg
+      18deg);-webkit-mask:radial-gradient(circle,#000 18%,transparent
+      62%);mask:radial-gradient(circle,#000 18%,transparent 62%);animation:spin
+      60s linear infinite}
+
+      @keyframes spin{to{rotate:360deg}}
+
+      .moon .mdisc{width:34px;height:34px;background:radial-gradient(circle at
+      35% 35%,#f5f7ff,#c9d3ea 60%,#9aa7c7);box-shadow:inset -8px -4px 0
+      rgba(0,0,0,.18)}
+
+      .moon
+      .mglow{width:120px;height:120px;background:radial-gradient(circle,rgba(200,215,255,.22),transparent
+      65%)}
+
+      .house{position:absolute;left:var(--hx);bottom:58px;width:216px;height:144px;translate:-50%
+      0;filter:drop-shadow(0 6px 10px rgba(0,0,0,.4))}
+
+      .glint{animation:glint 5s ease-in-out infinite}
+
+      @keyframes glint{0%,70%,100%{fill:#2c4f8f}80%{fill:#ffe7a8}}
+
+      .wall{position:absolute;left:var(--tx);bottom:56px;width:40px;height:94px;box-sizing:border-box;border-radius:12px;background:linear-gradient(180deg,#f2f5f9,#cdd4df);box-shadow:inset
+      0 -2px 0 rgba(0,0,0,.12),0 8px 14px rgba(0,0,0,.35)}
+
+      .wall
+      .led{position:absolute;left:50%;top:7px;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--bc);box-shadow:0
+      0 6px var(--bc)}
+
+      .wall
+      .wbar{position:absolute;left:50%;top:17px;bottom:11px;width:7px;margin-left:-3.5px;display:flex;flex-direction:column;gap:3px}
+
+      .wall
+      .seg{position:relative;flex:1;border-radius:3px;background:rgba(40,52,74,.28);overflow:hidden}
+
+      .wall
+      .seg::after{content:"";position:absolute;left:0;right:0;bottom:0;height:calc(var(--f)
+      * 100%);background:var(--bc);box-shadow:0 0 8px var(--bc)}
+
+      .wall .seg.act::after{height:100%;animation:modpulse 1.6s ease-in-out
+      infinite}
+
+      @keyframes modpulse{0%,100%{opacity:.25}50%{opacity:1}}
+
+      .pylon{position:absolute;left:var(--px);bottom:62px;width:34px;height:84px;translate:-50%
+      0;opacity:.9}
+
+      .pt{position:absolute;width:5px;height:5px;margin:-2.5px 0 0
+      -2.5px;border-radius:50%;animation:fly linear infinite;opacity:0}
+
+      .pt.sun{background:#fff3c4;box-shadow:0 0 8px 2px rgba(255,200,90,.85)}
+
+      .pt.exp{background:#dbe4ff;box-shadow:0 0 8px 2px rgba(142,166,255,.9)}
+
+      .pt.imp{background:#ffd0d0;box-shadow:0 0 8px 2px rgba(255,107,107,.9)}
+
+      .pt.batf{background:#d6ffe9;box-shadow:0 0 8px 2px rgba(62,224,143,.95)}
+
+      /* smooth arcs: x moves steadily while y eases up to the apex and back
+      down, giving a true curve */
+
+      .pt.batf,.pt.exp,.pt.imp{animation-name:arcx,arcy,arco;animation-timing-function:linear;animation-iteration-count:infinite}
+
+      @keyframes arcx{0%{left:var(--x0)}100%{left:var(--x1)}}
+
+      @keyframes
+      arcy{0%{top:var(--y0);animation-timing-function:cubic-bezier(.2,.6,.4,1)}50%{top:var(--ym);animation-timing-function:cubic-bezier(.6,0,.8,.4)}100%{top:var(--y1)}}
+
+      @keyframes arco{0%{opacity:0}12%{opacity:1}88%{opacity:1}100%{opacity:0}}
+
+      /* battery dots: straight line between the house wall and the battery */
+
+      .pt.batf{animation-name:linexy,arco}
+
+      @keyframes
+      linexy{0%{left:var(--x0);top:var(--y0)}100%{left:var(--x1);top:var(--y1)}}
+
+      @keyframes
+      fly{0%{left:var(--x0);top:var(--y0);opacity:0}10%{opacity:1}50%{left:var(--xm);top:var(--ym)}90%{opacity:1}100%{left:var(--x1);top:var(--y1);opacity:0}}
+
+      .txt{position:absolute;left:26px;top:22px;max-width:46%;color:#fff;text-shadow:0
+      2px 14px rgba(0,0,0,.45)}
+
+      .when{font-size:12px;opacity:.85}
+
+      h1{margin:2px 0
+      0;font-size:32px;line-height:1.1;font-weight:300;letter-spacing:-.5px}
+
+      .txt p{display:flex;align-items:center;gap:8px;margin:8px 0
+      0;font-size:14px}
+
+      .dot{flex:none;width:8px;height:8px;border-radius:50%;box-shadow:0 0 10px
+      currentColor}
+
+      .big{display:flex;align-items:flex-end;gap:10px;margin-top:16px}
+
+      .big
+      b{font-size:60px;line-height:.9;font-weight:200;letter-spacing:-2px;font-variant-numeric:tabular-nums}
+
+      .big span{font-size:12px;line-height:1.25;opacity:.85;padding-bottom:4px}
+
+      .panel{position:absolute;right:16px;top:16px;bottom:16px;width:300px;box-sizing:border-box;padding:18px
+      18px
+      14px;border-radius:20px;background:rgba(10,16,32,.42);backdrop-filter:blur(18px)
+      saturate(140%);-webkit-backdrop-filter:blur(18px)
+      saturate(140%);border:1px solid
+      rgba(255,255,255,.12);color:#eef3fb;display:flex;flex-direction:column}
+
+      .today{display:flex;align-items:baseline;gap:7px}
+
+      .today
+      b{font-size:30px;font-weight:300;letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+
+      .today span{font-size:12px;color:#c9d3e4}
+
+      .bar{position:relative;height:6px;margin-top:9px;border-radius:999px;background:rgba(255,255,255,.12);overflow:hidden}
+
+      .bar
+      i{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:linear-gradient(90deg,#ffb648,#ffd877)}
+
+      .vs{display:block;margin-top:5px;font-size:11px;color:#c9d3e4}
+
+      .rows{display:flex;flex-direction:column;align-items:stretch;gap:9px;margin-top:auto;text-align:left}
+
+      .row{display:grid;grid-template-columns:18px auto
+      minmax(0,1fr);align-items:center;column-gap:12px;font-size:13px;min-width:0}
+
+      .row ha-icon{flex:none !important;width:18px !important;height:18px
+      !important;--mdc-icon-size:18px !important}
+
+      .rl{color:#c9d3e4;justify-self:start;text-align:left;white-space:nowrap}
+
+      .rv{justify-self:end;text-align:right;min-width:0;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+      @container (max-width:760px){.txt
+      .bigl{display:flex}.bigr{display:none}.sunlbl,.sunlbl.bd{translate:-50%
+      calc(-100% - 30px);left:clamp(70px,var(--sx),calc(100% - 70px))}.sunlbl
+      b{font-size:34px}.arc.ad{display:none}.arc.am{display:block}.rows{margin-top:16px}.scene{right:0;--sx:var(--sxm);--sy:var(--sym);--hx:56%;--rx:23px;--ry:97px;--wx:59px;--wy:92px;--px:93%;--py:100px;--tx:calc(47%
+      -
+      108px);--lx:61px;--ly:68px;--bx:32px;--by:78px}.glow{width:380px;height:380px}.sky{height:356px}.panel{position:static;width:auto;margin-top:12px;background:rgba(255,255,255,.04);backdrop-filter:none;-webkit-backdrop-filter:none}.txt{max-width:80%;left:20px;top:18px}.big{margin-top:10px}.big
+      b{font-size:46px}h1{font-size:26px}
+
+      .house{width:136px;height:91px;bottom:46px}.pylon{width:24px;height:60px;bottom:50px}.wall{width:28px;height:66px;bottom:46px;border-radius:9px}.wall
+      .led{top:5px;width:3px;height:3px;margin-left:-1.5px}.wall
+      .wbar{top:12px;bottom:8px;width:5px;margin-left:-2.5px;gap:2px}.hills{height:100px}}
+
+      @media
+      (prefers-reduced-motion:reduce){.star,.shoot,.cloud,.halo,.rays,.glint,.pt,.drop,.flake,.flash{animation:none
+      !important}.pt,.drop,.flake,.flash{display:none}}
+  hm_room:
+    template: hm_base
+    custom_fields:
+      body: >-
+        [[[
+
+        const NA=['unknown','unavailable','none',''];
+
+        const num=(id)=>{if(!id)return null;const
+        o=states[id];if(!o||NA.includes(String(o.state).toLowerCase()))return
+        null;const n=Number(o.state);return Number.isFinite(n)?n:null;};
+
+        const reg=(typeof
+        hass!=='undefined'&&hass&&hass.entities)?hass.entities:{};
+
+        const devOf=(id)=>id&&reg[id]?reg[id].device_id:null;
+
+        const find=(d,dom,test,diag)=>{const
+        did=devOf(d.temp)||devOf(d.wifi)||devOf(d.power)||devOf(d.entity)||devOf(d.stats);if(!did)return
+        null;return
+        Object.keys(reg).find(k=>reg[k].device_id===did&&k.startsWith(dom+'.')&&(diag||!reg[k].entity_category)&&states[k]&&test(states[k]))||null;};
+
+        const resolve=(d)=>{const
+        r=Object.assign({},d);if(!states[d.entity]){const
+        dom=d.entity.split('.')[0];const
+        f=find(d,dom,()=>true,false);if(f)r.entity=f;}const
+        dc=(o)=>o.attributes.device_class;if(d.power&&!states[d.power]){const
+        f=find(d,'sensor',(o)=>dc(o)==='power',true);if(f)r.power=f;}if(d.temp&&!states[d.temp]){const
+        f=find(d,'sensor',(o)=>dc(o)==='temperature',true);if(f)r.temp=f;}if(d.wifi&&!states[d.wifi]){const
+        f=find(d,'sensor',(o)=>dc(o)==='signal_strength',true);if(f)r.wifi=f;}return
+        r;};
+
+        const dev=(d0)=>{const d=resolve(d0);const e=states[d.entity];const
+        missing=!e;const s=e?e.state:'missing';const
+        pw=num(d.power),tc=num(d.temp),db=num(d.wifi);const
+        silent=(d.temp||d.wifi)?(tc===null&&db===null):true;const
+        offline=(missing&&silent)||(!missing&&NA.includes(String(s).toLowerCase()));const
+        sx=states[d.stats];const
+        a=sx&&!NA.includes(String(sx.state).toLowerCase())?sx.attributes:null;const
+        an=(k)=>a&&a[k]!==undefined&&a[k]!==null&&a[k]!==''&&Number.isFinite(Number(a[k]))?Number(a[k]):null;const
+        clk=states[d.clock]?states[d.clock].state:'unavailable';const
+        starts=an('onCount');const rt=an('runtimeSeconds');const
+        clockOk=clk==='Healthy';let issue=null;if(offline)issue='offline';else
+        if(missing)issue='entity missing';else if(starts===null)issue='no
+        stats';else if(!clockOk)issue='clock '+String(clk).toLowerCase();return
+        Object.assign({},d,{s,on:s==='on',offline,missing:missing&&!offline,starts,rt,in0:an('input0'),in1:an('input1'),pw,tc,db,clk,clockOk,reporting:!offline&&starts!==null,healthy:issue===null,issue});};
+
+        const all=variables.devices.map(dev);
+
+        const fmt=(n)=>n===null?'—':n.toLocaleString();
+
+        const hrs=(s)=>s===null?'—':(s/3600).toFixed(1)+' h';
+
+        const list=all.filter(x=>x.group===variables.group);
+
+        const XE=(variables.extra||[]).filter(e=>states[e]);const
+        on=list.filter(x=>x.on).length+XE.filter(e=>states[e].state==='on').length;
+
+        const w=list.filter(x=>x.pw!==null).reduce((t,x)=>t+x.pw,0);
+
+        const bad=list.filter(x=>!x.healthy).length;
+
+        return `<div class="rh"><span class="ri"><ha-icon
+        icon="${variables.icon}"></ha-icon></span><div
+        class="rt"><b>${variables.title}</b><small>${!list.length?(variables.subtitle||''):on?on+'
+        of '+(list.length+XE.length)+' on, '+w.toFixed(0)+' W':'All
+        off'}${bad?`<em> · ${bad} need${bad>1?'':'s'}
+        attention</em>`:''}</small></div></div>`;
+
+        ]]]
+    styles:
+      card:
+        - background: none
+        - border: none
+        - box-shadow: none
+        - padding: '0'
+        - border-radius: 20px
+        - overflow: hidden
+        - overflow: visible
+      grid:
+        - grid-template-areas: '"body"'
+        - grid-template-columns: 1fr
+    extra_styles: >-
+      .rh{display:flex;align-items:center;gap:12px;padding:4px
+      2px;text-align:left}
+
+      .ri{flex:none;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.05);color:#c9d3e4}
+
+      .ri ha-icon{flex:none !important;width:21px !important;height:21px
+      !important;--mdc-icon-size:21px !important}
+
+      .rt{min-width:0}
+
+      .rt b{display:block;font-size:18px;font-weight:600;color:#f4f7fc}
+
+      .rt small{display:block;font-size:12px;color:#8d9ab3;margin-top:1px}
+
+      .rt em{font-style:normal;color:#ffb547}
+
+      .scs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 2px 50px}
+
+      .scn{display:inline-flex;align-items:center;gap:5px;font:inherit;font-size:11px;font-weight:600;color:#c9d3e4;padding:5px
+      11px;border-radius:999px;border:1px solid
+      rgba(255,255,255,.09);background:rgba(255,255,255,.04);cursor:pointer;transition:background
+      .2s,border-color .2s,color .2s}
+
+      .scn:hover{background:rgba(255,182,72,.12);border-color:rgba(255,182,72,.45);color:#ffcf85}
+
+      .scn:active{transform:scale(.96)}
+
+      .scn:focus-visible{outline:2px solid #ffb648;outline-offset:2px}
+
+      .scn ha-icon{flex:none !important;width:14px !important;height:14px
+      !important;--mdc-icon-size:14px !important}
+  hm_alloff:
+    template: hm_base
+    show_name: true
+    show_icon: true
+    name: All off
+    icon: mdi:power
+    card_size: 1
+    tap_action:
+      action: call-service
+      service: homeassistant.turn_off
+      service_data:
+        entity_id: >-
+          [[[
+
+          const NA=['unknown','unavailable','none',''];
+
+          const num=(id)=>{if(!id)return null;const
+          o=states[id];if(!o||NA.includes(String(o.state).toLowerCase()))return
+          null;const n=Number(o.state);return Number.isFinite(n)?n:null;};
+
+          const reg=(typeof
+          hass!=='undefined'&&hass&&hass.entities)?hass.entities:{};
+
+          const devOf=(id)=>id&&reg[id]?reg[id].device_id:null;
+
+          const find=(d,dom,test,diag)=>{const
+          did=devOf(d.temp)||devOf(d.wifi)||devOf(d.power)||devOf(d.entity)||devOf(d.stats);if(!did)return
+          null;return
+          Object.keys(reg).find(k=>reg[k].device_id===did&&k.startsWith(dom+'.')&&(diag||!reg[k].entity_category)&&states[k]&&test(states[k]))||null;};
+
+          const resolve=(d)=>{const
+          r=Object.assign({},d);if(!states[d.entity]){const
+          dom=d.entity.split('.')[0];const
+          f=find(d,dom,()=>true,false);if(f)r.entity=f;}const
+          dc=(o)=>o.attributes.device_class;if(d.power&&!states[d.power]){const
+          f=find(d,'sensor',(o)=>dc(o)==='power',true);if(f)r.power=f;}if(d.temp&&!states[d.temp]){const
+          f=find(d,'sensor',(o)=>dc(o)==='temperature',true);if(f)r.temp=f;}if(d.wifi&&!states[d.wifi]){const
+          f=find(d,'sensor',(o)=>dc(o)==='signal_strength',true);if(f)r.wifi=f;}return
+          r;};
+
+          const dev=(d0)=>{const d=resolve(d0);const e=states[d.entity];const
+          missing=!e;const s=e?e.state:'missing';const
+          pw=num(d.power),tc=num(d.temp),db=num(d.wifi);const
+          silent=(d.temp||d.wifi)?(tc===null&&db===null):true;const
+          offline=(missing&&silent)||(!missing&&NA.includes(String(s).toLowerCase()));const
+          sx=states[d.stats];const
+          a=sx&&!NA.includes(String(sx.state).toLowerCase())?sx.attributes:null;const
+          an=(k)=>a&&a[k]!==undefined&&a[k]!==null&&a[k]!==''&&Number.isFinite(Number(a[k]))?Number(a[k]):null;const
+          clk=states[d.clock]?states[d.clock].state:'unavailable';const
+          starts=an('onCount');const rt=an('runtimeSeconds');const
+          clockOk=clk==='Healthy';let issue=null;if(offline)issue='offline';else
+          if(missing)issue='entity missing';else if(starts===null)issue='no
+          stats';else if(!clockOk)issue='clock
+          '+String(clk).toLowerCase();return
+          Object.assign({},d,{s,on:s==='on',offline,missing:missing&&!offline,starts,rt,in0:an('input0'),in1:an('input1'),pw,tc,db,clk,clockOk,reporting:!offline&&starts!==null,healthy:issue===null,issue});};
+
+          const all=variables.devices.map(dev);
+
+          const fmt=(n)=>n===null?'—':n.toLocaleString();
+
+          const hrs=(s)=>s===null?'—':(s/3600).toFixed(1)+' h';
+
+          const XE=variables.extra||[];return
+          (all.filter(x=>x.group===variables.group&&x.on).map(x=>x.entity).length?all.filter(x=>x.group===variables.group&&x.on).map(x=>x.entity):all.filter(x=>x.group===variables.group).map(x=>x.entity)).concat(XE);
+
+          ]]]
+      confirmation:
+        text: '[[[ return `Turn off everything in ${variables.title}?`; ]]]'
+    styles:
+      card:
+        - border-radius: 999px
+        - height: 38px
+        - margin-top: 5px
+        - padding: 0 12px
+        - background: rgba(255,255,255,.06)
+        - border: 1px solid rgba(255,255,255,.1)
+        - box-shadow: none
+        - opacity: >-
+            [[[
+
+            const NA=['unknown','unavailable','none',''];
+
+            const num=(id)=>{if(!id)return null;const
+            o=states[id];if(!o||NA.includes(String(o.state).toLowerCase()))return
+            null;const n=Number(o.state);return Number.isFinite(n)?n:null;};
+
+            const reg=(typeof
+            hass!=='undefined'&&hass&&hass.entities)?hass.entities:{};
+
+            const devOf=(id)=>id&&reg[id]?reg[id].device_id:null;
+
+            const find=(d,dom,test,diag)=>{const
+            did=devOf(d.temp)||devOf(d.wifi)||devOf(d.power)||devOf(d.entity)||devOf(d.stats);if(!did)return
+            null;return
+            Object.keys(reg).find(k=>reg[k].device_id===did&&k.startsWith(dom+'.')&&(diag||!reg[k].entity_category)&&states[k]&&test(states[k]))||null;};
+
+            const resolve=(d)=>{const
+            r=Object.assign({},d);if(!states[d.entity]){const
+            dom=d.entity.split('.')[0];const
+            f=find(d,dom,()=>true,false);if(f)r.entity=f;}const
+            dc=(o)=>o.attributes.device_class;if(d.power&&!states[d.power]){const
+            f=find(d,'sensor',(o)=>dc(o)==='power',true);if(f)r.power=f;}if(d.temp&&!states[d.temp]){const
+            f=find(d,'sensor',(o)=>dc(o)==='temperature',true);if(f)r.temp=f;}if(d.wifi&&!states[d.wifi]){const
+            f=find(d,'sensor',(o)=>dc(o)==='signal_strength',true);if(f)r.wifi=f;}return
+            r;};
+
+            const dev=(d0)=>{const d=resolve(d0);const e=states[d.entity];const
+            missing=!e;const s=e?e.state:'missing';const
+            pw=num(d.power),tc=num(d.temp),db=num(d.wifi);const
+            silent=(d.temp||d.wifi)?(tc===null&&db===null):true;const
+            offline=(missing&&silent)||(!missing&&NA.includes(String(s).toLowerCase()));const
+            sx=states[d.stats];const
+            a=sx&&!NA.includes(String(sx.state).toLowerCase())?sx.attributes:null;const
+            an=(k)=>a&&a[k]!==undefined&&a[k]!==null&&a[k]!==''&&Number.isFinite(Number(a[k]))?Number(a[k]):null;const
+            clk=states[d.clock]?states[d.clock].state:'unavailable';const
+            starts=an('onCount');const rt=an('runtimeSeconds');const
+            clockOk=clk==='Healthy';let
+            issue=null;if(offline)issue='offline';else if(missing)issue='entity
+            missing';else if(starts===null)issue='no stats';else
+            if(!clockOk)issue='clock '+String(clk).toLowerCase();return
+            Object.assign({},d,{s,on:s==='on',offline,missing:missing&&!offline,starts,rt,in0:an('input0'),in1:an('input1'),pw,tc,db,clk,clockOk,reporting:!offline&&starts!==null,healthy:issue===null,issue});};
+
+            const all=variables.devices.map(dev);
+
+            const fmt=(n)=>n===null?'—':n.toLocaleString();
+
+            const hrs=(s)=>s===null?'—':(s/3600).toFixed(1)+' h';
+
+            return
+            all.some(x=>x.group===variables.group&&x.on)||(variables.extra||[]).some(e=>states[e]&&states[e].state==='on')?'1':'.4';
+
+            ]]]
+      grid:
+        - grid-template-areas: '"i n"'
+        - grid-template-columns: auto auto
+        - column-gap: 6px
+        - align-items: center
+        - justify-content: center
+      icon:
+        - width: 15px
+        - height: 15px
+        - color: '#c9d3e4'
+      img_cell:
+        - width: 15px
+        - height: 15px
+      name:
+        - font-size: 12px
+        - font-weight: '600'
+        - color: '#c9d3e4'
+  hm_tile:
+    template: hm_base
+    custom_fields:
+      body: >-
+        [[[
+
+        const NA=['unknown','unavailable','none',''];
+
+        const num=(id)=>{if(!id)return null;const
+        o=states[id];if(!o||NA.includes(String(o.state).toLowerCase()))return
+        null;const n=Number(o.state);return Number.isFinite(n)?n:null;};
+
+        const reg=(typeof
+        hass!=='undefined'&&hass&&hass.entities)?hass.entities:{};
+
+        const devOf=(id)=>id&&reg[id]?reg[id].device_id:null;
+
+        const find=(d,dom,test,diag)=>{const
+        did=devOf(d.temp)||devOf(d.wifi)||devOf(d.power)||devOf(d.entity)||devOf(d.stats);if(!did)return
+        null;return
+        Object.keys(reg).find(k=>reg[k].device_id===did&&k.startsWith(dom+'.')&&(diag||!reg[k].entity_category)&&states[k]&&test(states[k]))||null;};
+
+        const resolve=(d)=>{const
+        r=Object.assign({},d);if(!states[d.entity]){const
+        dom=d.entity.split('.')[0];const
+        f=find(d,dom,()=>true,false);if(f)r.entity=f;}const
+        dc=(o)=>o.attributes.device_class;if(d.power&&!states[d.power]){const
+        f=find(d,'sensor',(o)=>dc(o)==='power',true);if(f)r.power=f;}if(d.temp&&!states[d.temp]){const
+        f=find(d,'sensor',(o)=>dc(o)==='temperature',true);if(f)r.temp=f;}if(d.wifi&&!states[d.wifi]){const
+        f=find(d,'sensor',(o)=>dc(o)==='signal_strength',true);if(f)r.wifi=f;}return
+        r;};
+
+        const dev=(d0)=>{const d=resolve(d0);const e=states[d.entity];const
+        missing=!e;const s=e?e.state:'missing';const
+        pw=num(d.power),tc=num(d.temp),db=num(d.wifi);const
+        silent=(d.temp||d.wifi)?(tc===null&&db===null):true;const
+        offline=(missing&&silent)||(!missing&&NA.includes(String(s).toLowerCase()));const
+        sx=states[d.stats];const
+        a=sx&&!NA.includes(String(sx.state).toLowerCase())?sx.attributes:null;const
+        an=(k)=>a&&a[k]!==undefined&&a[k]!==null&&a[k]!==''&&Number.isFinite(Number(a[k]))?Number(a[k]):null;const
+        clk=states[d.clock]?states[d.clock].state:'unavailable';const
+        starts=an('onCount');const rt=an('runtimeSeconds');const
+        clockOk=clk==='Healthy';let issue=null;if(offline)issue='offline';else
+        if(missing)issue='entity missing';else if(starts===null)issue='no
+        stats';else if(!clockOk)issue='clock '+String(clk).toLowerCase();return
+        Object.assign({},d,{s,on:s==='on',offline,missing:missing&&!offline,starts,rt,in0:an('input0'),in1:an('input1'),pw,tc,db,clk,clockOk,reporting:!offline&&starts!==null,healthy:issue===null,issue});};
+
+        const all=variables.devices.map(dev);
+
+        const fmt=(n)=>n===null?'—':n.toLocaleString();
+
+        const hrs=(s)=>s===null?'—':(s/3600).toFixed(1)+' h';
+
+        if(typeof
+        window!=='undefined'&&(!window.hmUI||window.hmUI.v!==3)){window.hmUI={v:3,
+
+        hass(){const e=document.querySelector('home-assistant');return
+        e&&e.hass;},
+
+        call(d,s,data){const h=this.hass();if(h)h.callService(d,s,data);},
+
+        info(el,id){el.dispatchEvent(new
+        CustomEvent('hass-more-info',{detail:{entityId:id},bubbles:true,composed:true}));},
+
+        label(el,p){el.style.setProperty('--lvl',p+'%');el.classList.add('on');const
+        s=el.querySelector('small');if(s)s.textContent='On · '+p+'%';},
+
+        down(ev,el,id,dim){ev.stopPropagation();const
+        st={x:ev.clientX,y:ev.clientY,drag:false,held:false,pct:Number(el.dataset.pct)||0,w:el.getBoundingClientRect().width||1};el._s=st;
+         st.timer=setTimeout(()=>{if(!st.drag){st.held=true;el.classList.add('press');setTimeout(()=>el.classList.remove('press'),250);if(el.dataset.menu==='1'){const o=!el.classList.contains('menu');el.classList.toggle('menu',o);if(el._card)el._card._rnMenu=o;}else hmUI.info(el,id);}},550);
+         try{el.setPointerCapture(ev.pointerId);}catch(e){}},
+        move(ev,el,dim){const st=el._s;if(!st)return;ev.stopPropagation();const
+        dx=ev.clientX-st.x,dy=ev.clientY-st.y;
+         if(!st.drag){if(Math.abs(dy)>10&&Math.abs(dy)>Math.abs(dx)){this.cancel(el);return;}if(Math.abs(dx)>8){if(!dim){this.cancel(el);return;}st.drag=true;clearTimeout(st.timer);el.classList.add('dragging');}}
+         if(st.drag){st.np=Math.max(1,Math.min(100,Math.round(st.pct+dx/st.w*100)));this.label(el,st.np);}},
+        up(ev,el,id){const
+        st=el._s;el._s=null;if(!st)return;ev.stopPropagation();clearTimeout(st.timer);el.classList.remove('dragging');
+         if(st.drag){if(st.np)this.call('light','turn_on',{entity_id:id,brightness_pct:st.np});}
+         else if(!st.held){this.press(el,id);}},
+        press(el,id){const
+        s=el.dataset.tap;if(s)this.call('script','turn_on',{entity_id:s});else
+        this.call('homeassistant','toggle',{entity_id:id});},
+
+        cancel(el){const
+        st=el._s;if(st)clearTimeout(st.timer);el._s=null;el.classList.remove('dragging');},
+
+        key(ev,el,id,dim){const k=ev.key;if(k==='Enter'||k==='
+        '){ev.preventDefault();this.press(el,id);}
+         else if(dim&&(k==='ArrowRight'||k==='ArrowLeft')){ev.preventDefault();const p=Math.max(1,Math.min(100,(Number(el.dataset.cur||el.dataset.pct)||0)+(k==='ArrowRight'?10:-10)));el.dataset.cur=p;this.label(el,p);clearTimeout(el._k);el._k=setTimeout(()=>{this.call('light','turn_on',{entity_id:id,brightness_pct:p});delete el.dataset.cur;},400);}},
+        bind(t,id,dim){if(!t||t._hm)return;t._hm=true;const
+        U=this,st=(e)=>e.stopPropagation();
+         t.addEventListener('pointerdown',e=>U.down(e,t,id,dim));t.addEventListener('pointermove',e=>U.move(e,t,dim));
+         t.addEventListener('pointerup',e=>U.up(e,t,id));t.addEventListener('pointercancel',()=>U.cancel(t));
+         t.addEventListener('keydown',e=>U.key(e,t,id,dim));t.addEventListener('contextmenu',e=>e.preventDefault());
+         ['mousedown','mouseup','touchstart','touchend','click'].forEach(n=>t.addEventListener(n,st));}
+        };}
+
+        const x=all.find(d=>d.name===variables.name);
+
+        if(!x)return '<div class="t bad"><div class="tx"><b>Unknown
+        device</b></div></div>';
+
+        const eo=states[x.entity];const
+        modes=(eo&&eo.attributes.supported_color_modes)||[];
+
+        const
+        dim=!!eo&&x.entity.startsWith('light.')&&modes.some(m=>m!=='onoff')&&!x.offline;
+
+        const
+        pct=eo&&x.on&&eo.attributes.brightness?Math.max(1,Math.round(eo.attributes.brightness/2.55)):0;
+
+        const state=x.offline?'Offline':x.missing?'Not found':x.on?(dim?`On ·
+        ${pct}%`:'On'):'Off';
+
+        const tel=[x.rt!==null?(x.rt/3600).toFixed(1)+'
+        h':null,x.pw!==null?x.pw.toFixed(1)+'
+        W':null,x.tc!==null?x.tc.toFixed(0)+'°C':null].filter(Boolean).map(t=>`<span>${t}</span>`).join('');
+
+        const wf=x.db!==null?(()=>{const
+        q=x.db>=-55?4:x.db>=-67?3:x.db>=-75?2:x.db>=-85?1:0;return `<span
+        class="wf q${q}" title="Wi-Fi ${x.db.toFixed(0)} dBm"><ha-icon
+        icon="mdi:wifi-strength-${q?q:'outline'}"></ha-icon></span>`})():'';
+
+        const id=x.entity;
+
+        const card=this;
+
+        const R=variables.runon||null;
+
+        let sub=state,bar='',menu='',ra=false,rleft=0,rfin=0;
+
+        const rfmt=(s)=>{const m=Math.floor(s/60),z=s%60;return
+        m+':'+String(z).padStart(2,'0');};
+
+        if(R){const
+        tm=states[R.timer];ra=!!tm&&tm.state==='active'&&!!tm.attributes.finishes_at&&x.on;
+         const hms=(s)=>{const p=String(s||'0:0:0').split(':').map(Number);return (p[0]||0)*3600+(p[1]||0)*60+(p[2]||0);};
+         const mn=states[R.minutes];const cur=mn&&!['unknown','unavailable'].includes(mn.state)?Number(mn.state):null;
+         if(ra){rfin=Date.parse(tm.attributes.finishes_at);rleft=Math.max(0,Math.round((rfin-Date.now())/1000));const tot=Math.max(1,hms(tm.attributes.duration));
+          sub=`Running on · <b class="cdt">${rfmt(rleft)}</b>`;bar=`<span class="cdbar" aria-hidden="true"><i style="--f0:${(rleft/tot).toFixed(4)};animation-duration:${rleft}s"></i></span>`;}
+         menu=`<div class="mn" role="dialog" aria-label="Run-on time"><div class="mh"><span>Run-on after switching off</span><button class="x" data-a="close" aria-label="Close">✕</button></div>
+        <div class="chips">${R.choices.map(m=>`<button class="ch
+        ${m===cur?'sel':''}" data-m="${m}">${m} min</button>`).join('')}</div>
+
+        <div class="chips">${ra?'<button class="ch stop" data-a="stop">Stop fan
+        now</button>':''}<button class="ch"
+        data-a="info">Details</button></div></div>`;}
+
+        if(R&&typeof window!=='undefined'&&card){setTimeout(()=>{try{const
+        r=card.shadowRoot;const
+        t=r&&r.querySelector('.t');if(!t)return;t._card=card;
+         if(card._rnMenu)t.classList.add('menu');
+         const m=t.querySelector('.mn');
+         if(m&&!m._b){m._b=1;['pointerdown','pointerup','pointermove','mousedown','mouseup','touchstart','touchend','click','keydown','contextmenu'].forEach(n=>m.addEventListener(n,ev=>ev.stopPropagation()));
+          m.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;const U=window.hmUI;
+           if(b.dataset.m&&U)U.call('input_number','set_value',{entity_id:R.minutes,value:Number(b.dataset.m)});
+           if(b.dataset.a==='stop'&&U)U.call('script','turn_on',{entity_id:R.stop});
+           if(b.dataset.a==='info'&&U)U.info(t,id);
+           card._rnMenu=false;t.classList.remove('menu');});}
+         clearInterval(card._rnTick);
+         if(ra){card._rnTick=setInterval(()=>{const s=Math.max(0,Math.round((rfin-Date.now())/1000));const el=card.shadowRoot&&card.shadowRoot.querySelector('.cdt');if(el)el.textContent=rfmt(s);if(s<=0)clearInterval(card._rnTick);},1000);}
+        }catch(e){}},0);}
+
+        if(typeof
+        window!=='undefined'&&card&&window.hmUI){setTimeout(()=>{try{const
+        r=card.shadowRoot;if(r)window.hmUI.bind(r.querySelector('.t'),id,dim);}catch(e){}},0);}
+
+        return `<div class="t ${x.on?'on':''} ${dim?'dim':''}
+        ${x.offline||x.missing?'bad':''} ${x.icon==='mdi:fan'?'fan':''}"
+        style="--lvl:${pct}%" data-pct="${pct}" data-id="${id}"
+        data-dim="${dim}" data-menu="${R?1:0}" data-tap="${R&&R.tap?R.tap:''}"
+        role="button" tabindex="0" aria-label="${x.name}, ${state}${dim?'. Swipe
+        sideways or use arrow keys to dim':''}${ra?', running on, off in
+        '+rfmt(rleft):''}${R?'. Hold for run-on settings':''}">
+
+        <span class="lvl" aria-hidden="true"></span>
+
+        <span class="ic"><ha-icon icon="${x.icon}"></ha-icon></span>
+
+        <div class="tx"><b>${x.name.replace(/^(Ensuite|Kitchen|Main Bathroom)
+        /,'')}</b><small>${sub}</small><div class="tel">${tel}${wf}</div></div>
+
+        <span class="corner">${dim?'<span class="hint" title="Swipe to
+        dim"><ha-icon
+        icon="mdi:gesture-swipe-horizontal"></ha-icon></span>':''}${x.healthy?'':`<span
+        class="flag" title="${x.issue}">!</span>`}</span>${bar}${menu}</div>`;
+
+        ]]]
+    tap_action:
+      action: call-service
+      service: homeassistant.toggle
+      service_data:
+        entity_id: >-
+          [[[
+
+          const NA=['unknown','unavailable','none',''];
+
+          const num=(id)=>{if(!id)return null;const
+          o=states[id];if(!o||NA.includes(String(o.state).toLowerCase()))return
+          null;const n=Number(o.state);return Number.isFinite(n)?n:null;};
+
+          const reg=(typeof
+          hass!=='undefined'&&hass&&hass.entities)?hass.entities:{};
+
+          const devOf=(id)=>id&&reg[id]?reg[id].device_id:null;
+
+          const find=(d,dom,test,diag)=>{const
+          did=devOf(d.temp)||devOf(d.wifi)||devOf(d.power)||devOf(d.entity)||devOf(d.stats);if(!did)return
+          null;return
+          Object.keys(reg).find(k=>reg[k].device_id===did&&k.startsWith(dom+'.')&&(diag||!reg[k].entity_category)&&states[k]&&test(states[k]))||null;};
+
+          const resolve=(d)=>{const
+          r=Object.assign({},d);if(!states[d.entity]){const
+          dom=d.entity.split('.')[0];const
+          f=find(d,dom,()=>true,false);if(f)r.entity=f;}const
+          dc=(o)=>o.attributes.device_class;if(d.power&&!states[d.power]){const
+          f=find(d,'sensor',(o)=>dc(o)==='power',true);if(f)r.power=f;}if(d.temp&&!states[d.temp]){const
+          f=find(d,'sensor',(o)=>dc(o)==='temperature',true);if(f)r.temp=f;}if(d.wifi&&!states[d.wifi]){const
+          f=find(d,'sensor',(o)=>dc(o)==='signal_strength',true);if(f)r.wifi=f;}return
+          r;};
+
+          const dev=(d0)=>{const d=resolve(d0);const e=states[d.entity];const
+          missing=!e;const s=e?e.state:'missing';const
+          pw=num(d.power),tc=num(d.temp),db=num(d.wifi);const
+          silent=(d.temp||d.wifi)?(tc===null&&db===null):true;const
+          offline=(missing&&silent)||(!missing&&NA.includes(String(s).toLowerCase()));const
+          sx=states[d.stats];const
+          a=sx&&!NA.includes(String(sx.state).toLowerCase())?sx.attributes:null;const
+          an=(k)=>a&&a[k]!==undefined&&a[k]!==null&&a[k]!==''&&Number.isFinite(Number(a[k]))?Number(a[k]):null;const
+          clk=states[d.clock]?states[d.clock].state:'unavailable';const
+          starts=an('onCount');const rt=an('runtimeSeconds');const
+          clockOk=clk==='Healthy';let issue=null;if(offline)issue='offline';else
+          if(missing)issue='entity missing';else if(starts===null)issue='no
+          stats';else if(!clockOk)issue='clock
+          '+String(clk).toLowerCase();return
+          Object.assign({},d,{s,on:s==='on',offline,missing:missing&&!offline,starts,rt,in0:an('input0'),in1:an('input1'),pw,tc,db,clk,clockOk,reporting:!offline&&starts!==null,healthy:issue===null,issue});};
+
+          const all=variables.devices.map(dev);
+
+          const fmt=(n)=>n===null?'—':n.toLocaleString();
+
+          const hrs=(s)=>s===null?'—':(s/3600).toFixed(1)+' h';
+
+          const x=all.find(d=>d.name===variables.name);return x?x.entity:'';
+
+          ]]]
+    hold_action:
+      action: more-info
+    styles:
+      card:
+        - background: none
+        - border: none
+        - box-shadow: none
+        - padding: '0'
+        - border-radius: 20px
+        - overflow: hidden
+    extra_styles: >-
+      .tx small b{display:inline !important;font-size:inherit
+      !important;font-weight:700;color:#fff;font-variant-numeric:tabular-nums}
+
+      .cdbar{position:absolute
+      !important;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.06);z-index:2
+      !important}
+
+      .cdbar
+      i{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,#ffb648,#ffd877);box-shadow:0
+      0 8px rgba(255,190,90,.7);animation:drain linear forwards}
+
+      @keyframes drain{from{width:calc(var(--f0) * 100%)}to{width:0}}
+
+      .mn{display:none;flex-direction:column;gap:8px;cursor:default}
+
+      .t.menu{display:block;min-height:0;padding:12px 14px}
+
+      .t.menu>:not(.mn){display:none !important}
+
+      .t.menu .mn{display:flex}
+
+      .mh{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;font-weight:600;color:#c9d3e4}
+
+      .chips{display:flex;flex-wrap:wrap;gap:6px}
+
+      .ch{font:inherit;font-size:12px;font-weight:600;color:#c9d3e4;padding:6px
+      10px;border-radius:999px;border:1px solid
+      rgba(255,255,255,.12);background:rgba(255,255,255,.05);cursor:pointer}
+
+      .ch:hover{border-color:rgba(255,182,72,.5);color:#ffcf85}
+
+      .ch.sel{background:#ffb648;border-color:#ffb648;color:#2a1700}
+
+      .ch.stop{color:#ff9b9b;border-color:rgba(255,107,107,.35)}
+
+      .x{flex:none;font:inherit;font-size:13px;width:26px;height:26px;border-radius:50%;border:none;background:rgba(255,255,255,.08);color:#c9d3e4;cursor:pointer}
+
+      @media (prefers-reduced-motion:reduce){.cdbar
+      i{animation:none;width:calc(var(--f0) * 100%)}}
+
+      .t{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;gap:18px;min-height:132px;box-sizing:border-box;padding:14px
+      15px;border-radius:20px;text-align:left;background:rgba(255,255,255,.035);border:1px
+      solid rgba(255,255,255,.07);transition:background .35s,border-color
+      .35s,box-shadow .35s,transform
+      .15s;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:pan-y;outline:none}
+
+      .t:focus-visible{box-shadow:0 0 0 2px #ffb648}
+
+      .t:active{transform:scale(.985)}
+
+      .t.press{transform:scale(.97)}
+
+      .t>*{position:relative;z-index:1}
+
+      .lvl{position:absolute !important;z-index:0
+      !important;left:0;top:0;bottom:0;width:var(--lvl);background:linear-gradient(90deg,rgba(255,182,72,.10),rgba(255,182,72,.30));border-right:2px
+      solid rgba(255,214,140,.0);transition:width .45s
+      cubic-bezier(.2,.8,.2,1),border-color .3s;pointer-events:none}
+
+      .t:not(.on) .lvl{width:0}
+
+      .t.dim.on .lvl{border-right-color:rgba(255,214,140,.65);box-shadow:6px 0
+      18px -6px rgba(255,190,90,.6)}
+
+      .t.dragging .lvl{transition:none}
+
+      .ic{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.06);color:#7d8aa3;transition:all
+      .35s}
+
+      .ic ha-icon{flex:none !important;width:23px !important;height:23px
+      !important;--mdc-icon-size:23px !important}
+
+      .tx{min-width:0}
+
+      .tx
+      b{display:block;font-size:14px;font-weight:600;color:#e7edf7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+      .tx
+      small{display:block;font-size:12px;color:#7d8aa3;margin-top:2px;font-variant-numeric:tabular-nums}
+
+      .t.on{background:rgba(255,182,72,.06);border-color:rgba(255,182,72,.45);box-shadow:0
+      8px 28px rgba(255,160,40,.14)}
+
+      .t.on:not(.dim){background:linear-gradient(150deg,rgba(255,182,72,.22),rgba(255,182,72,.06))}
+
+      .t.on .ic{background:#ffb648;color:#2a1700;box-shadow:0 0 18px
+      rgba(255,182,72,.65)}
+
+      .t.on .tx small{color:#ffcf85}
+
+      .t.bad{border-color:rgba(255,107,107,.4)}
+
+      .t.bad .tx small{color:#ff8c8c}
+
+      .t.fan.on .ic ha-icon{animation:spin 1.6s linear infinite}
+
+      @keyframes spin{to{transform:rotate(360deg)}}
+
+      .tel{display:flex;flex-wrap:wrap;align-items:center;gap:2px
+      10px;margin-top:6px;font-size:11px;color:#6f7c95;font-variant-numeric:tabular-nums}
+
+      .tel span{white-space:nowrap}
+
+      .t.on .tel{color:#c9a46a}
+
+      .wf{display:inline-flex;align-items:center}
+
+      .wf ha-icon{flex:none !important;width:14px !important;height:14px
+      !important;--mdc-icon-size:14px !important}
+
+      .wf.q4,.wf.q3{color:#7fd39a}.wf.q2{color:#ffb547}.wf.q1,.wf.q0{color:#ff6b6b}
+
+      .corner{position:absolute
+      !important;top:13px;right:13px;display:flex;align-items:center;gap:6px}
+
+      .hint{display:inline-flex;color:rgba(255,255,255,.22);transition:color
+      .3s}
+
+      .hint ha-icon{flex:none !important;width:18px !important;height:18px
+      !important;--mdc-icon-size:18px !important}
+
+      .t:hover .hint,.t.dragging .hint{color:#ffcf85}
+
+      .flag{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;background:#ffb547;color:#2a1a00}
+
+      @media (prefers-reduced-motion:reduce){.t.fan.on .ic
+      ha-icon{animation:none}.lvl{transition:none}}
+  hm_lamp:
+    template: hm_base
+    entity: light.wled_lamp
+    custom_fields:
+      body: >-
+        [[[
+
+        const NA=['unknown','unavailable','none',''];
+
+        const num=(id)=>{if(!id)return null;const
+        o=states[id];if(!o||NA.includes(String(o.state).toLowerCase()))return
+        null;const n=Number(o.state);return Number.isFinite(n)?n:null;};
+
+        const reg=(typeof
+        hass!=='undefined'&&hass&&hass.entities)?hass.entities:{};
+
+        const devOf=(id)=>id&&reg[id]?reg[id].device_id:null;
+
+        const find=(d,dom,test,diag)=>{const
+        did=devOf(d.temp)||devOf(d.wifi)||devOf(d.power)||devOf(d.entity)||devOf(d.stats);if(!did)return
+        null;return
+        Object.keys(reg).find(k=>reg[k].device_id===did&&k.startsWith(dom+'.')&&(diag||!reg[k].entity_category)&&states[k]&&test(states[k]))||null;};
+
+        const resolve=(d)=>{const
+        r=Object.assign({},d);if(!states[d.entity]){const
+        dom=d.entity.split('.')[0];const
+        f=find(d,dom,()=>true,false);if(f)r.entity=f;}const
+        dc=(o)=>o.attributes.device_class;if(d.power&&!states[d.power]){const
+        f=find(d,'sensor',(o)=>dc(o)==='power',true);if(f)r.power=f;}if(d.temp&&!states[d.temp]){const
+        f=find(d,'sensor',(o)=>dc(o)==='temperature',true);if(f)r.temp=f;}if(d.wifi&&!states[d.wifi]){const
+        f=find(d,'sensor',(o)=>dc(o)==='signal_strength',true);if(f)r.wifi=f;}return
+        r;};
+
+        const dev=(d0)=>{const d=resolve(d0);const e=states[d.entity];const
+        missing=!e;const s=e?e.state:'missing';const
+        pw=num(d.power),tc=num(d.temp),db=num(d.wifi);const
+        silent=(d.temp||d.wifi)?(tc===null&&db===null):true;const
+        offline=(missing&&silent)||(!missing&&NA.includes(String(s).toLowerCase()));const
+        sx=states[d.stats];const
+        a=sx&&!NA.includes(String(sx.state).toLowerCase())?sx.attributes:null;const
+        an=(k)=>a&&a[k]!==undefined&&a[k]!==null&&a[k]!==''&&Number.isFinite(Number(a[k]))?Number(a[k]):null;const
+        clk=states[d.clock]?states[d.clock].state:'unavailable';const
+        starts=an('onCount');const rt=an('runtimeSeconds');const
+        clockOk=clk==='Healthy';let issue=null;if(offline)issue='offline';else
+        if(missing)issue='entity missing';else if(starts===null)issue='no
+        stats';else if(!clockOk)issue='clock '+String(clk).toLowerCase();return
+        Object.assign({},d,{s,on:s==='on',offline,missing:missing&&!offline,starts,rt,in0:an('input0'),in1:an('input1'),pw,tc,db,clk,clockOk,reporting:!offline&&starts!==null,healthy:issue===null,issue});};
+
+        const all=variables.devices.map(dev);
+
+        const fmt=(n)=>n===null?'—':n.toLocaleString();
+
+        const hrs=(s)=>s===null?'—':(s/3600).toFixed(1)+' h';
+
+        const e=states['light.wled_lamp'];
+
+        const on=!!e&&e.state==='on';
+
+        const rgb=(e&&e.attributes.rgb_color)||[255,182,72];
+
+        const
+        br=e&&e.attributes.brightness?Math.round(e.attributes.brightness/2.55):0;
+
+        const
+        pv=num('sensor.sigen_plant_pv_power')||0,gi=num('sensor.sigen_plant_grid_import_power')||0;
+
+        const src=gi>0.2?'grid':pv>0.1?'solar':'battery';
+
+        return `<div class="t lamp ${on?'on':''}
+        ${!e||['unavailable','unknown'].includes(e.state)?'bad':''}"
+        style="--lc:${rgb.join(',')}"><span class="ic"><ha-icon
+        icon="mdi:lamp-outline"></ha-icon></span><div class="tx"><b>Solar
+        lamp</b><small>${!e?'Not found':on?`On · ${br}% · showing
+        ${src}`:e.state==='off'?'Off':e.state}</small></div></div>`;
+
+        ]]]
+    tap_action:
+      action: toggle
+    hold_action:
+      action: more-info
+    styles:
+      card:
+        - background: none
+        - border: none
+        - box-shadow: none
+        - padding: '0'
+        - border-radius: 20px
+        - overflow: hidden
+    extra_styles: >-
+      .tx small b{display:inline !important;font-size:inherit
+      !important;font-weight:700;color:#fff;font-variant-numeric:tabular-nums}
+
+      .cdbar{position:absolute
+      !important;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.06);z-index:2
+      !important}
+
+      .cdbar
+      i{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,#ffb648,#ffd877);box-shadow:0
+      0 8px rgba(255,190,90,.7);animation:drain linear forwards}
+
+      @keyframes drain{from{width:calc(var(--f0) * 100%)}to{width:0}}
+
+      .mn{display:none;flex-direction:column;gap:8px;cursor:default}
+
+      .t.menu{display:block;min-height:0;padding:12px 14px}
+
+      .t.menu>:not(.mn){display:none !important}
+
+      .t.menu .mn{display:flex}
+
+      .mh{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;font-weight:600;color:#c9d3e4}
+
+      .chips{display:flex;flex-wrap:wrap;gap:6px}
+
+      .ch{font:inherit;font-size:12px;font-weight:600;color:#c9d3e4;padding:6px
+      10px;border-radius:999px;border:1px solid
+      rgba(255,255,255,.12);background:rgba(255,255,255,.05);cursor:pointer}
+
+      .ch:hover{border-color:rgba(255,182,72,.5);color:#ffcf85}
+
+      .ch.sel{background:#ffb648;border-color:#ffb648;color:#2a1700}
+
+      .ch.stop{color:#ff9b9b;border-color:rgba(255,107,107,.35)}
+
+      .x{flex:none;font:inherit;font-size:13px;width:26px;height:26px;border-radius:50%;border:none;background:rgba(255,255,255,.08);color:#c9d3e4;cursor:pointer}
+
+      @media (prefers-reduced-motion:reduce){.cdbar
+      i{animation:none;width:calc(var(--f0) * 100%)}}
+
+      .t{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;gap:18px;min-height:132px;box-sizing:border-box;padding:14px
+      15px;border-radius:20px;text-align:left;background:rgba(255,255,255,.035);border:1px
+      solid rgba(255,255,255,.07);transition:background .35s,border-color
+      .35s,box-shadow .35s,transform
+      .15s;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:pan-y;outline:none}
+
+      .t:focus-visible{box-shadow:0 0 0 2px #ffb648}
+
+      .t:active{transform:scale(.985)}
+
+      .t.press{transform:scale(.97)}
+
+      .t>*{position:relative;z-index:1}
+
+      .lvl{position:absolute !important;z-index:0
+      !important;left:0;top:0;bottom:0;width:var(--lvl);background:linear-gradient(90deg,rgba(255,182,72,.10),rgba(255,182,72,.30));border-right:2px
+      solid rgba(255,214,140,.0);transition:width .45s
+      cubic-bezier(.2,.8,.2,1),border-color .3s;pointer-events:none}
+
+      .t:not(.on) .lvl{width:0}
+
+      .t.dim.on .lvl{border-right-color:rgba(255,214,140,.65);box-shadow:6px 0
+      18px -6px rgba(255,190,90,.6)}
+
+      .t.dragging .lvl{transition:none}
+
+      .ic{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.06);color:#7d8aa3;transition:all
+      .35s}
+
+      .ic ha-icon{flex:none !important;width:23px !important;height:23px
+      !important;--mdc-icon-size:23px !important}
+
+      .tx{min-width:0}
+
+      .tx
+      b{display:block;font-size:14px;font-weight:600;color:#e7edf7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+      .tx
+      small{display:block;font-size:12px;color:#7d8aa3;margin-top:2px;font-variant-numeric:tabular-nums}
+
+      .t.on{background:rgba(255,182,72,.06);border-color:rgba(255,182,72,.45);box-shadow:0
+      8px 28px rgba(255,160,40,.14)}
+
+      .t.on:not(.dim){background:linear-gradient(150deg,rgba(255,182,72,.22),rgba(255,182,72,.06))}
+
+      .t.on .ic{background:#ffb648;color:#2a1700;box-shadow:0 0 18px
+      rgba(255,182,72,.65)}
+
+      .t.on .tx small{color:#ffcf85}
+
+      .t.bad{border-color:rgba(255,107,107,.4)}
+
+      .t.bad .tx small{color:#ff8c8c}
+
+      .t.fan.on .ic ha-icon{animation:spin 1.6s linear infinite}
+
+      @keyframes spin{to{transform:rotate(360deg)}}
+
+      .tel{display:flex;flex-wrap:wrap;align-items:center;gap:2px
+      10px;margin-top:6px;font-size:11px;color:#6f7c95;font-variant-numeric:tabular-nums}
+
+      .tel span{white-space:nowrap}
+
+      .t.on .tel{color:#c9a46a}
+
+      .wf{display:inline-flex;align-items:center}
+
+      .wf ha-icon{flex:none !important;width:14px !important;height:14px
+      !important;--mdc-icon-size:14px !important}
+
+      .wf.q4,.wf.q3{color:#7fd39a}.wf.q2{color:#ffb547}.wf.q1,.wf.q0{color:#ff6b6b}
+
+      .corner{position:absolute
+      !important;top:13px;right:13px;display:flex;align-items:center;gap:6px}
+
+      .hint{display:inline-flex;color:rgba(255,255,255,.22);transition:color
+      .3s}
+
+      .hint ha-icon{flex:none !important;width:18px !important;height:18px
+      !important;--mdc-icon-size:18px !important}
+
+      .t:hover .hint,.t.dragging .hint{color:#ffcf85}
+
+      .flag{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;background:#ffb547;color:#2a1a00}
+
+      @media (prefers-reduced-motion:reduce){.t.fan.on .ic
+      ha-icon{animation:none}.lvl{transition:none}}
+
+      .t.lamp{flex-direction:row;align-items:center;justify-content:flex-start;gap:14px;min-height:76px}
+
+      .t.lamp.on{background:linear-gradient(120deg,rgba(var(--lc),.28),rgba(var(--lc),.05)
+      70%);border-color:rgba(var(--lc),.55);box-shadow:0 8px 30px
+      rgba(var(--lc),.18)}
+
+      .t.lamp.on .ic{background:rgb(var(--lc));color:#0b0f18;box-shadow:0 0 20px
+      rgba(var(--lc),.7)}
+
+      .t.lamp.on .tx small{color:rgba(var(--lc),1);filter:brightness(1.3)}
+  hm_health:
+    template: hm_base
+    custom_fields:
+      body: >-
+        [[[
+
+        const NA=['unknown','unavailable','none',''];
+
+        const num=(id)=>{if(!id)return null;const
+        o=states[id];if(!o||NA.includes(String(o.state).toLowerCase()))return
+        null;const n=Number(o.state);return Number.isFinite(n)?n:null;};
+
+        const reg=(typeof
+        hass!=='undefined'&&hass&&hass.entities)?hass.entities:{};
+
+        const devOf=(id)=>id&&reg[id]?reg[id].device_id:null;
+
+        const find=(d,dom,test,diag)=>{const
+        did=devOf(d.temp)||devOf(d.wifi)||devOf(d.power)||devOf(d.entity)||devOf(d.stats);if(!did)return
+        null;return
+        Object.keys(reg).find(k=>reg[k].device_id===did&&k.startsWith(dom+'.')&&(diag||!reg[k].entity_category)&&states[k]&&test(states[k]))||null;};
+
+        const resolve=(d)=>{const
+        r=Object.assign({},d);if(!states[d.entity]){const
+        dom=d.entity.split('.')[0];const
+        f=find(d,dom,()=>true,false);if(f)r.entity=f;}const
+        dc=(o)=>o.attributes.device_class;if(d.power&&!states[d.power]){const
+        f=find(d,'sensor',(o)=>dc(o)==='power',true);if(f)r.power=f;}if(d.temp&&!states[d.temp]){const
+        f=find(d,'sensor',(o)=>dc(o)==='temperature',true);if(f)r.temp=f;}if(d.wifi&&!states[d.wifi]){const
+        f=find(d,'sensor',(o)=>dc(o)==='signal_strength',true);if(f)r.wifi=f;}return
+        r;};
+
+        const dev=(d0)=>{const d=resolve(d0);const e=states[d.entity];const
+        missing=!e;const s=e?e.state:'missing';const
+        pw=num(d.power),tc=num(d.temp),db=num(d.wifi);const
+        silent=(d.temp||d.wifi)?(tc===null&&db===null):true;const
+        offline=(missing&&silent)||(!missing&&NA.includes(String(s).toLowerCase()));const
+        sx=states[d.stats];const
+        a=sx&&!NA.includes(String(sx.state).toLowerCase())?sx.attributes:null;const
+        an=(k)=>a&&a[k]!==undefined&&a[k]!==null&&a[k]!==''&&Number.isFinite(Number(a[k]))?Number(a[k]):null;const
+        clk=states[d.clock]?states[d.clock].state:'unavailable';const
+        starts=an('onCount');const rt=an('runtimeSeconds');const
+        clockOk=clk==='Healthy';let issue=null;if(offline)issue='offline';else
+        if(missing)issue='entity missing';else if(starts===null)issue='no
+        stats';else if(!clockOk)issue='clock '+String(clk).toLowerCase();return
+        Object.assign({},d,{s,on:s==='on',offline,missing:missing&&!offline,starts,rt,in0:an('input0'),in1:an('input1'),pw,tc,db,clk,clockOk,reporting:!offline&&starts!==null,healthy:issue===null,issue});};
+
+        const all=variables.devices.map(dev);
+
+        const fmt=(n)=>n===null?'—':n.toLocaleString();
+
+        const hrs=(s)=>s===null?'—':(s/3600).toFixed(1)+' h';
+
+        const bad=all.filter(x=>!x.healthy);
+
+        if(!bad.length)return `<div class="ft ok"><span
+        class="orb">✓</span><div><b>Everything looks healthy</b><small>All
+        ${all.length} Shelly devices are online, clock-synced and
+        reporting.</small></div></div>`;
+
+        return `<div class="ft warn"><span
+        class="orb">!</span><div><b>${bad.length} device${bad.length>1?'s
+        need':' needs'} attention</b><div class="chips">${bad.map(x=>`<span
+        class="chip"><ha-icon icon="${x.icon}"></ha-icon>${x.name}:
+        ${x.issue}</span>`).join('')}</div></div></div>`;
+
+        ]]]
+    extra_styles: >-
+      .ft{display:flex;align-items:center;gap:14px;padding:14px
+      18px;text-align:left}
+
+      .orb{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:17px;font-weight:900}
+
+      .ft.ok .orb{color:#3ee08f;background:rgba(62,224,143,.12)}
+
+      .ft.warn .orb{color:#ffb547;background:rgba(255,181,71,.14)}
+
+      .ft b{display:block;font-size:14px;font-weight:600;color:#f4f7fc}
+
+      .ft small{display:block;font-size:12px;color:#8d9ab3;margin-top:2px}
+
+      .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+
+      .chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:4px
+      10px;border-radius:999px;color:#ffcf85;background:rgba(255,181,71,.1)}
+
+      .chip ha-icon{flex:none !important;width:14px !important;height:14px
+      !important;--mdc-icon-size:14px !important}
+
+      .ft{position:relative;padding-bottom:22px}
+
+      .ft::after{content:'Home Claude v1.0.4 · 11 Nov 2026 +4
+      Shelly';position:absolute;right:16px;bottom:7px;font-size:10px;letter-spacing:.2px;color:#55617a;pointer-events:none}
+  hm_garage:
+    template: hm_base
+    entity: binary_sensor.garage_door_opener_garage_door_closed
+    custom_fields:
+      body: >-
+        [[[
+
+        const G={"closed":
+        "binary_sensor.garage_door_opener_garage_door_closed", "online":
+        "binary_sensor.garage_door_opener_garage_door_opener", "switch":
+        "switch.garage_door_opener_garage_door_open_close_switch", "temp":
+        "sensor.garage_door_opener_internal_temperature", "wifi":
+        "sensor.garage_door_opener_wifi_signal_sensor"};
+
+        const NA=['unknown','unavailable','none',''];
+
+        const c=states[G.closed];const net=states[G.online];
+
+        const known=c&&!NA.includes(String(c.state).toLowerCase());
+
+        const offline=!known||(net&&net.state==='off');
+
+        const closed=known&&c.state==='on';
+
+        const num=(id)=>{const
+        o=states[id];if(!o||NA.includes(String(o.state).toLowerCase()))return
+        null;const n=Number(o.state);return Number.isFinite(n)?n:null;};
+
+        const tc=num(G.temp),db=num(G.wifi);
+
+        const since=c&&c.last_changed?(()=>{const
+        m=Math.round((Date.now()-Date.parse(c.last_changed))/60000);return
+        m<1?'just now':m<60?m+' min ago':m<1440?Math.round(m/60)+' h
+        ago':Math.round(m/1440)+' d ago';})():'';
+
+        const state=offline?'Offline':closed?'Closed':'Open';
+
+        const q=db===null?null:db>=-55?4:db>=-67?3:db>=-75?2:db>=-85?1:0;
+
+        const wf=q===null?'':`<span class="wf q${q}" title="Wi-Fi
+        ${db.toFixed(0)} dBm"><ha-icon
+        icon="mdi:wifi-strength-${q?q:'outline'}"></ha-icon></span>`;
+
+        const tel=(tc!==null?`<span>${tc.toFixed(0)}°C</span>`:'')+wf;
+
+        return `<div class="t gd ${offline?'bad':closed?'shut':'open'}"
+        role="button" aria-label="Garage door, ${state}. Tap to
+        ${closed?'open':'close'}.">
+
+        <span class="ic"><ha-icon
+        icon="${closed||offline?'mdi:garage':'mdi:garage-open-variant'}"></ha-icon></span>
+
+        <div class="tx"><b>Garage Door</b><small>${state}${since&&!offline?' ·
+        '+since:''}</small><div class="tel">${tel}</div></div>
+
+        <span class="act">${offline?'':closed?'Tap to open':'Tap to
+        close'}</span></div>`;
+
+        ]]]
+    tap_action:
+      action: call-service
+      service: switch.toggle
+      service_data:
+        entity_id: switch.garage_door_opener_garage_door_open_close_switch
+      confirmation:
+        text: >-
+          [[[ const
+          s=states['binary_sensor.garage_door_opener_garage_door_closed']?.state;
+          return s==='on' ? 'Open the garage door?' : s==='off' ? 'Close the
+          garage door?' : 'The garage door opener is offline or its state is
+          unknown. Send the open/close command anyway?'; ]]]
+    hold_action:
+      action: more-info
+    styles:
+      card:
+        - background: none
+        - border: none
+        - box-shadow: none
+        - padding: '0'
+        - border-radius: 20px
+        - overflow: hidden
+    extra_styles: >-
+      .tx small b{display:inline !important;font-size:inherit
+      !important;font-weight:700;color:#fff;font-variant-numeric:tabular-nums}
+
+      .cdbar{position:absolute
+      !important;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.06);z-index:2
+      !important}
+
+      .cdbar
+      i{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,#ffb648,#ffd877);box-shadow:0
+      0 8px rgba(255,190,90,.7);animation:drain linear forwards}
+
+      @keyframes drain{from{width:calc(var(--f0) * 100%)}to{width:0}}
+
+      .mn{display:none;flex-direction:column;gap:8px;cursor:default}
+
+      .t.menu{display:block;min-height:0;padding:12px 14px}
+
+      .t.menu>:not(.mn){display:none !important}
+
+      .t.menu .mn{display:flex}
+
+      .mh{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;font-weight:600;color:#c9d3e4}
+
+      .chips{display:flex;flex-wrap:wrap;gap:6px}
+
+      .ch{font:inherit;font-size:12px;font-weight:600;color:#c9d3e4;padding:6px
+      10px;border-radius:999px;border:1px solid
+      rgba(255,255,255,.12);background:rgba(255,255,255,.05);cursor:pointer}
+
+      .ch:hover{border-color:rgba(255,182,72,.5);color:#ffcf85}
+
+      .ch.sel{background:#ffb648;border-color:#ffb648;color:#2a1700}
+
+      .ch.stop{color:#ff9b9b;border-color:rgba(255,107,107,.35)}
+
+      .x{flex:none;font:inherit;font-size:13px;width:26px;height:26px;border-radius:50%;border:none;background:rgba(255,255,255,.08);color:#c9d3e4;cursor:pointer}
+
+      @media (prefers-reduced-motion:reduce){.cdbar
+      i{animation:none;width:calc(var(--f0) * 100%)}}
+
+      .t{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;gap:18px;min-height:132px;box-sizing:border-box;padding:14px
+      15px;border-radius:20px;text-align:left;background:rgba(255,255,255,.035);border:1px
+      solid rgba(255,255,255,.07);transition:background .35s,border-color
+      .35s,box-shadow .35s,transform
+      .15s;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:pan-y;outline:none}
+
+      .t:focus-visible{box-shadow:0 0 0 2px #ffb648}
+
+      .t:active{transform:scale(.985)}
+
+      .t.press{transform:scale(.97)}
+
+      .t>*{position:relative;z-index:1}
+
+      .lvl{position:absolute !important;z-index:0
+      !important;left:0;top:0;bottom:0;width:var(--lvl);background:linear-gradient(90deg,rgba(255,182,72,.10),rgba(255,182,72,.30));border-right:2px
+      solid rgba(255,214,140,.0);transition:width .45s
+      cubic-bezier(.2,.8,.2,1),border-color .3s;pointer-events:none}
+
+      .t:not(.on) .lvl{width:0}
+
+      .t.dim.on .lvl{border-right-color:rgba(255,214,140,.65);box-shadow:6px 0
+      18px -6px rgba(255,190,90,.6)}
+
+      .t.dragging .lvl{transition:none}
+
+      .ic{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.06);color:#7d8aa3;transition:all
+      .35s}
+
+      .ic ha-icon{flex:none !important;width:23px !important;height:23px
+      !important;--mdc-icon-size:23px !important}
+
+      .tx{min-width:0}
+
+      .tx
+      b{display:block;font-size:14px;font-weight:600;color:#e7edf7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+      .tx
+      small{display:block;font-size:12px;color:#7d8aa3;margin-top:2px;font-variant-numeric:tabular-nums}
+
+      .t.on{background:rgba(255,182,72,.06);border-color:rgba(255,182,72,.45);box-shadow:0
+      8px 28px rgba(255,160,40,.14)}
+
+      .t.on:not(.dim){background:linear-gradient(150deg,rgba(255,182,72,.22),rgba(255,182,72,.06))}
+
+      .t.on .ic{background:#ffb648;color:#2a1700;box-shadow:0 0 18px
+      rgba(255,182,72,.65)}
+
+      .t.on .tx small{color:#ffcf85}
+
+      .t.bad{border-color:rgba(255,107,107,.4)}
+
+      .t.bad .tx small{color:#ff8c8c}
+
+      .t.fan.on .ic ha-icon{animation:spin 1.6s linear infinite}
+
+      @keyframes spin{to{transform:rotate(360deg)}}
+
+      .tel{display:flex;flex-wrap:wrap;align-items:center;gap:2px
+      10px;margin-top:6px;font-size:11px;color:#6f7c95;font-variant-numeric:tabular-nums}
+
+      .tel span{white-space:nowrap}
+
+      .t.on .tel{color:#c9a46a}
+
+      .wf{display:inline-flex;align-items:center}
+
+      .wf ha-icon{flex:none !important;width:14px !important;height:14px
+      !important;--mdc-icon-size:14px !important}
+
+      .wf.q4,.wf.q3{color:#7fd39a}.wf.q2{color:#ffb547}.wf.q1,.wf.q0{color:#ff6b6b}
+
+      .corner{position:absolute
+      !important;top:13px;right:13px;display:flex;align-items:center;gap:6px}
+
+      .hint{display:inline-flex;color:rgba(255,255,255,.22);transition:color
+      .3s}
+
+      .hint ha-icon{flex:none !important;width:18px !important;height:18px
+      !important;--mdc-icon-size:18px !important}
+
+      .t:hover .hint,.t.dragging .hint{color:#ffcf85}
+
+      .flag{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;background:#ffb547;color:#2a1a00}
+
+      @media (prefers-reduced-motion:reduce){.t.fan.on .ic
+      ha-icon{animation:none}.lvl{transition:none}}
+
+      .t.gd{flex-direction:row;align-items:center;justify-content:flex-start;gap:14px;min-height:84px}
+
+      .t.gd .tx{flex:1}
+
+      .t.gd .tel{margin-top:4px}
+
+      .t.gd.shut .ic{background:rgba(62,224,143,.14);color:#3ee08f}
+
+      .t.gd.shut .tx small{color:#7fd39a}
+
+      .t.gd.open{background:linear-gradient(120deg,rgba(255,181,71,.22),rgba(255,181,71,.05)
+      70%);border-color:rgba(255,181,71,.6);animation:gdglow 2.4s ease-in-out
+      infinite}
+
+      .t.gd.open .ic{background:#ffb547;color:#2a1700;box-shadow:0 0 18px
+      rgba(255,181,71,.65)}
+
+      .t.gd.open .tx small{color:#ffcf85;font-weight:600}
+
+      @keyframes gdglow{50%{box-shadow:0 0 26px rgba(255,181,71,.35)}}
+
+      .act{flex:none;font-size:11px;font-weight:600;color:#8d9ab3;padding:6px
+      11px;border-radius:999px;border:1px solid
+      rgba(255,255,255,.1);background:rgba(255,255,255,.04)}
+
+      .t.gd.open .act{color:#ffcf85;border-color:rgba(255,181,71,.45)}
+
+      .act:empty{display:none}
+
+      @media (prefers-reduced-motion:reduce){.t.gd.open{animation:none}}
+  hm_esplight:
+    template: hm_base
+    entity: light.garage_light_garage_light
+    custom_fields:
+      body: >-
+        [[[
+
+        const L={"entity": "light.garage_light_garage_light", "status":
+        "binary_sensor.garage_light_garage_light_status", "wifi":
+        "sensor.garage_light_wifi_signal_sensor", "timer":
+        "timer.garage_light_off", "delay":
+        "input_number.garage_light_delay"};const CH=[2, 5, 10, 15, 30, 60];
+
+        const NA=['unknown','unavailable','none',''];
+
+        const e=states[L.entity];const st=states[L.status];
+
+        const
+        offline=!e||NA.includes(String(e.state).toLowerCase())||(st&&st.state==='off');
+
+        const on=!offline&&e.state==='on';
+
+        const dbs=states[L.wifi];const
+        db=dbs&&!NA.includes(String(dbs.state).toLowerCase())?Number(dbs.state):null;
+
+        const
+        q=db===null||!Number.isFinite(db)?null:db>=-55?4:db>=-67?3:db>=-75?2:db>=-85?1:0;
+
+        const wf=q===null?'':`<span class="wf q${q}" title="Wi-Fi
+        ${db.toFixed(0)} dBm"><ha-icon
+        icon="mdi:wifi-strength-${q?q:'outline'}"></ha-icon></span>`;
+
+        const dl=states[L.delay];const
+        cur=dl&&!NA.includes(dl.state)?Math.round(Number(dl.state)):null;
+
+        const tm=states[L.timer];const
+        active=!!tm&&tm.state==='active'&&tm.attributes.finishes_at;
+
+        const hms=(s)=>{const p=String(s||'0:0:0').split(':').map(Number);return
+        (p[0]||0)*3600+(p[1]||0)*60+(p[2]||0);};
+
+        const fin=active?Date.parse(tm.attributes.finishes_at):0;const
+        tot=active?Math.max(1,hms(tm.attributes.duration)):1;
+
+        const left=active?Math.max(0,Math.round((fin-Date.now())/1000)):0;
+
+        const fmt=(s)=>{const
+        h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return
+        (h?h+':'+String(m).padStart(2,'0'):m)+':'+String(x).padStart(2,'0');};
+
+        const sub=offline?'Offline':!on?'Off':active?`Off in <b
+        class="cdt">${fmt(left)}</b>`:'On';
+
+        const auto=cur!==null&&!active&&!offline?`<span class="auto" title="Hold
+        to change">⏱ ${cur} min after door closes</span>`:'';
+
+        const bar=active?`<span class="cdbar" aria-hidden="true"><i
+        style="--f0:${(left/tot).toFixed(4)};animation-duration:${left}s"></i></span>`:'';
+
+        const menu=`<div class="mn" role="dialog" aria-label="Auto-off
+        delay"><div class="mh"><span>Light off after door closes</span><button
+        class="x" data-a="close" aria-label="Close">✕</button></div>
+
+        <div class="chips">${CH.map(m=>`<button class="ch ${m===cur?'sel':''}"
+        data-m="${m}">${m<60?m+' min':m/60+' h'}</button>`).join('')}</div>
+
+        ${active?'<button class="ch stop" data-a="cancel">Stop countdown · keep
+        light on</button>':''}</div>`;
+
+        const card=this;
+
+        if(typeof window!=='undefined'&&card){setTimeout(()=>{try{
+         const r=card.shadowRoot;const t=r&&r.querySelector('.t.el');if(!t)return;
+         if(card._glMenu)t.classList.add('menu');
+         const H=()=>card._hass||(document.querySelector('home-assistant')||{}).hass;
+         const mn=t.querySelector('.mn');
+         if(mn&&!mn._b){mn._b=1;['pointerdown','pointerup','mousedown','mouseup','touchstart','touchend','click','contextmenu'].forEach(n=>mn.addEventListener(n,ev=>ev.stopPropagation()));
+          mn.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;const h=H();
+           if(b.dataset.m&&h)h.callService('input_number','set_value',{entity_id:L.delay,value:Number(b.dataset.m)});
+           if(b.dataset.a==='cancel'&&h)h.callService('timer','cancel',{entity_id:L.timer});
+           card._glMenu=false;t.classList.remove('menu');});}
+         clearInterval(card._glTick);
+         if(active){card._glTick=setInterval(()=>{const s=Math.max(0,Math.round((fin-Date.now())/1000));const el=card.shadowRoot&&card.shadowRoot.querySelector('.cdt');if(el)el.textContent=fmt(s);if(s<=0)clearInterval(card._glTick);},1000);}
+        }catch(err){}},0);}
+
+        return `<div class="t el ${on?'on':''} ${offline?'bad':''}
+        ${active?'counting':''}" role="button" aria-label="Garage light,
+        ${offline?'offline':on?'on':'off'}${active?', turning off in
+        '+fmt(left):''}. Hold for auto-off settings.">
+
+        <span class="ic"><ha-icon
+        icon="${on?'mdi:lightbulb-on':'mdi:lightbulb-outline'}"></ha-icon></span>
+
+        <div class="tx"><b>${variables.label}</b><small>${sub}</small><div
+        class="tel">${wf}${auto}</div></div>${bar}${menu}</div>`;
+
+        ]]]
+    tap_action:
+      action: toggle
+    hold_action:
+      action: javascript
+      javascript: >-
+        [[[ this._glMenu=!this._glMenu; const
+        t=this.shadowRoot&&this.shadowRoot.querySelector('.t.el'); if(t)
+        t.classList.toggle('menu', this._glMenu); ]]]
+    double_tap_action:
+      action: more-info
+    styles:
+      card:
+        - background: none
+        - border: none
+        - box-shadow: none
+        - padding: '0'
+        - border-radius: 20px
+        - overflow: hidden
+    extra_styles: >-
+      .tx small b{display:inline !important;font-size:inherit
+      !important;font-weight:700;color:#fff;font-variant-numeric:tabular-nums}
+
+      .cdbar{position:absolute
+      !important;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.06);z-index:2
+      !important}
+
+      .cdbar
+      i{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,#ffb648,#ffd877);box-shadow:0
+      0 8px rgba(255,190,90,.7);animation:drain linear forwards}
+
+      @keyframes drain{from{width:calc(var(--f0) * 100%)}to{width:0}}
+
+      .mn{display:none;flex-direction:column;gap:8px;cursor:default}
+
+      .t.menu{display:block;min-height:0;padding:12px 14px}
+
+      .t.menu>:not(.mn){display:none !important}
+
+      .t.menu .mn{display:flex}
+
+      .mh{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;font-weight:600;color:#c9d3e4}
+
+      .chips{display:flex;flex-wrap:wrap;gap:6px}
+
+      .ch{font:inherit;font-size:12px;font-weight:600;color:#c9d3e4;padding:6px
+      10px;border-radius:999px;border:1px solid
+      rgba(255,255,255,.12);background:rgba(255,255,255,.05);cursor:pointer}
+
+      .ch:hover{border-color:rgba(255,182,72,.5);color:#ffcf85}
+
+      .ch.sel{background:#ffb648;border-color:#ffb648;color:#2a1700}
+
+      .ch.stop{color:#ff9b9b;border-color:rgba(255,107,107,.35)}
+
+      .x{flex:none;font:inherit;font-size:13px;width:26px;height:26px;border-radius:50%;border:none;background:rgba(255,255,255,.08);color:#c9d3e4;cursor:pointer}
+
+      @media (prefers-reduced-motion:reduce){.cdbar
+      i{animation:none;width:calc(var(--f0) * 100%)}}
+
+      .t{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;gap:18px;min-height:132px;box-sizing:border-box;padding:14px
+      15px;border-radius:20px;text-align:left;background:rgba(255,255,255,.035);border:1px
+      solid rgba(255,255,255,.07);transition:background .35s,border-color
+      .35s,box-shadow .35s,transform
+      .15s;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:pan-y;outline:none}
+
+      .t:focus-visible{box-shadow:0 0 0 2px #ffb648}
+
+      .t:active{transform:scale(.985)}
+
+      .t.press{transform:scale(.97)}
+
+      .t>*{position:relative;z-index:1}
+
+      .lvl{position:absolute !important;z-index:0
+      !important;left:0;top:0;bottom:0;width:var(--lvl);background:linear-gradient(90deg,rgba(255,182,72,.10),rgba(255,182,72,.30));border-right:2px
+      solid rgba(255,214,140,.0);transition:width .45s
+      cubic-bezier(.2,.8,.2,1),border-color .3s;pointer-events:none}
+
+      .t:not(.on) .lvl{width:0}
+
+      .t.dim.on .lvl{border-right-color:rgba(255,214,140,.65);box-shadow:6px 0
+      18px -6px rgba(255,190,90,.6)}
+
+      .t.dragging .lvl{transition:none}
+
+      .ic{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.06);color:#7d8aa3;transition:all
+      .35s}
+
+      .ic ha-icon{flex:none !important;width:23px !important;height:23px
+      !important;--mdc-icon-size:23px !important}
+
+      .tx{min-width:0}
+
+      .tx
+      b{display:block;font-size:14px;font-weight:600;color:#e7edf7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+      .tx
+      small{display:block;font-size:12px;color:#7d8aa3;margin-top:2px;font-variant-numeric:tabular-nums}
+
+      .t.on{background:rgba(255,182,72,.06);border-color:rgba(255,182,72,.45);box-shadow:0
+      8px 28px rgba(255,160,40,.14)}
+
+      .t.on:not(.dim){background:linear-gradient(150deg,rgba(255,182,72,.22),rgba(255,182,72,.06))}
+
+      .t.on .ic{background:#ffb648;color:#2a1700;box-shadow:0 0 18px
+      rgba(255,182,72,.65)}
+
+      .t.on .tx small{color:#ffcf85}
+
+      .t.bad{border-color:rgba(255,107,107,.4)}
+
+      .t.bad .tx small{color:#ff8c8c}
+
+      .t.fan.on .ic ha-icon{animation:spin 1.6s linear infinite}
+
+      @keyframes spin{to{transform:rotate(360deg)}}
+
+      .tel{display:flex;flex-wrap:wrap;align-items:center;gap:2px
+      10px;margin-top:6px;font-size:11px;color:#6f7c95;font-variant-numeric:tabular-nums}
+
+      .tel span{white-space:nowrap}
+
+      .t.on .tel{color:#c9a46a}
+
+      .wf{display:inline-flex;align-items:center}
+
+      .wf ha-icon{flex:none !important;width:14px !important;height:14px
+      !important;--mdc-icon-size:14px !important}
+
+      .wf.q4,.wf.q3{color:#7fd39a}.wf.q2{color:#ffb547}.wf.q1,.wf.q0{color:#ff6b6b}
+
+      .corner{position:absolute
+      !important;top:13px;right:13px;display:flex;align-items:center;gap:6px}
+
+      .hint{display:inline-flex;color:rgba(255,255,255,.22);transition:color
+      .3s}
+
+      .hint ha-icon{flex:none !important;width:18px !important;height:18px
+      !important;--mdc-icon-size:18px !important}
+
+      .t:hover .hint,.t.dragging .hint{color:#ffcf85}
+
+      .flag{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;background:#ffb547;color:#2a1a00}
+
+      @media (prefers-reduced-motion:reduce){.t.fan.on .ic
+      ha-icon{animation:none}.lvl{transition:none}}
+
+      .t.el{flex-direction:row;align-items:center;justify-content:flex-start;gap:14px;min-height:84px}
+
+      .t.el .tx{flex:1}.t.el .tel{margin-top:4px;gap:2px 12px}
+
+      .t.el .tx small
+      b{display:inline;font-size:inherit;font-weight:700;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:.3px}
+
+      .auto{font-size:11px;color:#6f7c95}.t.on .auto{color:#c9a46a}
+
+      .cdbar{position:absolute
+      !important;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.06);z-index:2
+      !important}
+
+      .cdbar
+      i{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,#ffb648,#ffd877);box-shadow:0
+      0 8px rgba(255,190,90,.7);animation:drain linear forwards}
+
+      @keyframes drain{from{width:calc(var(--f0) * 100%)}to{width:0}}
+
+      .mn{position:absolute !important;inset:0;z-index:5
+      !important;display:none;flex-direction:column;justify-content:center;gap:9px;padding:10px
+      14px;background:rgba(12,17,30,.94);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:20px;cursor:default}
+
+      .t.el.menu{display:block;min-height:0;padding:12px 14px}
+
+      .t.el.menu>:not(.mn){display:none !important}
+
+      .t.menu .mn{display:flex;position:static
+      !important;inset:auto;padding:0;background:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+
+      .mh{display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:600;color:#c9d3e4}
+
+      .chips{display:flex;flex-wrap:wrap;gap:6px}
+
+      .ch{font:inherit;font-size:12px;font-weight:600;color:#c9d3e4;padding:6px
+      11px;border-radius:999px;border:1px solid
+      rgba(255,255,255,.12);background:rgba(255,255,255,.05);cursor:pointer}
+
+      .ch:hover{border-color:rgba(255,182,72,.5);color:#ffcf85}
+
+      .ch.sel{background:#ffb648;border-color:#ffb648;color:#2a1700}
+
+      .ch.stop{align-self:flex-start;color:#ff9b9b;border-color:rgba(255,107,107,.35)}
+
+      .x{font:inherit;font-size:13px;width:26px;height:26px;border-radius:50%;border:none;background:rgba(255,255,255,.08);color:#c9d3e4;cursor:pointer}
+
+      @media (prefers-reduced-motion:reduce){.cdbar
+      i{animation:none;width:calc(var(--f0) * 100%)}}
+views:
+  - title: Home Claude
+    path: home
+    icon: mdi:home-variant-outline
+    type: sections
+    max_columns: 3
+    dense_section_placement: false
+    background: >-
+      radial-gradient(900px 520px at 12% -8%, rgba(255,194,74,.10), transparent
+      60%), radial-gradient(900px 600px at 95% 110%, rgba(62,224,143,.08),
+      transparent 60%), #080c16
+    sections:
+      - type: grid
+        column_span: 3
+        cards:
+          - type: custom:button-card
+            template: hm_hero
+            variables:
+              pv_max: 30
+            triggers_update:
+              - sensor.sigen_plant_pv_power
+              - sensor.sigen_plant_grid_import_power
+              - sensor.sigen_plant_grid_export_power
+              - sensor.sigen_plant_battery_state_of_charge
+              - sensor.sigen_plant_battery_power
+              - binary_sensor.sigen_plant_battery_charging
+              - binary_sensor.sigen_plant_battery_discharging
+              - sensor.sigen_plant_pv_daily_generation
+              - sensor.sigen_plant_pv_previous_day_generation
+              - sun.sun
+              - weather.forecast_home
+            grid_options:
+              columns: full
+              rows: auto
+      - type: grid
+        cards:
+          - type: custom:button-card
+            template: hm_room
+            variables:
+              group: outside
+              title: Outside + Entry
+              icon: mdi:home-import-outline
+              extra:
+                - light.garage_light_garage_light
+            triggers_update:
+              - light.shellydimmerg4_e8f60a7c01d4
+              - sensor.shelly_stats_garage
+              - sensor.shelly_ntp_garage_status
+              - sensor.shellydimmerg4_e8f60a7c01d4_power
+              - sensor.shellydimmerg4_e8f60a7c01d4_temperature
+              - sensor.shellydimmerg4_e8f60a7c01d4_signal_strength
+              - light.shellydimmerg4_e8f60a7c5ffc
+              - sensor.shelly_stats_front_door
+              - sensor.shelly_ntp_front_door_status
+              - sensor.shellydimmerg4_e8f60a7c5ffc_power
+              - sensor.shellydimmerg4_e8f60a7c5ffc_temperature
+              - sensor.shellydimmerg4_e8f60a7c5ffc_signal_strength
+              - light.shellydimmerg4_acebe6f7211c
+              - sensor.shelly_stats_entry
+              - sensor.shelly_ntp_entry_status
+              - sensor.shellydimmerg4_acebe6f7211c_power
+              - sensor.shellydimmerg4_acebe6f7211c_temperature
+              - sensor.shellydimmerg4_acebe6f7211c_signal_strength
+              - light.entry_painting_light
+              - sensor.shelly_stats_painting
+              - sensor.shelly_ntp_painting_dimmer_status
+              - sensor.entry_painting_light_power
+              - sensor.shellydimmerg4_e83dc1a20f98_temperature
+              - sensor.shellydimmerg4_e83dc1a20f98_signal_strength
+              - light.garage_light_garage_light
+              - light.shellydimmerg4_d885aced2060
+              - sensor.shelly_stats_bbq
+              - sensor.shelly_ntp_bbq_status
+              - sensor.shellydimmerg4_d885aced2060_power
+              - sensor.shellydimmerg4_d885aced2060_temperature
+              - sensor.shellydimmerg4_d885aced2060_signal_strength
+              - light.shellydimmerg4_e8f60a7c4ef8
+              - sensor.shelly_stats_back_yard
+              - sensor.shelly_ntp_back_yard_status
+              - sensor.shellydimmerg4_e8f60a7c4ef8_power
+              - sensor.shellydimmerg4_e8f60a7c4ef8_temperature
+              - sensor.shellydimmerg4_e8f60a7c4ef8_signal_strength
+            grid_options:
+              columns: 9
+              rows: auto
+          - type: custom:button-card
+            template: hm_alloff
+            variables:
+              group: outside
+              title: Outside + Entry
+              icon: mdi:home-import-outline
+              extra:
+                - light.garage_light_garage_light
+            triggers_update:
+              - light.shellydimmerg4_e8f60a7c01d4
+              - sensor.shelly_stats_garage
+              - sensor.shelly_ntp_garage_status
+              - sensor.shellydimmerg4_e8f60a7c01d4_power
+              - sensor.shellydimmerg4_e8f60a7c01d4_temperature
+              - sensor.shellydimmerg4_e8f60a7c01d4_signal_strength
+              - light.shellydimmerg4_e8f60a7c5ffc
+              - sensor.shelly_stats_front_door
+              - sensor.shelly_ntp_front_door_status
+              - sensor.shellydimmerg4_e8f60a7c5ffc_power
+              - sensor.shellydimmerg4_e8f60a7c5ffc_temperature
+              - sensor.shellydimmerg4_e8f60a7c5ffc_signal_strength
+              - light.shellydimmerg4_acebe6f7211c
+              - sensor.shelly_stats_entry
+              - sensor.shelly_ntp_entry_status
+              - sensor.shellydimmerg4_acebe6f7211c_power
+              - sensor.shellydimmerg4_acebe6f7211c_temperature
+              - sensor.shellydimmerg4_acebe6f7211c_signal_strength
+              - light.entry_painting_light
+              - sensor.shelly_stats_painting
+              - sensor.shelly_ntp_painting_dimmer_status
+              - sensor.entry_painting_light_power
+              - sensor.shellydimmerg4_e83dc1a20f98_temperature
+              - sensor.shellydimmerg4_e83dc1a20f98_signal_strength
+              - light.garage_light_garage_light
+              - light.shellydimmerg4_d885aced2060
+              - sensor.shelly_stats_bbq
+              - sensor.shelly_ntp_bbq_status
+              - sensor.shellydimmerg4_d885aced2060_power
+              - sensor.shellydimmerg4_d885aced2060_temperature
+              - sensor.shellydimmerg4_d885aced2060_signal_strength
+              - light.shellydimmerg4_e8f60a7c4ef8
+              - sensor.shelly_stats_back_yard
+              - sensor.shelly_ntp_back_yard_status
+              - sensor.shellydimmerg4_e8f60a7c4ef8_power
+              - sensor.shellydimmerg4_e8f60a7c4ef8_temperature
+              - sensor.shellydimmerg4_e8f60a7c4ef8_signal_strength
+            grid_options:
+              columns: 3
+              rows: auto
+          - type: custom:button-card
+            template: hm_tile
+            variables:
+              name: Garage Lights
+            triggers_update:
+              - light.shellydimmerg4_e8f60a7c01d4
+              - sensor.shelly_stats_garage
+              - sensor.shelly_ntp_garage_status
+              - sensor.shellydimmerg4_e8f60a7c01d4_power
+              - sensor.shellydimmerg4_e8f60a7c01d4_temperature
+              - sensor.shellydimmerg4_e8f60a7c01d4_signal_strength
+            grid_options:
+              columns: 6
+              rows: auto
+            hold_action:
+              action: more-info
+              entity: light.shellydimmerg4_e8f60a7c01d4
+          - type: custom:button-card
+            template: hm_tile
+            variables:
+              name: Front Door
+            triggers_update:
+              - light.shellydimmerg4_e8f60a7c5ffc
+              - sensor.shelly_stats_front_door
+              - sensor.shelly_ntp_front_door_status
+              - sensor.shellydimmerg4_e8f60a7c5ffc_power
+              - sensor.shellydimmerg4_e8f60a7c5ffc_temperature
+              - sensor.shellydimmerg4_e8f60a7c5ffc_signal_strength
+            grid_options:
+              columns: 6
+              rows: auto
+            hold_action:
+              action: more-info
+              entity: light.shellydimmerg4_e8f60a7c5ffc
+          - type: custom:button-card
+            template: hm_tile
+            variables:
+              name: Entry Light
+            triggers_update:
+              - light.shellydimmerg4_acebe6f7211c
+              - sensor.shelly_stats_entry
+              - sensor.shelly_ntp_entry_status
+              - sensor.shellydimmerg4_acebe6f7211c_power
+              - sensor.shellydimmerg4_acebe6f7211c_temperature
+              - sensor.shellydimmerg4_acebe6f7211c_signal_strength
+            grid_options:
+              columns: 6
+              rows: auto
+            hold_action:
+              action: more-info
+              entity: light.shellydimmerg4_acebe6f7211c
+          - type: custom:button-card
+            template: hm_tile
+            variables:
+              name: Painting Light
+            triggers_update:
+              - light.entry_painting_light
+              - sensor.shelly_stats_painting
+              - sensor.shelly_ntp_painting_dimmer_status
+              - sensor.entry_painting_light_power
+              - sensor.shellydimmerg4_e83dc1a20f98_temperature
+              - sensor.shellydimmerg4_e83dc1a20f98_signal_strength
+            grid_options:
+              columns: 6
+              rows: auto
+            hold_action:
+              action: more-info
+              entity: light.entry_painting_light
+          - type: custom:button-card
+            template: hm_tile
+            variables:
+              name: BBQ Area
+            triggers_update:
+              - light.shellydimmerg4_d885aced2060
+              - sensor.shelly_stats_bbq
+              - sensor.shelly_ntp_bbq_status
+              - sensor.shellydimmerg4_d885aced2060_power
+              - sensor.shellydimmerg4_d885aced2060_temperature
+              - sensor.shellydimmerg4_d885aced2060_signal_strength
+            grid_options:
+              columns: 6
+              rows: auto
+            hold_action:
+              action: more-info
+              entity: light.shellydimmerg4_d885aced2060
+          - type: custom:button-card
+            template: hm_tile
+            variables:
+              name: Back Yard / Gate
+            triggers_update:
+              - light.shellydimmerg4_e8f60a7c4ef8
+              - sensor.shelly_stats_back_yard
+              - sensor.shelly_ntp_back_yard_status
+              - sensor.shellydimmerg4_e8f60a7c4ef8_power
+              - sensor.shellydimmerg4_e8f60a7c4ef8_temperature
+              - sensor.shellydimmerg4_e8f60a7c4ef8_signal_strength
+            grid_options:
+              columns: 6
+              rows: auto
+            hold_action:
+              action: more-info
+              entity: light.shellydimmerg4_e8f60a7c4ef8
+          - type: custom:button-card
+            template: hm_esplight
+            variables:
+              label: Garage Light (ESP)
+            triggers_update:
+              - light.garage_light_garage_light
+              - binary_sensor.garage_light_garage_light_status
+              - sensor.garage_light_wifi_signal_sensor
+              - timer.garage_light_off
+              - input_number.garage_light_delay
+            grid_options:
+              columns: 12
+              rows: auto
+          - type: custom:button-card
+            template: hm_garage
+            triggers_update:
+              - binary_sensor.garage_door_opener_garage_door_closed
+              - binary_sensor.garage_door_opener_garage_door_opener
+              - switch.garage_door_opener_garage_door_open_close_switch
+              - sensor.garage_door_opener_internal_temperature
+              - sensor.garage_door_opener_wifi_signal_sensor
+            grid_options:
+              columns: 12
+              rows: auto
+          - type: custom:button-card
+            template: hm_room
+            variables:
+              group: theater
+              title: Theater
+              icon: mdi:theater
+            triggers_update:
+              - light.shellydimmerg4_e8f60a7c1d30
+              - sensor.shelly_stats_theater
+              - sensor.shelly_ntp_theater_status
+              - sensor.shellydimmerg4_e8f60a7c1d30_power
+              - sensor.shellydimmerg4_e8f60a7c1d30_temperature
+              - sensor.shellydimmerg4_e8f60a7c1d30_signal_strength
+            grid_options:
+              columns: 9
+              rows: auto
+          - type: custom:button-card
+            template: hm_alloff
+            variables:
+              group: theater
+              title: Theater
+              icon: mdi:theater
+            triggers_update:
+              - light.shellydimmerg4_e8f60a7c1d30
+              - sensor.shelly_stats_theater
+              - sensor.shelly_ntp_theater_status
+              - sensor.shellydimmerg4_e8f60a7c1d30_power
+              - sensor.shellydimmerg4_e8f60a7c1d30_temperature
+              - sensor.shellydimmerg4_e8f60a7c1d30_signal_strength
+            grid_options:
+              columns: 3
+              rows: auto
+          - type: custom:button-card
+            template: hm_tile
+            variables:
+              name: Theater Lights
+            triggers_update:
+              - light.shellydimmerg4_e8f60a7c1d30
+              - sensor.shelly_stats_theater
+              - sensor.shelly_ntp_theater_status
+              - sensor.shellydimmerg4_e8f60a7c1d30_power
+              - sensor.shellydimmerg4_e8f60a7c1d30_temperature
+              - sensor.shellydimmerg4_e8f60a7c1d30_signal_strength
+            grid_options:
+              columns: 12
+              rows: auto
+            hold_action:
+              action: more-info
+              entity: light.shellydimmerg4_e8f60a7c1d30
+      - type: grid
+        cards:
+          - type: custom:button-card
+            template: hm_room
+            variables:
+              group: kitchen
+              title: Kitchen + Hallway
+              icon: mdi:silverware-fork-knife
+            triggers_update:
+              - light.shellydimmerg4_e8f60a7c0940
+              - sensor.shelly_stats_kitchen_stove
+              - sensor.shelly_ntp_kitchen_stove_status
+              - sensor.shellydimmerg4_e8f60a7c0940_power
+              - sensor.shellydimmerg4_e8f60a7c0940_temperature
+              - sensor.shellydimmerg4_e8f60a7c0940_signal_strength
+              - light.shellydimmerg4_e8f60a7dc7b0
+              - sensor.shelly_stats_kitchen_sink
+              - sensor.shelly_ntp_kitchen_sink_status
+              - sensor.shellydimmerg4_e8f60a7dc7b0_power
+              - sensor.shellydimmerg4_e8f60a7dc7b0_temperature
+              - sensor.shellydimmerg4_e8f60a7dc7b0_signal_strength
+              - light.shellydimmerg4_e8f60a79a410
+              - sensor.shelly_stats_hallway
+              - sensor.shelly_ntp_hallway_dimmer_status
+              - sensor.shellydimmerg4_e8f60a79a410_power
+              - sensor.shellydimmerg4_e8f60a79a410_temperature
+              - sensor.shellydimmerg4_e8f60a79a410_signal_strength
+            grid_options:
+              columns: 9
+              rows: auto
+          - type: custom:button-card
+            template: hm_alloff
+            variables:
+              group: kitchen
+              title: Kitchen + Hallway
+              icon: mdi:silverware-fork-knife
+            triggers_update:
+              - light.shellydimmerg4_e8f60a7c0940
+              - sensor.shelly_stats_kitchen_stove
+              - sensor.shelly_ntp_kitchen_stove_status
+              - sensor.shellydimmerg4_e8f60a7c0940_power
+              - sensor.shellydimmerg4_e8f60a7c0940_temperature
+              - sensor.shellydimmerg4_e8f60a7c0940_signal_strength
+              - light.shellydimmerg4_e8f60a7dc7b0
+              - sensor.shelly_stats_kitchen_sink
+              - sensor.shelly_ntp_kitchen_sink_status
+              - sensor.shellydimmerg4_e8f60a7dc7b0_power
+              - sensor.shellydimmerg4_e8f60a7dc7b0_temperature
+              - sensor.shellydimmerg4_e8f60a7dc7b0_signal_strength
+              - light.shellydimmerg4_e8f60a79a410
+              - sensor.shelly_stats_hallway
+              - sensor.shelly_ntp_hallway_dimmer_status
+              - sensor.shellydimmerg4_e8f60a79a410_power
+              - sensor.shellydimmerg4_e8f60a79a410_temperature
+              - sensor.shellydimmerg4_e8f60a79a410_signal_strength
+            grid_options:
+              columns: 3
+              rows: auto
+          - type: custom:button-card
+            template: hm_tile
+            variables:
+              name: Kitchen Stove
+            triggers_update:
+              - light.shellydimmerg4_e8f60a7c0940
+              - sensor.shelly_stats_kitchen_stove
+              - sensor.shelly_ntp_kitchen_stove_status
+              - sensor.shellydimmerg4_e8f60a7c0940_power
+              - sensor.shellydimmerg4_e8f60a7c0940_temperature
+              - sensor.shellydimmerg4_e8f60a7c0940_signal_strength
+            grid_options:
+              columns: 6
+              rows: auto
+            hold_action:
+              action: more-info
+              entity: light.shellydimmerg4_e8f60a7c0940
+          - type: custom:button-card
+            template: hm_tile
+            variables:
+              name: Kitchen Sink
+            triggers_update:
+              - light.shellydimmerg4_e8f60a7dc7b0
+              - sensor.shelly_stats_kitchen_sink
+              - sensor.shelly_ntp_kitchen_sink_status
+              - sensor.shellydimmerg4_e8f60a7dc7b0_power
+              - sensor.shellydimmerg4_e8f60a7dc7b0_temperature
+              - sensor.shellydimmerg4_e8f60a7dc7b0_signal_strength
+            grid_options:
+              columns: 6
+              rows: auto
+            hold_action:
+              action: more-info
+              entity: light.shellydimmerg4_e8f60a7dc7b0
+          - type: custom:button-card
+            template: hm_tile
+            variables:
+              name: Hallway
+            triggers_update:
+              - light.shellydimmerg4_e8f60a79a410
+              - sensor.shelly_stats_hallway
+              - sensor.shelly_ntp_hallway_dimmer_status
+              - sensor.shellydimmerg4_e8f60a79a410_power
+              - sensor.shellydimmerg4_e8f60a79a410_temperature
+              - sensor.shellydimmerg4_e8f60a79a410_signal_strength
+            grid_options:
+              columns: 12
+              rows: auto
+            hold_action:
+              action: more-info
+              entity: light.shellydimmerg4_e8f60a79a410
+          - type: custom:button-card
+            template: hm_room
+            triggers_update:
+              - light.wled_lamp
+            variables:
+              group: none
+              title: Ambient
+              icon: mdi:lamp-outline
+              subtitle: Colour follows your power source
+            grid_options:
+              columns: 12
+              rows: auto
+          - type: custom:button-card
+            template: hm_lamp
+            triggers_update:
+              - light.wled_lamp
+              - sensor.sigen_plant_pv_power
+              - sensor.sigen_plant_grid_import_power
+              - sensor.sigen_plant_grid_export_power
+              - sensor.sigen_plant_battery_state_of_charge
+              - sensor.sigen_plant_battery_power
+              - binary_sensor.sigen_plant_battery_charging
+              - binary_sensor.sigen_plant_battery_discharging
+              - sensor.sigen_plant_pv_daily_generation
+              - sensor.sigen_plant_pv_previous_day_generation
+            grid_options:
+              columns: 12
+              rows: auto
+      - type: grid
+        cards:
+          - type: custom:button-card
+            template: hm_room
+            variables:
+              group: ensuite
+              title: Ensuite
+              icon: mdi:shower
+            triggers_update:
+              - light.shellydimmerg4_acebe6f60b34
+              - sensor.shelly_stats_ensuite_main
+              - sensor.shelly_ntp_ensuite_main_lights_status
+              - sensor.shellydimmerg4_acebe6f60b34_power
+              - sensor.shellydimmerg4_acebe6f60b34_temperature
+              - sensor.shellydimmerg4_acebe6f60b34_signal_strength
+              - light.shellydimmerg4_e8f60a7d87bc
+              - sensor.shelly_stats_ensuite_shower
+              - sensor.shelly_ntp_ensuite_shower_status
+              - sensor.shellydimmerg4_e8f60a7d87bc_power
+              - sensor.shellydimmerg4_e8f60a7d87bc_temperature
+              - sensor.shellydimmerg4_e8f60a7d87bc_signal_strength
+              - light.shellydimmerg4_e8f60a7cabbc
+              - sensor.shelly_stats_ensuite_toilet
+              - sensor.shelly_ntp_ensuite_toilet_status
+              - sensor.shellydimmerg4_e8f60a7cabbc_power
+              - sensor.shellydimmerg4_e8f60a7cabbc_temperature
+              - sensor.shellydimmerg4_e8f60a7cabbc_signal_strength
+              - switch.shelly1pmminig4_98c37700c828
+              - sensor.shelly_stats_ensuite_fan
+              - sensor.shelly_ntp_ensuite_fan_status
+              - sensor.shelly1pmminig4_98c37700c828_power
+              - sensor.shelly1pmminig4_98c37700c828_temperature
+              - sensor.shelly1pmminig4_98c37700c828_signal_strength
+            grid_options:
+              columns: 9
+              rows: auto
+          - type: custom:button-card
+            template: hm_alloff
+            variables:
+              group: ensuite
+              title: Ensuite
+              icon: mdi:shower
+            triggers_update:
+              - light.shellydimmerg4_acebe6f60b34
+              - sensor.shelly_stats_ensuite_main
+              - sensor.shelly_ntp_ensuite_main_lights_status
+              - sensor.shellydimmerg4_acebe6f60b34_power
+              - sensor.shellydimmerg4_acebe6f60b34_temperature
+              - sensor.shellydimmerg4_acebe6f60b34_signal_strength
+              - light.shellydimmerg4_e8f60a7d87bc
+              - sensor.shelly_stats_ensuite_shower
+              - sensor.shelly_ntp_ensuite_shower_status
+              - sensor.shellydimmerg4_e8f60a7d87bc_power
+              - sensor.shellydimmerg4_e8f60a7d87bc_temperature
+              - sensor.shellydimmerg4_e8f60a7d87bc_signal_strength
+              - light.shellydimmerg4_e8f60a7cabbc
+              - sensor.shelly_stats_ensuite_toilet
+              - sensor.shelly_ntp_ensuite_toilet_status
+              - sensor.shellydimmerg4_e8f60a7cabbc_power
+              - sensor.shellydimmerg4_e8f60a7cabbc_temperature
+              - sensor.shellydimmerg4_e8f60a7cabbc_signal_strength
+              - switch.shelly1pmminig4_98c37700c828
+              - sensor.shelly_stats_ensuite_fan
+              - sensor.shelly_ntp_ensuite_fan_status
+              - sensor.shelly1pmminig4_98c37700c828_power
+              - sensor.shelly1pmminig4_98c37700c828_temperature
+              - sensor.shelly1pmminig4_98c37700c828_signal_strength
+            grid_options:
+              columns: 3
+              rows: auto
+          - type: custom:button-card
+            template: hm_tile
+            variables:
+              name: Ensuite Main
+            triggers_update:
+              - light.shellydimmerg4_acebe6f60b34
+              - sensor.shelly_stats_ensuite_main
+              - sensor.shelly_ntp_ensuite_main_lights_status
+              - sensor.shellydimmerg4_acebe6f60b34_power
+              - sensor.shellydimmerg4_acebe6f60b34_temperature
+              - sensor.shellydimmerg4_acebe6f60b34_signal_strength
+            grid_options:
+              columns: 6
+              rows: auto
+            hold_action:
+              action: more-info
+              entity: light.shellydimmerg4_acebe6f60b34
+          - type: custom:button-card
+            template: hm_tile
+            variables:
+              name: Ensuite Shower
+            triggers_update:
+              - light.shellydimmerg4_e8f60a7d87bc
+              - sensor.shelly_stats_ensuite_shower
+              - sensor.shelly_ntp_ensuite_shower_status
+              - sensor.shellydimmerg4_e8f60a7d87bc_power
+              - sensor.shellydimmerg4_e8f60a7d87bc_temperature
+              - sensor.shellydimmerg4_e8f60a7d87bc_signal_strength
+            grid_options:
+              columns: 6
+              rows: auto
+            hold_action:
+              action: more-info
+              entity: light.shellydimmerg4_e8f60a7d87bc
+          - type: custom:button-card
+            template: hm_tile
+            variables:
+              name: Ensuite Toilet
+            triggers_update:
+              - light.shellydimmerg4_e8f60a7cabbc
+              - sensor.shelly_stats_ensuite_toilet
+              - sensor.shelly_ntp_ensuite_toilet_status
+              - sensor.shellydimmerg4_e8f60a7cabbc_power
+              - sensor.shellydimmerg4_e8f60a7cabbc_temperature
+              - sensor.shellydimmerg4_e8f60a7cabbc_signal_strength
+            grid_options:
+              columns: 6
+              rows: auto
+            hold_action:
+              action: more-info
+              entity: light.shellydimmerg4_e8f60a7cabbc
+          - type: custom:button-card
+            template: hm_tile
+            variables:
+              name: Ensuite Fan
+              runon:
+                timer: timer.lumen_ensuite_fan_runon
+                minutes: input_number.lumen_ensuite_fan_runon_minutes
+                stop: script.lumen_ensuite_fan_stop_now
+                tap: script.lumen_ensuite_fan_toggle
+                choices:
+                  - 1
+                  - 2
+                  - 3
+                  - 5
+                  - 10
+                  - 15
+            triggers_update:
+              - switch.shelly1pmminig4_98c37700c828
+              - sensor.shelly_stats_ensuite_fan
+              - sensor.shelly_ntp_ensuite_fan_status
+              - sensor.shelly1pmminig4_98c37700c828_power
+              - sensor.shelly1pmminig4_98c37700c828_temperature
+              - sensor.shelly1pmminig4_98c37700c828_signal_strength
+              - timer.lumen_ensuite_fan_runon
+              - input_number.lumen_ensuite_fan_runon_minutes
+            grid_options:
+              columns: 6
+              rows: auto
+            hold_action:
+              action: more-info
+              entity: switch.shelly1pmminig4_98c37700c828
+          - type: custom:button-card
+            template: hm_room
+            variables:
+              group: main_bathroom
+              title: Main Bathroom
+              icon: mdi:bathtub-outline
+            triggers_update:
+              - light.shellydimmerg4_e8f60a7c1bec
+              - sensor.shelly_stats_main_bathroom_lights
+              - sensor.shelly_ntp_main_bathroom_lights_status
+              - sensor.shellydimmerg4_e8f60a7c1bec_power
+              - sensor.shellydimmerg4_e8f60a7c1bec_temperature
+              - sensor.shellydimmerg4_e8f60a7c1bec_signal_strength
+              - switch.shelly1pmminig4_98c37700ba58
+              - sensor.shelly_stats_main_bathroom_fan
+              - sensor.shelly_ntp_main_bathroom_fan_status
+              - sensor.shelly1pmminig4_98c37700ba58_power
+              - sensor.shelly1pmminig4_98c37700ba58_temperature
+              - sensor.shelly1pmminig4_98c37700ba58_signal_strength
+            grid_options:
+              columns: 9
+              rows: auto
+          - type: custom:button-card
+            template: hm_alloff
+            variables:
+              group: main_bathroom
+              title: Main Bathroom
+              icon: mdi:bathtub-outline
+            triggers_update:
+              - light.shellydimmerg4_e8f60a7c1bec
+              - sensor.shelly_stats_main_bathroom_lights
+              - sensor.shelly_ntp_main_bathroom_lights_status
+              - sensor.shellydimmerg4_e8f60a7c1bec_power
+              - sensor.shellydimmerg4_e8f60a7c1bec_temperature
+              - sensor.shellydimmerg4_e8f60a7c1bec_signal_strength
+              - switch.shelly1pmminig4_98c37700ba58
+              - sensor.shelly_stats_main_bathroom_fan
+              - sensor.shelly_ntp_main_bathroom_fan_status
+              - sensor.shelly1pmminig4_98c37700ba58_power
+              - sensor.shelly1pmminig4_98c37700ba58_temperature
+              - sensor.shelly1pmminig4_98c37700ba58_signal_strength
+            grid_options:
+              columns: 3
+              rows: auto
+          - type: custom:button-card
+            template: hm_tile
+            variables:
+              name: Main Bathroom Lights
+            triggers_update:
+              - light.shellydimmerg4_e8f60a7c1bec
+              - sensor.shelly_stats_main_bathroom_lights
+              - sensor.shelly_ntp_main_bathroom_lights_status
+              - sensor.shellydimmerg4_e8f60a7c1bec_power
+              - sensor.shellydimmerg4_e8f60a7c1bec_temperature
+              - sensor.shellydimmerg4_e8f60a7c1bec_signal_strength
+            grid_options:
+              columns: 6
+              rows: auto
+            hold_action:
+              action: more-info
+              entity: light.shellydimmerg4_e8f60a7c1bec
+          - type: custom:button-card
+            template: hm_tile
+            variables:
+              name: Main Bathroom Fan
+              runon:
+                timer: timer.lumen_main_bathroom_fan_runon
+                minutes: input_number.lumen_main_bathroom_fan_runon_minutes
+                stop: script.lumen_main_bathroom_fan_stop_now
+                tap: script.lumen_main_bathroom_fan_toggle
+                choices:
+                  - 1
+                  - 2
+                  - 3
+                  - 5
+                  - 10
+                  - 15
+            triggers_update:
+              - switch.shelly1pmminig4_98c37700ba58
+              - sensor.shelly_stats_main_bathroom_fan
+              - sensor.shelly_ntp_main_bathroom_fan_status
+              - sensor.shelly1pmminig4_98c37700ba58_power
+              - sensor.shelly1pmminig4_98c37700ba58_temperature
+              - sensor.shelly1pmminig4_98c37700ba58_signal_strength
+              - timer.lumen_main_bathroom_fan_runon
+              - input_number.lumen_main_bathroom_fan_runon_minutes
+            grid_options:
+              columns: 6
+              rows: auto
+            hold_action:
+              action: more-info
+              entity: switch.shelly1pmminig4_98c37700ba58
+      - type: grid
+        column_span: 3
+        cards:
+          - type: custom:button-card
+            template: hm_health
+            triggers_update:
+              - light.shellydimmerg4_e8f60a7c01d4
+              - sensor.shelly_stats_garage
+              - sensor.shelly_ntp_garage_status
+              - sensor.shellydimmerg4_e8f60a7c01d4_power
+              - sensor.shellydimmerg4_e8f60a7c01d4_temperature
+              - sensor.shellydimmerg4_e8f60a7c01d4_signal_strength
+              - light.shellydimmerg4_e8f60a7c5ffc
+              - sensor.shelly_stats_front_door
+              - sensor.shelly_ntp_front_door_status
+              - sensor.shellydimmerg4_e8f60a7c5ffc_power
+              - sensor.shellydimmerg4_e8f60a7c5ffc_temperature
+              - sensor.shellydimmerg4_e8f60a7c5ffc_signal_strength
+              - light.shellydimmerg4_acebe6f7211c
+              - sensor.shelly_stats_entry
+              - sensor.shelly_ntp_entry_status
+              - sensor.shellydimmerg4_acebe6f7211c_power
+              - sensor.shellydimmerg4_acebe6f7211c_temperature
+              - sensor.shellydimmerg4_acebe6f7211c_signal_strength
+              - light.entry_painting_light
+              - sensor.shelly_stats_painting
+              - sensor.shelly_ntp_painting_dimmer_status
+              - sensor.entry_painting_light_power
+              - sensor.shellydimmerg4_e83dc1a20f98_temperature
+              - sensor.shellydimmerg4_e83dc1a20f98_signal_strength
+              - light.shellydimmerg4_e8f60a79a410
+              - sensor.shelly_stats_hallway
+              - sensor.shelly_ntp_hallway_dimmer_status
+              - sensor.shellydimmerg4_e8f60a79a410_power
+              - sensor.shellydimmerg4_e8f60a79a410_temperature
+              - sensor.shellydimmerg4_e8f60a79a410_signal_strength
+              - light.shellydimmerg4_e8f60a7dc7b0
+              - sensor.shelly_stats_kitchen_sink
+              - sensor.shelly_ntp_kitchen_sink_status
+              - sensor.shellydimmerg4_e8f60a7dc7b0_power
+              - sensor.shellydimmerg4_e8f60a7dc7b0_temperature
+              - sensor.shellydimmerg4_e8f60a7dc7b0_signal_strength
+              - light.shellydimmerg4_e8f60a7c0940
+              - sensor.shelly_stats_kitchen_stove
+              - sensor.shelly_ntp_kitchen_stove_status
+              - sensor.shellydimmerg4_e8f60a7c0940_power
+              - sensor.shellydimmerg4_e8f60a7c0940_temperature
+              - sensor.shellydimmerg4_e8f60a7c0940_signal_strength
+              - light.shellydimmerg4_acebe6f60b34
+              - sensor.shelly_stats_ensuite_main
+              - sensor.shelly_ntp_ensuite_main_lights_status
+              - sensor.shellydimmerg4_acebe6f60b34_power
+              - sensor.shellydimmerg4_acebe6f60b34_temperature
+              - sensor.shellydimmerg4_acebe6f60b34_signal_strength
+              - light.shellydimmerg4_e8f60a7d87bc
+              - sensor.shelly_stats_ensuite_shower
+              - sensor.shelly_ntp_ensuite_shower_status
+              - sensor.shellydimmerg4_e8f60a7d87bc_power
+              - sensor.shellydimmerg4_e8f60a7d87bc_temperature
+              - sensor.shellydimmerg4_e8f60a7d87bc_signal_strength
+              - light.shellydimmerg4_e8f60a7cabbc
+              - sensor.shelly_stats_ensuite_toilet
+              - sensor.shelly_ntp_ensuite_toilet_status
+              - sensor.shellydimmerg4_e8f60a7cabbc_power
+              - sensor.shellydimmerg4_e8f60a7cabbc_temperature
+              - sensor.shellydimmerg4_e8f60a7cabbc_signal_strength
+              - switch.shelly1pmminig4_98c37700c828
+              - sensor.shelly_stats_ensuite_fan
+              - sensor.shelly_ntp_ensuite_fan_status
+              - sensor.shelly1pmminig4_98c37700c828_power
+              - sensor.shelly1pmminig4_98c37700c828_temperature
+              - sensor.shelly1pmminig4_98c37700c828_signal_strength
+              - light.shellydimmerg4_e8f60a7c1d30
+              - sensor.shelly_stats_theater
+              - sensor.shelly_ntp_theater_status
+              - sensor.shellydimmerg4_e8f60a7c1d30_power
+              - sensor.shellydimmerg4_e8f60a7c1d30_temperature
+              - sensor.shellydimmerg4_e8f60a7c1d30_signal_strength
+              - light.shellydimmerg4_d885aced2060
+              - sensor.shelly_stats_bbq
+              - sensor.shelly_ntp_bbq_status
+              - sensor.shellydimmerg4_d885aced2060_power
+              - sensor.shellydimmerg4_d885aced2060_temperature
+              - sensor.shellydimmerg4_d885aced2060_signal_strength
+              - light.shellydimmerg4_e8f60a7c4ef8
+              - sensor.shelly_stats_back_yard
+              - sensor.shelly_ntp_back_yard_status
+              - sensor.shellydimmerg4_e8f60a7c4ef8_power
+              - sensor.shellydimmerg4_e8f60a7c4ef8_temperature
+              - sensor.shellydimmerg4_e8f60a7c4ef8_signal_strength
+              - light.shellydimmerg4_e8f60a7c1bec
+              - sensor.shelly_stats_main_bathroom_lights
+              - sensor.shelly_ntp_main_bathroom_lights_status
+              - sensor.shellydimmerg4_e8f60a7c1bec_power
+              - sensor.shellydimmerg4_e8f60a7c1bec_temperature
+              - sensor.shellydimmerg4_e8f60a7c1bec_signal_strength
+              - switch.shelly1pmminig4_98c37700ba58
+              - sensor.shelly_stats_main_bathroom_fan
+              - sensor.shelly_ntp_main_bathroom_fan_status
+              - sensor.shelly1pmminig4_98c37700ba58_power
+              - sensor.shelly1pmminig4_98c37700ba58_temperature
+              - sensor.shelly1pmminig4_98c37700ba58_signal_strength
+            grid_options:
+              columns: full
+              rows: auto
