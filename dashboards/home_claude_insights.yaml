@@ -1,0 +1,637 @@
+title: Home Claude · Insights
+button_card_templates:
+  hm_base:
+    variables:
+      devices:
+        - name: Garage Lights
+          group: outside
+          icon: mdi:garage
+          entity: light.shellydimmerg4_e8f60a7c01d4
+          stats: sensor.shelly_stats_garage
+          power: sensor.shellydimmerg4_e8f60a7c01d4_power
+          temp: sensor.shellydimmerg4_e8f60a7c01d4_temperature
+          wifi: sensor.shellydimmerg4_e8f60a7c01d4_signal_strength
+        - name: Front Door
+          group: outside
+          icon: mdi:door
+          entity: light.shellydimmerg4_e8f60a7c5ffc
+          stats: sensor.shelly_stats_front_door
+          power: sensor.shellydimmerg4_e8f60a7c5ffc_power
+          temp: sensor.shellydimmerg4_e8f60a7c5ffc_temperature
+          wifi: sensor.shellydimmerg4_e8f60a7c5ffc_signal_strength
+        - name: Entry Light
+          group: outside
+          icon: mdi:door-open
+          entity: light.shellydimmerg4_acebe6f7211c
+          stats: sensor.shelly_stats_entry
+          power: sensor.shellydimmerg4_acebe6f7211c_power
+          temp: sensor.shellydimmerg4_acebe6f7211c_temperature
+          wifi: sensor.shellydimmerg4_acebe6f7211c_signal_strength
+        - name: Painting Light
+          group: outside
+          icon: mdi:palette
+          entity: light.entry_painting_light
+          stats: sensor.shelly_stats_painting
+          power: sensor.entry_painting_light_power
+          temp: sensor.shellydimmerg4_e83dc1a20f98_temperature
+          wifi: sensor.shellydimmerg4_e83dc1a20f98_signal_strength
+        - name: Hallway
+          group: kitchen
+          icon: mdi:wall-sconce-flat
+          entity: light.shellydimmerg4_e8f60a79a410
+          stats: sensor.shelly_stats_hallway
+          power: sensor.shellydimmerg4_e8f60a79a410_power
+          temp: sensor.shellydimmerg4_e8f60a79a410_temperature
+          wifi: sensor.shellydimmerg4_e8f60a79a410_signal_strength
+        - name: Kitchen Sink
+          group: kitchen
+          icon: mdi:water-pump
+          entity: light.shellydimmerg4_e8f60a7dc7b0
+          stats: sensor.shelly_stats_kitchen_sink
+          power: sensor.shellydimmerg4_e8f60a7dc7b0_power
+          temp: sensor.shellydimmerg4_e8f60a7dc7b0_temperature
+          wifi: sensor.shellydimmerg4_e8f60a7dc7b0_signal_strength
+        - name: Kitchen Stove
+          group: kitchen
+          icon: mdi:stove
+          entity: light.shellydimmerg4_e8f60a7c0940
+          stats: sensor.shelly_stats_kitchen_stove
+          power: sensor.shellydimmerg4_e8f60a7c0940_power
+          temp: sensor.shellydimmerg4_e8f60a7c0940_temperature
+          wifi: sensor.shellydimmerg4_e8f60a7c0940_signal_strength
+        - name: Ensuite Main
+          group: ensuite
+          icon: mdi:ceiling-light
+          entity: light.shellydimmerg4_acebe6f60b34
+          stats: sensor.shelly_stats_ensuite_main
+          power: sensor.shellydimmerg4_acebe6f60b34_power
+          temp: sensor.shellydimmerg4_acebe6f60b34_temperature
+          wifi: sensor.shellydimmerg4_acebe6f60b34_signal_strength
+        - name: Ensuite Shower
+          group: ensuite
+          icon: mdi:shower-head
+          entity: light.shellydimmerg4_e8f60a7d87bc
+          stats: sensor.shelly_stats_ensuite_shower
+          power: sensor.shellydimmerg4_e8f60a7d87bc_power
+          temp: sensor.shellydimmerg4_e8f60a7d87bc_temperature
+          wifi: sensor.shellydimmerg4_e8f60a7d87bc_signal_strength
+        - name: Ensuite Toilet
+          group: ensuite
+          icon: mdi:lightbulb
+          entity: light.shellydimmerg4_e8f60a7cabbc
+          stats: sensor.shelly_stats_ensuite_toilet
+          power: sensor.shellydimmerg4_e8f60a7cabbc_power
+          temp: sensor.shellydimmerg4_e8f60a7cabbc_temperature
+          wifi: sensor.shellydimmerg4_e8f60a7cabbc_signal_strength
+        - name: Ensuite Fan
+          group: ensuite
+          icon: mdi:fan
+          entity: switch.shelly1pmminig4_98c37700c828
+          stats: sensor.shelly_stats_ensuite_fan
+          power: sensor.shelly1pmminig4_98c37700c828_power
+          temp: sensor.shelly1pmminig4_98c37700c828_temperature
+          wifi: sensor.shelly1pmminig4_98c37700c828_signal_strength
+        - name: Theater Lights
+          group: theater
+          icon: mdi:theater
+          entity: light.shellydimmerg4_e8f60a7c1d30
+          stats: sensor.shelly_stats_theater
+          power: sensor.shellydimmerg4_e8f60a7c1d30_power
+          temp: sensor.shellydimmerg4_e8f60a7c1d30_temperature
+          wifi: sensor.shellydimmerg4_e8f60a7c1d30_signal_strength
+        - name: BBQ Area
+          group: outside
+          icon: mdi:grill
+          entity: light.shellydimmerg4_d885aced2060
+          stats: sensor.shelly_stats_bbq
+          power: sensor.shellydimmerg4_d885aced2060_power
+          temp: sensor.shellydimmerg4_d885aced2060_temperature
+          wifi: sensor.shellydimmerg4_d885aced2060_signal_strength
+        - name: Back Yard / Gate
+          group: outside
+          icon: mdi:gate
+          entity: light.shellydimmerg4_e8f60a7c4ef8
+          stats: sensor.shelly_stats_back_yard
+          power: sensor.shellydimmerg4_e8f60a7c4ef8_power
+          temp: sensor.shellydimmerg4_e8f60a7c4ef8_temperature
+          wifi: sensor.shellydimmerg4_e8f60a7c4ef8_signal_strength
+        - name: Main Bathroom Lights
+          group: main_bathroom
+          icon: mdi:ceiling-light
+          entity: light.shellydimmerg4_e8f60a7c1bec
+          stats: sensor.shelly_stats_main_bathroom_lights
+          power: sensor.shellydimmerg4_e8f60a7c1bec_power
+          temp: sensor.shellydimmerg4_e8f60a7c1bec_temperature
+          wifi: sensor.shellydimmerg4_e8f60a7c1bec_signal_strength
+        - name: Main Bathroom Fan
+          group: main_bathroom
+          icon: mdi:fan
+          entity: switch.shelly1pmminig4_98c37700ba58
+          stats: sensor.shelly_stats_main_bathroom_fan
+          power: sensor.shelly1pmminig4_98c37700ba58_power
+          temp: sensor.shelly1pmminig4_98c37700ba58_temperature
+          wifi: sensor.shelly1pmminig4_98c37700ba58_signal_strength
+    show_icon: false
+    show_name: false
+    show_state: false
+    show_label: false
+    tap_action:
+      action: none
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+    styles:
+      card:
+        - border-radius: 26px
+        - padding: '0'
+        - background: linear-gradient(160deg, rgba(22,30,48,.78), rgba(12,17,30,.86))
+        - backdrop-filter: blur(18px)
+        - -webkit-backdrop-filter: blur(18px)
+        - border: 1px solid rgba(255,255,255,.07)
+        - box-shadow: 0 18px 40px rgba(0,0,0,.35)
+        - color: '#eef3fb'
+        - overflow: hidden
+      grid:
+        - grid-template-areas: '"body"'
+        - grid-template-columns: 1fr
+      custom_fields:
+        body:
+          - justify-self: stretch
+          - width: 100%
+          - text-align: left
+  hm_ins:
+    template: hm_base
+    variables:
+      rate: 0.3
+      cur: $
+    triggers_update:
+      - light.shellydimmerg4_e8f60a7c01d4
+      - light.shellydimmerg4_e8f60a7c5ffc
+      - light.shellydimmerg4_acebe6f7211c
+      - light.entry_painting_light
+      - light.shellydimmerg4_e8f60a79a410
+      - light.shellydimmerg4_e8f60a7dc7b0
+      - light.shellydimmerg4_e8f60a7c0940
+      - light.shellydimmerg4_acebe6f60b34
+      - light.shellydimmerg4_e8f60a7d87bc
+      - light.shellydimmerg4_e8f60a7cabbc
+      - switch.shelly1pmminig4_98c37700c828
+      - light.shellydimmerg4_e8f60a7c1d30
+      - light.shellydimmerg4_d885aced2060
+      - light.shellydimmerg4_e8f60a7c4ef8
+      - light.shellydimmerg4_e8f60a7c1bec
+      - switch.shelly1pmminig4_98c37700ba58
+      - sensor.shellydimmerg4_e8f60a7c01d4_power
+      - sensor.shellydimmerg4_e8f60a7c5ffc_power
+      - sensor.shellydimmerg4_acebe6f7211c_power
+      - sensor.entry_painting_light_power
+      - sensor.shellydimmerg4_e8f60a79a410_power
+      - sensor.shellydimmerg4_e8f60a7dc7b0_power
+      - sensor.shellydimmerg4_e8f60a7c0940_power
+      - sensor.shellydimmerg4_acebe6f60b34_power
+      - sensor.shellydimmerg4_e8f60a7d87bc_power
+      - sensor.shellydimmerg4_e8f60a7cabbc_power
+      - sensor.shelly1pmminig4_98c37700c828_power
+      - sensor.shellydimmerg4_e8f60a7c1d30_power
+      - sensor.shellydimmerg4_d885aced2060_power
+      - sensor.shellydimmerg4_e8f60a7c4ef8_power
+      - sensor.shellydimmerg4_e8f60a7c1bec_power
+      - sensor.shelly1pmminig4_98c37700ba58_power
+      - sensor.shelly_stats_garage
+      - sensor.shelly_stats_front_door
+      - sensor.shelly_stats_entry
+      - sensor.shelly_stats_painting
+      - sensor.shelly_stats_hallway
+      - sensor.shelly_stats_kitchen_sink
+      - sensor.shelly_stats_kitchen_stove
+      - sensor.shelly_stats_ensuite_main
+      - sensor.shelly_stats_ensuite_shower
+      - sensor.shelly_stats_ensuite_toilet
+      - sensor.shelly_stats_ensuite_fan
+      - sensor.shelly_stats_theater
+      - sensor.shelly_stats_bbq
+      - sensor.shelly_stats_back_yard
+      - sensor.shelly_stats_main_bathroom_lights
+      - sensor.shelly_stats_main_bathroom_fan
+      - sensor.sigen_plant_pv_power
+      - sensor.sigen_plant_grid_import_power
+      - sensor.sigen_plant_grid_export_power
+      - sensor.sigen_plant_battery_power
+      - binary_sensor.sigen_plant_battery_charging
+      - binary_sensor.sigen_plant_battery_discharging
+    custom_fields:
+      body: >-
+        [[[
+
+        const NA=['unknown','unavailable','none',''];
+
+        const num=(id)=>{if(!id)return null;const
+        o=states[id];if(!o||NA.includes(String(o.state).toLowerCase()))return
+        null;const n=Number(o.state);return Number.isFinite(n)?n:null;};
+
+        const RATE=Number(variables.rate)||0.30;const CUR=variables.cur||'$';
+
+        const all=variables.devices.map(d=>{
+          const e=states[d.entity];const s=e?String(e.state):'missing';
+          const sx=states[d.stats];
+          const a=sx&&!NA.includes(String(sx.state).toLowerCase())?sx.attributes:null;
+          const an=(k)=>a&&a[k]!==undefined&&a[k]!==null&&a[k]!==''&&Number.isFinite(Number(a[k]))?Number(a[k]):null;
+          const on=s==='on';
+          const bri=e&&on?(e.attributes.brightness?Math.max(1,Math.round(e.attributes.brightness/2.55)):100):0;
+          return Object.assign({},d,{s,on,off:!e||NA.includes(s.toLowerCase()),bri,starts:an('onCount'),rt:an('runtimeSeconds'),in0:an('input0'),pw:num(d.power),tc:num(d.temp),db:num(d.wifi),since:e&&e.last_changed?Date.parse(e.last_changed):null});
+        });
+
+        const now=Date.now();
+
+        const dur=(sec)=>{if(sec===null||!Number.isFinite(sec))return '—';const
+        m=sec/60;return m<1?Math.round(sec)+' s':m<60?Math.round(m)+'
+        min':m<1440?(m/60).toFixed(1)+' h':(m/1440).toFixed(1)+' d';};
+
+        const
+        esc=(t)=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+        const head=(icon,title,sub)=>`<div class="ihd"><span
+        class="iic"><ha-icon
+        icon="${icon}"></ha-icon></span><div><b>${title}</b>${sub?`<small>${sub}</small>`:''}</div></div>`;
+
+        const dot=(x)=>`<span class="dt ${x.on?'on':''} ${x.off?'bad':''}"
+        style="--b:${(x.bri/100).toFixed(2)}"><ha-icon
+        icon="${x.icon}"></ha-icon></span>`;
+
+        const P=variables.panel;
+
+
+        /* ───────── HERO: live lighting load, energy mix, room glow map
+        ───────── */
+
+        if(P==='hero'){
+          const lw=all.reduce((t,x)=>t+(x.pw||0),0);
+          const lon=all.filter(x=>x.on).length;
+          const v=(id)=>num(id)||0;
+          const pv=v('sensor.sigen_plant_pv_power'),gi=v('sensor.sigen_plant_grid_import_power'),ge=v('sensor.sigen_plant_grid_export_power');
+          const bp=Math.abs(v('sensor.sigen_plant_battery_power'));
+          const chg=states['binary_sensor.sigen_plant_battery_charging']?.state==='on';
+          const dis=states['binary_sensor.sigen_plant_battery_discharging']?.state==='on';
+          const home=Math.max(0,pv+gi-ge+(chg?-bp:dis?bp:0));
+          const has=home>0.01;
+          const g=has?Math.min(1,gi/home):1;
+          const b=has&&dis?Math.min(1-g,bp/home):0;
+          const s=Math.max(0,1-g-b);
+          const cost=lw/1000*RATE*g;
+          const tot=all.reduce((t,x)=>t+(x.rt||0),0);
+          const st=all.reduce((t,x)=>t+(x.starts||0),0);
+          const since=new Date(now-tot*1000).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'});
+          const mixTxt=!has?'':s>=0.99?'Your lights are running on sunshine':g>=0.99?'Your lights are running on grid power':`Lights powered by ${Math.round(s*100)}% sun, ${Math.round(b*100)}% battery, ${Math.round(g*100)}% grid`;
+          const ROOMS=[['outside','Outside + Entry'],['kitchen','Kitchen + Hallway'],['ensuite','Ensuite'],['main_bathroom','Main Bathroom'],['theater','Theater']];
+          const map=ROOMS.map(([k,t])=>{const L=all.filter(x=>x.group===k);const gl=L.length?L.reduce((a,x)=>a+x.bri,0)/L.length/100:0;const n=L.filter(x=>x.on).length;
+            return `<div class="rm ${gl>0?'lit':''}" style="--g:${gl.toFixed(2)}"><span class="rn">${t}<em>${n?n+' on':''}</em></span><div class="dots">${L.map(dot).join('')}</div></div>`;}).join('');
+          return `<div class="iw"><div class="ih"><div class="il">
+            <div class="when">Lighting right now</div>
+            <div class="big"><b>${lw<10?lw.toFixed(1):Math.round(lw)}</b><span>watts across<br>${lon} of ${all.length} devices</span></div>
+            <p class="sub">${lw>0.5?`≈ ${CUR}${cost.toFixed(3)} an hour${has&&g<0.99?' from the grid':''}`:'Nothing is drawing power'}</p>
+            ${has?`<div class="mix"><i style="width:${(s*100).toFixed(1)}%;background:#ffc24a"></i><i style="width:${(b*100).toFixed(1)}%;background:#3ee08f"></i><i style="width:${(g*100).toFixed(1)}%;background:#ff6b6b"></i></div><small class="mixt">${mixTxt}</small>`:''}
+            <div class="facts"><span><ha-icon icon="mdi:lightbulb-on-outline"></ha-icon>${(tot/86400).toFixed(1)} days of light in total, like one bulb left on since ${since}</span><span><ha-icon icon="mdi:gesture-tap"></ha-icon>${st.toLocaleString()} switch-ons, lifetime</span></div>
+          </div><div class="map">${map}</div></div></div>`;
+        }
+
+
+        /* ───────── TIMELINE: when every light was on today ───────── */
+
+        if(P==='timeline'){
+          const W=window;const card=this;
+          const d0=new Date(now);d0.setHours(0,0,0,0);const t0=d0.getTime();const DAY=864e5;
+          const ids=all.filter(x=>states[x.entity]).map(x=>x.entity);
+          const hc=W.__hmLightHist;const fresh=hc&&hc.day===t0&&(now-hc.at<120000);
+          if(!fresh&&typeof hass!=='undefined'&&hass&&hass.callWS&&!W.__hmLightBusy){W.__hmLightBusy=true;
+            hass.callWS({type:'history/history_during_period',start_time:new Date(t0).toISOString(),end_time:new Date(now).toISOString(),entity_ids:ids,minimal_response:true,no_attributes:true,significant_changes_only:false})
+              .then(r=>{W.__hmLightHist={day:t0,at:Date.now(),data:r||{}};})
+              .catch(()=>{W.__hmLightHist={day:t0,at:Date.now(),data:{},err:true};})
+              .finally(()=>{W.__hmLightBusy=false;try{card.requestUpdate&&card.requestUpdate();}catch(e){}});}
+          const H=W.__hmLightHist&&W.__hmLightHist.day===t0?W.__hmLightHist:null;
+          const nowPct=((now-t0)/DAY*100).toFixed(2);
+          let first=null,busy=null,busyMs=0,totalMs=0;
+          const rows=all.map(x=>{
+            const E=H&&H.data[x.entity]?H.data[x.entity]:[];
+            const ev=E.map(e=>({s:e.s!==undefined?e.s:e.state,t:e.lu!==undefined?e.lu*1000:e.lc!==undefined?e.lc*1000:Date.parse(e.last_updated||e.last_changed)})).filter(e=>Number.isFinite(e.t));
+            let ms=0,seg='';
+            ev.forEach((e,i)=>{if(e.s!=='on')return;const a=Math.max(e.t,t0);const z=i+1<ev.length?ev[i+1].t:now;if(z<=a)return;ms+=z-a;
+              if(e.t>t0&&(first===null||e.t<first.t))first={t:e.t,n:x.name};
+              seg+=`<i style="left:${((a-t0)/DAY*100).toFixed(2)}%;width:${Math.max(0.4,(z-a)/DAY*100).toFixed(2)}%"></i>`;});
+            totalMs+=ms;if(ms>busyMs){busyMs=ms;busy=x.name;}
+            return `<div class="tl"><span class="tn">${esc(x.name)}</span><div class="tr">${seg}<b class="nw" style="left:${nowPct}%"></b></div><span class="th">${ms?dur(ms/1000):'—'}</span></div>`;}).join('');
+          const ax=`<div class="tl ax"><span class="tn"></span><div class="tr axis"><span style="left:0">00</span><span style="left:25%">06</span><span style="left:50%">12</span><span style="left:75%">18</span><span style="left:100%">24</span></div><span class="th"></span></div>`;
+          const tm=(t)=>new Date(t).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+          const ins=[first?`🌅 First light on at ${tm(first.t)} (${esc(first.n)})`:'',busy?`🏆 ${esc(busy)} has been on longest today (${dur(busyMs/1000)})`:'',totalMs?`💡 ${dur(totalMs/1000)} of light-time so far`:''].filter(Boolean).map(t=>`<span>${t}</span>`).join('');
+          return `<div class="ip">${head('mdi:chart-timeline','Today, light by light','Every on-period since midnight')}${!H?'<div class="empty">Loading today’s history…</div>':H.err?'<div class="empty">Couldn’t load history. Check the recorder is running.</div>':ax+rows+`<div class="ins">${ins}</div>`}</div>`;
+        }
+
+
+        /* ───────── HABITS: runtime share + average session ───────── */
+
+        if(P==='habits'){
+          const L=all.filter(x=>x.rt!==null).sort((a,b)=>b.rt-a.rt);
+          if(!L.length)return `<div class="ip">${head('mdi:timer-sand','Usage habits','')}<div class="empty">No stats sensors reporting yet</div></div>`;
+          const mx=Math.max(1,...L.map(x=>x.rt));const tot=L.reduce((t,x)=>t+x.rt,0)||1;
+          const A=L.filter(x=>x.starts>0).map(x=>Object.assign({},x,{avg:x.rt/x.starts})).sort((a,b)=>b.avg-a.avg);
+          const busiest=[...L].sort((a,b)=>(b.starts||0)-(a.starts||0))[0];
+          const rows=L.map(x=>`<div class="rw"><b>${esc(x.name)}</b><span class="rv">${dur(x.rt)} · ${Math.round(x.rt/tot*100)}%</span><div class="br"><i style="width:${(x.rt/mx*100).toFixed(1)}%"></i></div><small>${x.starts!==null?x.starts.toLocaleString()+' starts':'—'}${x.starts?` · ${dur(x.rt/x.starts)} per use`:''}</small></div>`).join('');
+          const ins=[A.length?`🛋️ ${esc(A[0].name)} stays on longest, ${dur(A[0].avg)} each time`:'',A.length>1?`🏃 ${esc(A[A.length-1].name)} is the quickest, ${dur(A[A.length-1].avg)}`:'',busiest&&busiest.starts?`🔁 ${esc(busiest.name)} is switched on most`:''].filter(Boolean).map(t=>`<span>${t}</span>`).join('');
+          return `<div class="ip">${head('mdi:timer-sand','Usage habits','Lifetime runtime and how long each use lasts')}${rows}<div class="ins">${ins}</div></div>`;
+        }
+
+
+        /* ───────── HANDS: wall switch vs automation ───────── */
+
+        if(P==='hands'){
+          const L=all.filter(x=>x.starts>0&&x.in0!==null).map(x=>Object.assign({},x,{h:Math.min(1,x.in0/x.starts)})).sort((a,b)=>b.h-a.h);
+          if(!L.length)return `<div class="ip">${head('mdi:hand-back-right-outline','Hands vs automation','')}<div class="empty">No switch-press data yet</div></div>`;
+          const S=L.reduce((t,x)=>t+x.starts,0),I=L.reduce((t,x)=>t+Math.min(x.in0,x.starts),0);
+          const rows=L.map(x=>`<div class="rw"><b>${esc(x.name)}</b><span class="rv">${Math.round(x.h*100)}%</span><div class="br"><i class="hd" style="width:${(x.h*100).toFixed(1)}%"></i><i class="au" style="width:${((1-x.h)*100).toFixed(1)}%"></i></div></div>`).join('');
+          return `<div class="ip">${head('mdi:hand-back-right-outline','Hands vs automation','Wall-switch presses compared with starts')}
+            <div class="kpi"><b>${Math.round(I/S*100)}%</b><span>of switch-ons look hand-pressed</span></div>
+            <div class="legend"><span><i style="background:#ffb648"></i>By hand</span><span><i style="background:#8ea6ff"></i>Automation or app</span></div>${rows}
+            <div class="ins"><span>🖐️ Most manual: ${esc(L[0].name)}</span><span>🤖 Most automated: ${esc(L[L.length-1].name)}</span></div>
+            <small class="note">Assumes input0 counts wall-switch presses. If it counts on and off presses, these figures read about double.</small></div>`;
+        }
+
+
+        /* ───────── WATCH: what's on and for how long ───────── */
+
+        if(P==='watch'){
+          const ON=all.filter(x=>x.on&&x.since).map(x=>{const m=(now-x.since)/60000;const lim=x.icon==='mdi:fan'?45:120;return Object.assign({},x,{m,lim,long:m>lim});}).sort((a,b)=>b.m-a.m);
+          const OFF=all.filter(x=>!x.on&&!x.off&&x.since).sort((a,b)=>a.since-b.since);
+          const hr=new Date(now).getHours();const late=(hr>=23||hr<5)&&ON.length;
+          const rows=ON.map(x=>`<div class="wr">${dot(x)}<div class="wt"><b>${esc(x.name)}</b><small>On for ${dur(x.m*60)}${x.icon!=='mdi:fan'&&x.bri<100?' · '+x.bri+'%':''}${x.pw!==null?' · '+x.pw.toFixed(1)+' W':''}</small></div><span class="pill ${x.long?'long':''}">${x.long?'Long run':'OK'}</span></div>`).join('');
+          const flagged=ON.filter(x=>x.long).length;
+          return `<div class="ip">${head('mdi:alarm-light-outline','Left-on watch',ON.length?`${ON.length} on${flagged?`, ${flagged} running long`:''}`:'Everything is off')}
+            ${ON.length?rows:'<div class="empty"><ha-icon icon="mdi:weather-night"></ha-icon>Every light is off</div>'}
+            <div class="ins">${late?`<span>🌙 It’s late and ${ON.length} still on</span>`:''}${OFF.length?`<span>😴 Quietest: ${esc(OFF[0].name)}, untouched for ${dur((now-OFF[0].since)/1000)}</span>`:''}</div>
+            <small class="note">Lights flag after 2 h, the fan after 45 min. Timers reset when Home Assistant restarts.</small></div>`;
+        }
+
+
+        /* ───────── FLEET: dimmer temperature and Wi-Fi ───────── */
+
+        if(P==='fleet'){
+          const L=all.filter(x=>x.tc!==null||x.db!==null).sort((a,b)=>(b.tc??-99)-(a.tc??-99));
+          if(!L.length)return `<div class="ip">${head('mdi:thermometer','Device fleet','')}<div class="empty">No temperature or Wi-Fi sensors reporting</div></div>`;
+          const T=L.filter(x=>x.tc!==null);const D=L.filter(x=>x.db!==null).sort((a,b)=>a.db-b.db);
+          const avg=T.length?T.reduce((t,x)=>t+x.tc,0)/T.length:null;
+          const tcls=(t)=>t===null?'':t>=70?'hot':t>=55?'long':'';
+          const q=(db)=>db>=-55?4:db>=-67?3:db>=-75?2:db>=-85?1:0;
+          const rows=L.map(x=>`<div class="wr">${dot(x)}<div class="wt"><b>${esc(x.name)}</b><small>${x.on?'On':x.off?'Offline':'Off'}${x.db!==null?' · Wi-Fi '+x.db.toFixed(0)+' dBm':''}</small></div>${x.db!==null?`<span class="wf q${q(x.db)}"><ha-icon icon="mdi:wifi-strength-${q(x.db)||'outline'}"></ha-icon></span>`:''}<span class="pill ${tcls(x.tc)}">${x.tc!==null?x.tc.toFixed(0)+'°C':'—'}</span></div>`).join('');
+          const ins=[T.length?`🔥 Warmest: ${esc(T[0].name)} at ${T[0].tc.toFixed(0)}°C`:'',D.length?`📶 Weakest Wi-Fi: ${esc(D[0].name)} at ${D[0].db.toFixed(0)} dBm`:''].filter(Boolean).map(t=>`<span>${t}</span>`).join('');
+          return `<div class="ip">${head('mdi:thermometer-lines','Device fleet',avg!==null?`Devices average ${avg.toFixed(0)}°C`:'')}${rows}<div class="ins">${ins}</div>
+            <small class="note">Warm from 55°C, hot from 70°C. These are my estimates; check Shelly’s spec for the Dimmer G4’s real limit.</small></div>`;
+        }
+
+        return '';
+
+        ]]]
+    extra_styles: >-
+      .iw,.ip{container-type:inline-size;padding:18px
+      20px;text-align:left;box-sizing:border-box}
+
+      .ihd{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+
+      .iic{flex:none;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.05);color:#c9d3e4}
+
+      .iic ha-icon{flex:none !important;width:21px !important;height:21px
+      !important;--mdc-icon-size:21px !important}
+
+      .ihd b{display:block;font-size:17px;font-weight:600;color:#f4f7fc}
+
+      .ihd small{display:block;font-size:12px;color:#8d9ab3;margin-top:1px}
+
+      .ih{display:grid;grid-template-columns:minmax(0,1fr)
+      minmax(0,1.15fr);gap:22px;align-items:center}
+
+      .when{font-size:12px;color:#c9d3e4;opacity:.85}
+
+      .big{display:flex;align-items:flex-end;gap:10px;margin-top:6px}
+
+      .big
+      b{font-size:60px;line-height:.9;font-weight:200;letter-spacing:-2px;font-variant-numeric:tabular-nums;color:#fff}
+
+      .big
+      span{font-size:12px;line-height:1.25;color:#c9d3e4;padding-bottom:4px}
+
+      .sub{margin:10px 0 0;font-size:14px;color:#eef3fb}
+
+      .mix{display:flex;height:6px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.1);margin-top:12px}
+
+      .mix i{display:block;height:100%}
+
+      .mixt{display:block;margin-top:5px;font-size:11px;color:#c9d3e4}
+
+      .facts{display:flex;flex-direction:column;gap:7px;margin-top:16px;font-size:12px;color:#8d9ab3}
+
+      .facts span{display:flex;align-items:center;gap:8px}
+
+      .facts ha-icon{flex:none !important;width:16px !important;height:16px
+      !important;--mdc-icon-size:16px !important;color:#ffcf85}
+
+      .map{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+      .rm{padding:12px;border-radius:16px;background:rgba(255,255,255,.035);border:1px
+      solid rgba(255,255,255,.07);transition:background .4s,border-color
+      .4s,box-shadow .4s}
+
+      .rm.lit{background:linear-gradient(150deg,rgba(255,182,72,calc(.08 +
+      .25*var(--g))),rgba(255,182,72,.03));border-color:rgba(255,182,72,calc(.2
+      + .4*var(--g)));box-shadow:0 0 calc(30px*var(--g))
+      rgba(255,170,60,calc(.35*var(--g)))}
+
+      .map .rm:last-child:nth-child(odd){grid-column:1/-1}
+
+      .rn{display:flex;justify-content:space-between;font-size:11px;font-weight:600;color:#c9d3e4;margin-bottom:8px}
+
+      .rn em{font-style:normal;color:#ffcf85}
+
+      .dots{display:flex;flex-wrap:wrap;gap:6px}
+
+      .dt{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.06);color:#6f7c95;box-sizing:border-box}
+
+      .dt ha-icon{flex:none !important;width:16px !important;height:16px
+      !important;--mdc-icon-size:16px !important}
+
+      .dt.on{background:rgba(255,182,72,calc(.35 +
+      .65*var(--b)));color:#2a1700;box-shadow:0 0 calc(4px + 14px*var(--b))
+      rgba(255,182,72,calc(.3 + .5*var(--b)))}
+
+      .dt.bad{border:1px solid rgba(255,107,107,.6);color:#ff8c8c}
+
+      .rw{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px
+      12px;align-items:center;padding:8px 0;border-top:1px solid
+      rgba(255,255,255,.05)}
+
+      .ihd + .rw,.legend + .rw{border-top:none}
+
+      .rw
+      b{font-size:13px;font-weight:600;color:#e7edf7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+      .rv{font-size:12px;font-weight:600;color:#eef3fb;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+
+      .rw small{grid-column:1/-1;font-size:11px;color:#6f7c95}
+
+      .br{grid-column:1/-1;display:flex;height:5px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden}
+
+      .br
+      i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#ffb648,#ffd877)}
+
+      .br i.hd{border-radius:0;background:#ffb648}
+
+      .br i.au{border-radius:0;background:#8ea6ff}
+
+      .kpi{display:flex;align-items:baseline;gap:8px;margin:-4px 0 10px}
+
+      .kpi
+      b{font-size:30px;font-weight:300;color:#fff;font-variant-numeric:tabular-nums}
+
+      .kpi span{font-size:12px;color:#c9d3e4}
+
+      .legend{display:flex;gap:14px;font-size:11px;color:#8d9ab3;margin-bottom:4px}
+
+      .legend
+      i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+
+      .ins{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+
+      .ins:empty{display:none}
+
+      .ins span{font-size:11px;padding:5px
+      10px;border-radius:999px;color:#ffcf85;background:rgba(255,181,71,.1)}
+
+      .note{display:block;margin-top:10px;font-size:11px;color:#55617a}
+
+      .empty{display:flex;align-items:center;gap:10px;padding:10px
+      0;color:#8d9ab3;font-size:13px}
+
+      .empty ha-icon{flex:none !important;width:20px !important;height:20px
+      !important;--mdc-icon-size:20px !important}
+
+      .tl{display:grid;grid-template-columns:110px minmax(0,1fr)
+      52px;gap:10px;align-items:center;padding:4px 0}
+
+      .tn{font-size:12px;color:#c9d3e4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+      .tr{position:relative;height:12px;border-radius:6px;background:rgba(255,255,255,.04)}
+
+      .tr
+      i{position:absolute;top:0;bottom:0;border-radius:4px;background:linear-gradient(90deg,#ffb648,#ffd877);box-shadow:0
+      0 8px rgba(255,182,72,.45)}
+
+      .tr
+      .nw{position:absolute;top:-3px;bottom:-3px;width:2px;margin-left:-1px;border-radius:2px;background:#8ea6ff}
+
+      .th{font-size:11px;color:#8d9ab3;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+      .tr.axis{background:none;height:14px}
+
+      .tr.axis span{position:absolute;top:0;translate:-50%
+      0;font-size:10px;color:#55617a}
+
+      .tr.axis span:first-child{translate:0 0}
+
+      .tr.axis span:last-child{translate:-100% 0}
+
+      .wr{display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px
+      solid rgba(255,255,255,.05)}
+
+      .ihd + .wr{border-top:none}
+
+      .wt{flex:1;min-width:0}
+
+      .wt
+      b{display:block;font-size:13px;font-weight:600;color:#e7edf7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+      .wt small{display:block;font-size:11px;color:#6f7c95;margin-top:1px}
+
+      .pill{flex:none;font-size:11px;font-weight:600;padding:4px
+      10px;border-radius:999px;background:rgba(127,211,154,.12);color:#7fd39a;font-variant-numeric:tabular-nums}
+
+      .pill.long{background:rgba(255,181,71,.14);color:#ffb547}
+
+      .pill.hot{background:rgba(255,107,107,.14);color:#ff8c8c}
+
+      .wf{display:inline-flex}
+
+      .wf ha-icon{flex:none !important;width:16px !important;height:16px
+      !important;--mdc-icon-size:16px !important}
+
+      .wf.q4,.wf.q3{color:#7fd39a}.wf.q2{color:#ffb547}.wf.q1,.wf.q0{color:#ff6b6b}
+
+      @container (max-width:620px){.ih{grid-template-columns:1fr}.big
+      b{font-size:46px}}
+
+      @container (max-width:440px){.tl{grid-template-columns:84px minmax(0,1fr)
+      44px}}
+
+      @media (prefers-reduced-motion:reduce){.rm{transition:none}}
+views:
+  - title: Insights
+    path: insights
+    icon: mdi:chart-bubble
+    type: sections
+    max_columns: 3
+    dense_section_placement: true
+    background: >-
+      radial-gradient(900px 520px at 12% -8%, rgba(255,194,74,.10), transparent
+      60%), radial-gradient(900px 600px at 95% 110%, rgba(142,166,255,.08),
+      transparent 60%), #080c16
+    sections:
+      - type: grid
+        column_span: 3
+        cards:
+          - type: custom:button-card
+            template: hm_ins
+            variables:
+              panel: hero
+            grid_options:
+              columns: full
+              rows: auto
+      - type: grid
+        column_span: 3
+        cards:
+          - type: custom:button-card
+            template: hm_ins
+            variables:
+              panel: timeline
+            grid_options:
+              columns: full
+              rows: auto
+      - type: grid
+        cards:
+          - type: custom:button-card
+            template: hm_ins
+            variables:
+              panel: watch
+            grid_options:
+              columns: full
+              rows: auto
+          - type: custom:button-card
+            template: hm_ins
+            variables:
+              panel: fleet
+            grid_options:
+              columns: full
+              rows: auto
+      - type: grid
+        cards:
+          - type: custom:button-card
+            template: hm_ins
+            variables:
+              panel: habits
+            grid_options:
+              columns: full
+              rows: auto
+      - type: grid
+        cards:
+          - type: custom:button-card
+            template: hm_ins
+            variables:
+              panel: hands
+            grid_options:
+              columns: full
+              rows: auto
