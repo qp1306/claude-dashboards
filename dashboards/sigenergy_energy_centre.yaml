@@ -1,0 +1,2946 @@
+title: Sigenergy Energy Centre
+button_card_templates:
+  sig_kpi:
+    show_icon: true
+    show_name: true
+    show_state: true
+    tap_action:
+      action: more-info
+    hold_action:
+      action: more-info
+    variables:
+      accent: '#ffb648'
+      prefix: ''
+      suffix: ''
+      decimals: 2
+      attr: ''
+      sub: ''
+      bill: false
+    state_display: |
+      [[[
+        const raw = variables.attr ? entity?.attributes?.[variables.attr] : entity?.state;
+        const v = parseFloat(raw);
+        if (!Number.isFinite(v)) return '—';
+        const d = Number(variables.decimals ?? 2), p = variables.prefix || '', s = variables.suffix || '';
+        if (variables.bill) return v < 0 ? `$${Math.abs(v).toFixed(d)} credit` : `$${v.toFixed(d)}${v > 0 ? ' to pay' : ''}`;
+        if (p === '$') return `${v < 0 ? '−' : ''}$${Math.abs(v).toFixed(d)}${s}`;
+        return `${p}${v.toFixed(d)}${s}`;
+      ]]]
+    custom_fields:
+      sub: |
+        [[[
+          if (variables.sub) return `<span>${variables.sub}</span>`;
+          if (variables.attr) return '';
+          const prev = parseFloat(entity?.attributes?.last_period);
+          if (!Number.isFinite(prev)) return `<span>Today so far</span>`;
+          const d = Number(variables.decimals ?? 2), p = variables.prefix || '', s = variables.suffix || '';
+          const txt = variables.bill ? (prev < 0 ? `$${Math.abs(prev).toFixed(d)} credit` : `$${prev.toFixed(d)}`)
+                    : p === '$' ? `${prev < 0 ? '−' : ''}$${Math.abs(prev).toFixed(d)}` : `${prev.toFixed(d)}${s}`;
+          return `<span>Yesterday ${txt}</span>`;
+        ]]]
+    styles:
+      card:
+        - height: 92px
+        - border-radius: 22px
+        - padding: 10px 13px 9px
+        - background: linear-gradient(160deg, rgba(22,30,48,.78), rgba(12,17,30,.86))
+        - backdrop-filter: blur(18px)
+        - -webkit-backdrop-filter: blur(18px)
+        - border: 1px solid rgba(255,255,255,.07)
+        - box-shadow: 0 18px 40px rgba(0,0,0,.35)
+        - overflow: hidden
+      grid:
+        - grid-template-areas: '"i n" "s s" "sub sub"'
+        - grid-template-columns: 26px minmax(0, 1fr)
+        - grid-template-rows: 18px 32px 16px
+        - column-gap: 6px
+      icon:
+        - width: 19px
+        - color: '[[[ return variables.accent ]]]'
+      img_cell:
+        - justify-self: start
+        - align-self: center
+        - width: 26px
+        - height: 26px
+      name:
+        - justify-self: start
+        - align-self: center
+        - font-size: 12px
+        - font-weight: 600
+        - white-space: nowrap
+        - overflow: hidden
+        - text-overflow: ellipsis
+        - color: '#c9d3e4'
+      state:
+        - justify-self: start
+        - align-self: center
+        - font-size: 24px
+        - font-weight: 300
+        - letter-spacing: -0.5px
+        - white-space: nowrap
+        - font-variant-numeric: tabular-nums
+        - color: >-
+            [[[ return variables.bill && parseFloat(entity?.state) < 0 ?
+            '#3ee08f' : '#eef3fb' ]]]
+      custom_fields:
+        sub:
+          - justify-self: start
+          - font-size: 11px
+          - font-weight: 500
+          - line-height: 16px
+          - white-space: nowrap
+          - overflow: hidden
+          - text-overflow: ellipsis
+          - max-width: 100%
+          - color: '#8d9ab3'
+  sig_card:
+    show_icon: true
+    show_name: true
+    show_state: false
+    tap_action:
+      action: none
+    variables:
+      icon_color: '#ffb648'
+    custom_fields:
+      lib: |
+        [[[
+          if (typeof window !== 'undefined' && (!window.sigE || window.sigE.v !== 3)) {
+            const LS = {get(k) { try { return JSON.parse(localStorage.getItem('sigE:' + k) || 'null'); } catch (e) { return null; } },
+                        set(k, v) { try { localStorage.setItem('sigE:' + k, JSON.stringify(v)); } catch (e) {} }};
+            window.sigE = {
+              v: 3, c: {}, busy: {}, memo: {}, keep: ['day5', 'cal2'],
+              ws(h, key, msg, startMs, ttlMs) {
+                const now = Date.now(), e = this.c[key];
+                const fresh = e && e.start === startMs && now - e.at < ttlMs;
+                if (!fresh && !this.busy[key] && h && h.callWS) {
+                  this.busy[key] = true;
+                  h.callWS(msg).then(r => { this.c[key] = {start: startMs, at: Date.now(), data: r || {}}; if (this.keep.includes(key)) LS.set(key, this.c[key]); })
+                    .catch(() => { if (!this.c[key] || this.c[key].start !== startMs) this.c[key] = {start: startMs, at: Date.now(), data: {}, err: true}; })
+                    .finally(() => { this.busy[key] = false; });
+                }
+                return e && e.start === startMs ? e : null;
+              },
+              hist(h, key, ids, startMs, ttlMs) {
+                return this.ws(h, key, {type: 'history/history_during_period', start_time: new Date(startMs).toISOString(),
+                  end_time: new Date().toISOString(), entity_ids: ids, minimal_response: true, no_attributes: true,
+                  significant_changes_only: false}, startMs, ttlMs);
+              },
+              stats(h, key, ids, startMs, ttlMs, period) {
+                return this.ws(h, key, {type: 'recorder/statistics_during_period', start_time: new Date(startMs).toISOString(),
+                  end_time: new Date().toISOString(), statistic_ids: ids, period: period || 'day',
+                  types: period === '5minute' ? ['mean'] : ['max', 'change']}, startMs, ttlMs);
+              },
+              dayIds: ['sensor.sigen_plant_pv_power', 'sensor.sigen_plant_consumed_power', 'sensor.sigen_plant_battery_state_of_charge', 'sensor.sigen_plant_grid_export_power'],
+              calIds: ['sensor.sigenergy_analytics_daily_pv', 'sensor.sigen_plant_pv_daily_generation'],
+              dayStart() { const n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()).getTime(); },
+              calStart(weeks) { const t = new Date(); t.setHours(0, 0, 0, 0); const dow = (t.getDay() + 6) % 7;
+                return new Date(t.getFullYear(), t.getMonth(), t.getDate() - dow - (weeks - 1) * 7).getTime(); },
+              kick(h) {
+                if (!h || !h.callWS) return;
+                this.stats(h, 'day5', this.dayIds, this.dayStart(), 120000, '5minute');
+                this.stats(h, 'cal2', this.calIds, this.calStart(16), 3600000);
+              },
+              pts(arr) {
+                return (arr || []).map(x => {
+                  const t = x.lu !== undefined ? x.lu * 1000 : x.lc !== undefined ? x.lc * 1000 : Date.parse(x.last_updated || x.last_changed);
+                  return [t, parseFloat(x.s !== undefined ? x.s : x.state)];
+                }).filter(p => Number.isFinite(p[0])).sort((a, b) => a[0] - b[0]);
+              },
+              spts(rows) {
+                return (rows || []).map(r => [typeof r.start === 'number' ? r.start : Date.parse(r.start), Number(r.mean)])
+                  .filter(p => Number.isFinite(p[0]) && Number.isFinite(p[1])).sort((a, b) => a[0] - b[0]);
+              },
+              sample(pts, t0, t1, step) {
+                const out = []; let i = 0, cur = null;
+                for (let t = t0; t <= t1; t += step) {
+                  while (i < pts.length && pts[i][0] <= t) { if (Number.isFinite(pts[i][1])) cur = pts[i][1]; i++; }
+                  out.push([t, cur]);
+                }
+                return out;
+              }
+            };
+            // Show the last saved copy instantly after a reload; a fresh fetch replaces it.
+            window.sigE.keep.forEach(k => { const s = LS.get(k); if (s && s.data && !s.err) window.sigE.c[k] = s; });
+          }
+          if (typeof window !== 'undefined' && typeof hass !== 'undefined') window.sigE.kick(hass);
+          return '';
+        ]]]
+    styles:
+      card:
+        - height: 100%
+        - border-radius: 24px
+        - padding: 14px 16px
+        - background: linear-gradient(160deg, rgba(22,30,48,.78), rgba(12,17,30,.86))
+        - backdrop-filter: blur(18px)
+        - -webkit-backdrop-filter: blur(18px)
+        - border: 1px solid rgba(255,255,255,.07)
+        - box-shadow: 0 18px 40px rgba(0,0,0,.35)
+        - overflow: hidden
+        - color: '#eef3fb'
+      grid:
+        - grid-template-areas: '"i n" "body body"'
+        - grid-template-columns: 30px minmax(0, 1fr)
+        - grid-template-rows: 32px 1fr
+      img_cell:
+        - justify-self: start
+        - align-self: center
+        - width: 30px
+        - height: 30px
+        - border-radius: 10px
+        - background: rgba(255,255,255,.05)
+      icon:
+        - width: 18px
+        - color: '[[[ return variables.icon_color ]]]'
+      name:
+        - justify-self: start
+        - padding-left: 8px
+        - font-size: 15px
+        - font-weight: 600
+        - color: '#f4f7fc'
+      custom_fields:
+        lib:
+          - display: none
+        body:
+          - align-self: stretch
+          - justify-self: stretch
+          - min-width: 0
+          - white-space: normal
+          - padding-top: 6px
+          - text-align: left
+  sig_header:
+    show_icon: true
+    show_name: true
+    show_state: false
+    show_label: true
+    tap_action:
+      action: none
+    triggers_update: all
+    custom_fields:
+      right: |
+        [[[
+          const s = id => states[id]?.state;
+          const dead = v => v === undefined || v === 'unavailable' || v === 'unknown';
+          const issues = [];
+          if (s('binary_sensor.sigenergy_analytics_data_problem') === 'on') issues.push('Data problem');
+          if (s('sensor.sigenergy_analytics_active_contract_validation') !== 'VALID') issues.push('Contract');
+          const alarms = [s('sensor.sigen_plant_general_alarm_1'), s('sensor.sigen_plant_general_alarm_2'),
+            s('sensor.sigen_plant_general_alarm_3'), s('sensor.sigen_plant_general_alarm_4'),
+            s('sensor.sigen_plant_general_alarm_5'), s('sensor.sigen_plant_general_alarm_6')];
+          if (alarms.some(a => !dead(a) && a !== 'No Problem')) issues.push('Inverter alarm');
+          if ([s('sensor.sigen_plant_pv_power'), s('sensor.sigen_plant_consumed_power'),
+               s('sensor.sigen_plant_battery_power'), s('sensor.sigen_plant_battery_state_of_charge')].some(dead)) issues.push('Sensors offline');
+          const ok = issues.length === 0;
+          const d = new Date();
+          const stamp = d.toLocaleDateString('en-AU', {weekday: 'long', day: 'numeric', month: 'long'});
+          return `<div class="hr"><span class="tm">${stamp}</span>
+            <span class="hp ${ok ? 'ok' : 'bad'}"><i></i><span><b>${ok ? 'System healthy' : 'Check system'}</b>
+            <small>${ok ? 'All checks passing' : issues.join(', ')}</small></span></span></div>`;
+        ]]]
+    styles:
+      card:
+        - background: transparent
+        - box-shadow: none
+        - border: 0
+        - padding: 0 6px
+        - height: 58px
+      grid:
+        - grid-template-areas: '"i n right" "i l right"'
+        - grid-template-columns: 50px minmax(0, 1fr) auto
+        - grid-template-rows: 32px 20px
+      img_cell:
+        - justify-self: start
+        - width: 42px
+        - height: 42px
+        - border-radius: 13px
+        - background: rgba(255,255,255,.05)
+      icon:
+        - width: 22px
+        - color: '#ffb648'
+      name:
+        - justify-self: start
+        - align-self: end
+        - font-size: 28px
+        - font-weight: 300
+        - letter-spacing: -.5px
+        - color: '#f4f7fc'
+      label:
+        - justify-self: start
+        - font-size: 12px
+        - color: '#8d9ab3'
+      custom_fields:
+        right:
+          - justify-self: end
+    extra_styles: >
+      .hr{display:flex;align-items:center;gap:12px}
+
+      .tm{color:#8d9ab3;font-size:12.5px;white-space:nowrap}
+
+      .hp{display:flex;align-items:center;gap:9px;padding:8px
+      14px;border-radius:16px;
+          background:rgba(10,16,32,.42);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+      .hp
+      i{width:8px;height:8px;border-radius:50%;background:#3ee08f;box-shadow:0 0
+      10px #3ee08f}
+
+      .hp.bad i{background:#ff6b6b;box-shadow:0 0 10px #ff6b6b}
+
+      .hp span{display:flex;flex-direction:column}
+
+      .hp b{font-size:12.5px;font-weight:600;color:#eef3fb}
+
+      .hp small{font-size:11px;color:#8d9ab3;margin-top:1px}
+
+      @media (max-width:700px){ .tm{display:none}
+      #name{font-size:22px!important} .hp{padding:6px 10px} }
+views:
+  - title: Now
+    path: now
+    icon: mdi:lightning-bolt
+    type: custom:grid-layout
+    background: >-
+      radial-gradient(900px 520px at 12% -8%, rgba(255,194,74,.10), transparent
+      60%), radial-gradient(900px 600px at 95% 110%, rgba(62,224,143,.08),
+      transparent 60%), #080c16
+    layout:
+      grid-template-columns: repeat(6, minmax(0, 1fr))
+      grid-template-rows: auto auto auto 330px auto auto
+      grid-template-areas: |
+        "head    head    head    head    head    head"
+        "day     day     day     day     day     day"
+        "insight insight insight insight insight insight"
+        "live    live    live    live    tou     tou"
+        "flow    flow    flow    flow    money   money"
+        "alerts  alerts  alerts  alerts  alerts  alerts"
+      grid-column-gap: 10px
+      grid-row-gap: 10px
+      margin: 8px 6px 10px
+      padding: 0px
+      card_margin: 0px
+      mediaquery:
+        '(min-width: 701px) and (max-width: 1100px)':
+          grid-template-rows: auto auto auto 330px auto auto
+          grid-template-areas: |
+            "head    head    head    head    head    head"
+            "day     day     day     day     day     day"
+            "insight insight insight insight insight insight"
+            "live    live    live    tou     tou     tou"
+            "flow    flow    flow    flow    money   money"
+            "alerts  alerts  alerts  alerts  alerts  alerts"
+        '(max-width: 700px)':
+          grid-template-columns: minmax(0, 1fr)
+          grid-template-rows: auto
+          grid-template-areas: |
+            "head"
+            "insight"
+            "live"
+            "day"
+            "tou"
+            "flow"
+            "money"
+            "alerts"
+    cards:
+      - type: custom:button-card
+        template: sig_card
+        view_layout:
+          grid-area: head
+        show_icon: false
+        show_name: false
+        triggers_update: all
+        custom_fields:
+          body: |
+            [[[
+            try {
+
+              const s = id => states[id]?.state;
+              const num = id => { const v = parseFloat(s(id)); return Number.isFinite(v) ? v : null; };
+              const dead = v => v === undefined || v === 'unavailable' || v === 'unknown';
+              const d = new Date(), hr = d.getHours();
+              const greet = hr < 5 ? 'Good evening' : hr < 12 ? 'Good morning' : hr < 18 ? 'Good afternoon' : 'Good evening';
+              const date = d.toLocaleDateString('en-AU', {weekday: 'long', day: 'numeric', month: 'long'});
+              const pv = num('sensor.sigen_plant_pv_power') ?? 0, gi = num('sensor.sigen_plant_grid_import_power') ?? 0;
+              const bp = num('sensor.sigen_plant_battery_power') ?? 0, soc = num('sensor.sigen_plant_battery_state_of_charge');
+              let line, dot;
+              if (gi > 0.2) { line = `Drawing ${gi.toFixed(2)} kW from the grid`; dot = '#ff6b6b'; }
+              else if (pv > 0.1) { line = bp > 0.05 ? `Running on sunshine and charging the battery` : soc !== null && soc >= 98 ? 'Running on sunshine, battery full' : 'Running on sunshine'; dot = '#ffc24a'; }
+              else { line = `Running on battery${soc !== null ? ', ' + Math.round(soc) + '% left' : ''}`; dot = '#3ee08f'; }
+              const tm = (id, def) => { const m = /^(\d{1,2}):(\d{2})/.exec(s(id) || ''); return m ? (+m[1]) * 60 + (+m[2]) : def; };
+              const peaks = [[tm('input_datetime.sigenergy_analytics_ui_peak_am_start', 420), tm('input_datetime.sigenergy_analytics_ui_peak_am_end', 540)],
+                             [tm('input_datetime.sigenergy_analytics_ui_peak_pm_start', 1020), tm('input_datetime.sigenergy_analytics_ui_peak_pm_end', 1260)]];
+              const now = ((d.getUTCHours() + 10) % 24) * 60 + d.getUTCMinutes();
+              const dur = m => { const h = Math.floor(m / 60), mm = m % 60; return h ? `${h}h ${String(mm).padStart(2, '0')}m` : `${mm}m`; };
+              const inPk = peaks.find(p => now >= p[0] && now < p[1]);
+              const next = peaks.map(p => p[0] > now ? p[0] - now : p[0] + 1440 - now).sort((a, b) => a - b)[0];
+              const peakTxt = inPk ? `Peak pricing for another ${dur(inPk[1] - now)}.` : `Next peak in ${dur(next)}.`;
+              const issues = [];
+              if (s('binary_sensor.sigenergy_analytics_data_problem') === 'on') issues.push('Data problem');
+              if (s('sensor.sigenergy_analytics_active_contract_validation') !== 'VALID') issues.push('Contract');
+              if ([s('sensor.sigen_plant_general_alarm_1'), s('sensor.sigen_plant_general_alarm_2'), s('sensor.sigen_plant_general_alarm_3'),
+                   s('sensor.sigen_plant_general_alarm_4'), s('sensor.sigen_plant_general_alarm_5'), s('sensor.sigen_plant_general_alarm_6')]
+                   .some(a => !dead(a) && a !== 'No Problem')) issues.push('Inverter alarm');
+              if ([s('sensor.sigen_plant_pv_power'), s('sensor.sigen_plant_consumed_power'), s('sensor.sigen_plant_battery_power')].some(dead)) issues.push('Sensors offline');
+              const ok = !issues.length;
+              const solar = num('sensor.sigenergy_analytics_daily_pv');
+              return `<div class="hd">
+                <div class="lt"><div class="when">${date}</div><h1>${greet}</h1>
+                  <p><span class="dot" style="background:${dot};color:${dot}"></span>${line}. ${peakTxt}</p></div>
+                <div class="rt"><div class="big"><b>${solar === null ? '—' : solar.toFixed(1)}</b><span>kWh solar<br>today</span></div>
+                  <span class="hp ${ok ? 'ok' : 'bad'}"><i></i>${ok ? 'System healthy' : 'Check: ' + issues.join(', ')}</span></div>
+              </div>`;
+
+            } catch (err) {
+              console.error('Energy Centre card failed: This card', err);
+              return `<div style="padding:14px;border-radius:12px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.35);font-size:12px;line-height:1.5;color:#c9d3e4;text-align:left"><b style="color:#ff6b6b">This card couldn’t draw.</b><br>${String(err && err.message || err).replace(/</g, '&lt;')}<br><span style="color:#8d9ab3">${String(err && err.stack || '').split('\n').slice(1, 3).join(' ').replace(/</g, '&lt;')}</span></div>`;
+            }
+            ]]]
+        styles:
+          card:
+            - background: transparent
+            - border: 0
+            - box-shadow: none
+            - backdrop-filter: none
+            - padding: 6px 8px 2px
+          grid:
+            - grid-template-areas: '"body"'
+            - grid-template-columns: 1fr
+            - grid-template-rows: auto
+        extra_styles: >
+          .hd{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+
+          .when{font-size:12px;color:#8d9ab3}
+
+          h1{margin:2px 0
+          0;font-size:32px;line-height:1.1;font-weight:300;letter-spacing:-.5px;color:#f4f7fc}
+
+          .lt p{display:flex;align-items:center;gap:8px;margin:8px 0
+          0;font-size:14px;color:#c9d3e4}
+
+          .dot{flex:none;width:8px;height:8px;border-radius:50%;box-shadow:0 0
+          10px currentColor}
+
+          .rt{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+
+          .big{display:flex;align-items:flex-end;gap:10px}
+
+          .big
+          b{font-size:56px;line-height:.9;font-weight:200;letter-spacing:-2px;color:#ffc24a;font-variant-numeric:tabular-nums;
+                 text-shadow:0 0 28px rgba(255,194,74,.25)}
+          .big
+          span{font-size:12px;line-height:1.25;color:#c9d3e4;padding-bottom:4px}
+
+          .hp{display:inline-flex;align-items:center;gap:7px;padding:5px
+          11px;border-radius:999px;font-size:11.5px;font-weight:600;
+              color:#c9d3e4;background:rgba(10,16,32,.42);border:1px solid rgba(255,255,255,.1)}
+          .hp
+          i{width:7px;height:7px;border-radius:50%;background:#3ee08f;box-shadow:0
+          0 8px #3ee08f}
+
+          .hp.bad{color:#ffb547;border-color:rgba(255,181,71,.4)}.hp.bad
+          i{background:#ff6b6b;box-shadow:0 0 8px #ff6b6b}
+
+          @media (max-width:700px){ h1{font-size:26px} .big b{font-size:44px}
+          .rt{align-items:flex-start} }
+      - type: custom:button-card
+        template: sig_card
+        view_layout:
+          grid-area: day
+        name: Your day
+        icon: mdi:chart-areaspline-variant
+        triggers_update: all
+        custom_fields:
+          body: >
+            [[[
+
+            try {
+
+              const E = typeof window !== 'undefined' ? window.sigE : null;
+              if (!E || E.v !== 3) return '<div class="ld">Loading today’s history…</div>';
+              const IDS = {pv: E.dayIds[0], load: E.dayIds[1], soc: E.dayIds[2], exp: E.dayIds[3]};
+              const now = new Date(), tn = now.getTime();
+              const t0 = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+              const HS = typeof hass !== 'undefined' ? hass : null;
+            let h = E.stats(HS, 'day5', E.dayIds, t0, 120000, '5minute'),
+            fromStats = true;
+
+            // Fall back to raw history only if 5-minute statistics aren't
+            available for these sensors.
+
+            if (h && (h.err || !(h.data[E.dayIds[0]] || []).length)) { fromStats
+            = false; h = E.hist(HS, 'day', E.dayIds, t0, 300000); }
+              if (!h) return '<div class="ld">Loading today’s history…</div>';
+              if (h.err) return '<div class="ld">Today’s history couldn’t be loaded. It will retry in a few minutes.</div>';
+              const memoKey = `${h.at}|${Math.floor(tn / 60000)}|${states['input_datetime.sigenergy_analytics_ui_peak_am_start']?.state}`;
+            if (E.memo.day && E.memo.day.k === memoKey) return E.memo.day.html;
+
+            const STEP = 300000, DAY = 864e5;
+              const S = k => { const s = E.sample(fromStats ? E.spts(h.data[IDS[k]]) : E.pts(h.data[IDS[k]]), t0, tn, STEP);
+              const live = parseFloat(states[IDS[k]]?.state); if (Number.isFinite(live) && s.length) s[s.length - 1] = [s[s.length - 1][0], live]; return s; };
+              const pv = S('pv'), ld = S('load'), soc = S('soc'), ex = S('exp');
+              const vals = pv.concat(ld).map(p => p[1] ?? 0);
+              const kmax = Math.max(1, ...vals), nice = Math.ceil(kmax / 5) * 5;
+              const X = t => ((t - t0) / DAY * 1000).toFixed(1);
+              const Y = kw => (196 - Math.max(0, kw) / nice * 186).toFixed(1);
+              const YS = p => (196 - Math.max(0, Math.min(100, p)) / 100 * 186).toFixed(1);
+              const area = `M${X(t0)},196 ` + pv.map(p => `L${X(p[0])},${Y(p[1] ?? 0)}`).join(' ') + ` L${X(pv[pv.length - 1][0])},196 Z`;
+              const line = arr => arr.filter(p => p[1] !== null).map((p, i) => `${i ? 'L' : 'M'}${X(p[0])},${Y(p[1])}`).join(' ');
+              const sline = soc.filter(p => p[1] !== null).map((p, i) => `${i ? 'L' : 'M'}${X(p[0])},${YS(p[1])}`).join(' ');
+              const tfmt = t => new Date(t).toLocaleTimeString('en-AU', {hour: 'numeric', minute: '2-digit'});
+
+              // Summary numbers shared with the insight card.
+              const full = soc.find(p => p[1] !== null && p[1] >= 99);
+              let expAfter = 0; if (full) ex.forEach(p => { if (p[0] > full[0] && p[1] > 0) expAfter += p[1] * STEP / 3.6e6; });
+              const pk = pv.reduce((a, p) => (p[1] ?? 0) > a[1] ? [p[0], p[1]] : a, [0, 0]);
+              const lastSun = pv.filter(p => (p[1] ?? 0) > 0.5).pop();
+              const sv = soc.filter(p => p[1] !== null);
+              const lo = sv.reduce((a, p) => p[1] < a[1] ? p : a, [0, 101]), hi = sv.reduce((a, p) => p[1] > a[1] ? p : a, [0, -1]);
+              E.daySum = {day: t0, fullAt: full ? full[0] : null, expAfter, lastSun: lastSun ? lastSun[0] : null,
+                          socMax: hi[1] >= 0 ? hi[1] : null, still: (pv[pv.length - 1][1] ?? 0) > 0.5};
+
+              // Tariff bands converted from fixed AEST to the viewer's local clock.
+              const st = id => states[id]?.state || '';
+              const tm = (id, def) => { const m = /^(\d{1,2}):(\d{2})/.exec(st(id)); return m ? (+m[1]) * 60 + (+m[2]) : def; };
+              const w = [tm('input_datetime.sigenergy_analytics_ui_peak_am_start', 420), tm('input_datetime.sigenergy_analytics_ui_peak_am_end', 540),
+                         tm('input_datetime.sigenergy_analytics_ui_off_peak_start', 660), tm('input_datetime.sigenergy_analytics_ui_off_peak_end', 900),
+                         tm('input_datetime.sigenergy_analytics_ui_peak_pm_start', 1020), tm('input_datetime.sigenergy_analytics_ui_peak_pm_end', 1260)];
+              const segs = [[0, w[0], 'sh'], [w[0], w[1], 'pk'], [w[1], w[2], 'sh'], [w[2], w[3], 'off'], [w[3], w[4], 'sh'], [w[4], w[5], 'pk'], [w[5], 1440, 'sh']];
+              const delta = -now.getTimezoneOffset() - 600;
+              let band = '';
+              segs.forEach(([a, b, t]) => [-1440, 0, 1440].forEach(k => {
+                const x0 = Math.max(0, a + delta + k), x1 = Math.min(1440, b + delta + k);
+                if (x1 > x0) band += `<i class="${t}" style="left:${(x0 / 14.4).toFixed(2)}%;width:${((x1 - x0) / 14.4).toFixed(2)}%"></i>`;
+              }));
+
+              const nowPct = ((tn - t0) / DAY * 100).toFixed(2);
+              const fullPct = full ? ((full[0] - t0) / DAY * 100).toFixed(2) : null;
+              const html = `<div class="dy">
+                <div class="plot">
+                  <span class="ax l">${nice} kW</span><span class="ax r" style="${nowPct > 88 ? 'visibility:hidden' : ''}">100%</span>
+                  <svg viewBox="0 0 1000 200" preserveAspectRatio="none">
+                    <line x1="0" y1="103" x2="1000" y2="103" class="gl"/><line x1="0" y1="196" x2="1000" y2="196" class="gl"/>
+                    <path d="${area}" class="sol"/>
+                    <path d="${line(ld)}" class="hom"/>
+                    <path d="${sline}" class="bat"/>
+                    <rect x="${X(tn)}" y="0" width="${Math.max(0, 1000 - X(tn))}" height="200" class="fut"/>
+                  </svg>
+                  ${fullPct ? `<span class="fl" style="left:${fullPct}%"></span><span class="flt" style="left:${fullPct}%">Battery full ${tfmt(full[0])}</span>` : ''}
+                  <span class="nw" style="left:${nowPct}%"></span><span class="nwt" style="left:${nowPct}%">now</span>
+                </div>
+                <div class="band">${band}</div>
+                <div class="ticks"><span>12a</span><span>6a</span><span>12p</span><span>6p</span><span>12a</span></div>
+                <div class="foot">
+                  <div class="lg"><span class="s">Solar</span><span class="h">House</span><span class="b">Battery %</span><span class="p">Peak</span><span class="o">Off-peak</span></div>
+                  <div class="st"><span>Solar peaked at <b>${pk[1].toFixed(1)} kW</b>${pk[1] > 0 ? ' at ' + tfmt(pk[0]) : ''}</span>
+                    ${lo[1] <= 100 ? `<span>Battery low <b>${Math.round(lo[1])}%</b> at ${tfmt(lo[0])}</span>` : ''}</div>
+                </div></div>`;
+            E.memo.day = {k: memoKey, html};
+
+            return html;
+
+
+            } catch (err) {
+              console.error('Energy Centre card failed: Your day', err);
+              return `<div style="padding:14px;border-radius:12px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.35);font-size:12px;line-height:1.5;color:#c9d3e4;text-align:left"><b style="color:#ff6b6b">Your day couldn’t draw.</b><br>${String(err && err.message || err).replace(/</g, '&lt;')}<br><span style="color:#8d9ab3">${String(err && err.stack || '').split('\n').slice(1, 3).join(' ').replace(/</g, '&lt;')}</span></div>`;
+            }
+
+            ]]]
+        extra_styles: >
+          .dy{display:flex;flex-direction:column;gap:6px}
+
+          .ld{padding:60px
+          10px;text-align:center;font-size:12.5px;color:#8d9ab3}
+
+          .plot{position:relative;height:210px;margin:14px 0 0}
+
+          .plot
+          svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+
+          .gl{stroke:rgba(255,255,255,.07);stroke-width:1;vector-effect:non-scaling-stroke}
+
+          .sol{fill:rgba(255,194,74,.22);stroke:#ffc24a;stroke-width:2;vector-effect:non-scaling-stroke;filter:drop-shadow(0
+          0 6px rgba(255,194,74,.35))}
+
+          .hom{fill:none;stroke:#e6edff;stroke-width:1.6;vector-effect:non-scaling-stroke;opacity:.85}
+
+          .bat{fill:none;stroke:#3ee08f;stroke-width:2.4;vector-effect:non-scaling-stroke;filter:drop-shadow(0
+          0 5px rgba(62,224,143,.45))}
+
+          .fut{fill:rgba(8,12,22,.5)}
+
+          .ax{position:absolute;top:-14px;font-size:10.5px;color:#6f7c95}.ax.l{left:0}.ax.r{right:0}
+
+          .nw{position:absolute;top:-4px;bottom:0;width:2px;margin-left:-1px;background:#fff;box-shadow:0
+          0 10px rgba(255,255,255,.8);animation:sigNow 2.4s ease-in-out
+          infinite}
+
+          .nwt{position:absolute;top:-16px;translate:-50%
+          0;font-size:11px;color:#fff}
+
+          .fl{position:absolute;top:0;bottom:0;border-left:1px dashed
+          rgba(62,224,143,.7)}
+
+          .flt{position:absolute;top:20px;margin-left:6px;font-size:11px;color:#3ee08f;white-space:nowrap}
+
+          @keyframes sigNow{50%{opacity:.55}}
+
+          .band{position:relative;height:6px;border-radius:3px;overflow:hidden;background:rgba(255,255,255,.04)}
+
+          .band i{position:absolute;top:0;bottom:0}
+
+          .band .sh{background:rgba(255,182,72,.35)}.band
+          .pk{background:#ff6b6b}.band .off{background:#3ee08f}
+
+          .ticks{display:flex;justify-content:space-between;font-size:11px;color:#6f7c95}
+
+          .foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px
+          16px;margin-top:2px}
+
+          .lg{display:flex;flex-wrap:wrap;gap:4px
+          12px;font-size:11px;color:#c9d3e4}
+
+          .lg
+          span::before{content:'';display:inline-block;width:10px;height:3px;border-radius:2px;margin-right:5px;vertical-align:middle}
+
+          .lg .s::before{background:#ffc24a}.lg
+          .h::before{background:#e6edff}.lg .b::before{background:#3ee08f}
+
+          .lg .p::before{background:#ff6b6b}.lg
+          .o::before{background:#3ee08f;opacity:.6}
+
+          .st{display:flex;flex-wrap:wrap;gap:4px
+          14px;font-size:11.5px;color:#8d9ab3}
+
+          .st b{color:#eef3fb;font-weight:600}
+
+          @media (prefers-reduced-motion: reduce){.nw{animation:none}}
+
+          @media (max-width:700px){.plot{height:170px}}
+      - type: custom:button-card
+        template: sig_card
+        view_layout:
+          grid-area: insight
+        show_icon: false
+        show_name: false
+        triggers_update:
+          - sensor.sigen_plant_battery_state_of_charge
+          - sensor.sigenergy_analytics_daily_import
+          - sensor.sigenergy_analytics_daily_export
+        custom_fields:
+          body: |
+            [[[
+            try {
+
+              const num = id => { const v = parseFloat(states[id]?.state); return Number.isFinite(v) ? v : null; };
+              const E = typeof window !== 'undefined' ? window.sigE : null;
+              const t0 = new Date(new Date().setHours(0, 0, 0, 0)).getTime();
+              const D = E && E.daySum && E.daySum.day === t0 ? E.daySum : null;
+              const fit = num('sensor.sigenergy_solar_feed_in_rate'), sh = num('sensor.sigenergy_shoulder_rate');
+              const imp = num('sensor.sigenergy_analytics_daily_import'), ss = num('sensor.sigenergy_analytics_self_sufficiency_today');
+              const tfmt = t => new Date(t).toLocaleTimeString('en-AU', {hour: 'numeric', minute: '2-digit'});
+              let icon = 'mdi:lightbulb-on-outline', title, text;
+              if (D && D.fullAt && D.expAfter >= 1) {
+                const until = D.still ? 'sunset' : D.lastSun ? tfmt(D.lastSun) : 'sunset';
+                const worth = fit !== null ? ` at ${(fit * 100).toFixed(1)}c, worth about $${(D.expAfter * fit).toFixed(2)}` : '';
+                const vs = sh !== null ? ` Bought back at shoulder it would cost about $${(D.expAfter * sh).toFixed(2)}.` : '';
+                title = `Your battery was full by ${tfmt(D.fullAt)}`;
+                text = `After that, about ${D.expAfter.toFixed(0)} kWh went to the grid${worth}.${vs} Anything you can move into ${tfmt(D.fullAt)} to ${until} runs on solar that’s otherwise worth very little.`;
+              } else if (imp !== null && imp >= 1) {
+                icon = 'mdi:transmission-tower-import';
+                title = `You’ve bought ${imp.toFixed(1)} kWh from the grid today`;
+                text = `Self-sufficiency is ${ss === null ? '—' : ss.toFixed(1) + '%'}. ${D && D.socMax !== null ? `The battery peaked at ${Math.round(D.socMax)}% today.` : ''}`;
+              } else if (D && D.socMax !== null) {
+                icon = 'mdi:leaf';
+                title = `${ss === null ? 'Almost' : ss.toFixed(1) + '%'} self-powered today`;
+                text = `The battery peaked at ${Math.round(D.socMax)}% and has covered the house without the grid${D.fullAt ? '' : ', without filling up'}.`;
+              } else if (ss !== null) {
+                icon = 'mdi:leaf';
+                title = `${ss.toFixed(1)}% self-powered today`;
+                text = `You’ve bought ${imp === null ? '—' : imp.toFixed(2)} kWh from the grid so far. More detail appears once today’s history has loaded.`;
+              } else {
+                title = 'Gathering today’s story';
+                text = 'The insight appears once today’s history has loaded.';
+              }
+              return `<div class="ins"><span class="io"><ha-icon icon="${icon}"></ha-icon></span><div><b>${title}</b><p>${text}</p></div></div>`;
+
+            } catch (err) {
+              console.error('Energy Centre card failed: This card', err);
+              return `<div style="padding:14px;border-radius:12px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.35);font-size:12px;line-height:1.5;color:#c9d3e4;text-align:left"><b style="color:#ff6b6b">This card couldn’t draw.</b><br>${String(err && err.message || err).replace(/</g, '&lt;')}<br><span style="color:#8d9ab3">${String(err && err.stack || '').split('\n').slice(1, 3).join(' ').replace(/</g, '&lt;')}</span></div>`;
+            }
+            ]]]
+        styles:
+          card:
+            - border: 1px solid rgba(255,182,72,.28)
+            - background: >-
+                linear-gradient(120deg, rgba(255,182,72,.10), rgba(12,17,30,.86)
+                60%)
+          grid:
+            - grid-template-areas: '"body"'
+            - grid-template-columns: 1fr
+            - grid-template-rows: auto
+        extra_styles: >
+          .ins{display:flex;gap:14px;align-items:flex-start}
+
+          .io{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:rgba(255,182,72,.16);color:#ffb648;box-shadow:0
+          0 18px rgba(255,182,72,.25)}
+
+          .io ha-icon{width:20px;height:20px;--mdc-icon-size:20px}
+
+          .ins b{display:block;font-size:15px;font-weight:600;color:#f4f7fc}
+
+          .ins p{margin:4px 0 0;font-size:13px;line-height:1.5;color:#c9d3e4}
+      - type: custom:button-card
+        template: sig_card
+        view_layout:
+          grid-area: live
+        name: Live power
+        icon: mdi:flash
+        variables:
+          reserve_soc: 10
+        custom_fields:
+          body: |
+            [[[
+            try {
+
+              const num = id => { const v = parseFloat(states[id]?.state); return Number.isFinite(v) ? v : null; };
+              const f = (v, d = 2) => v === null ? '—' : v.toFixed(d);
+              const pv = num('sensor.sigen_plant_pv_power'), load = num('sensor.sigen_plant_consumed_power');
+              const gi = num('sensor.sigen_plant_grid_import_power'), ge = num('sensor.sigen_plant_grid_export_power');
+              const bp = num('sensor.sigen_plant_battery_power'), soc = num('sensor.sigen_plant_battery_state_of_charge');
+              const cap = num('sensor.sigen_plant_rated_energy_capacity');
+              const rsv = (() => {
+              const pick = re => { const id = Object.keys(states).find(k => /^(number|sensor|input_number)\./.test(k) && /sigen/.test(k) && re.test(k));
+                const v = id ? parseFloat(states[id].state) : NaN; return Number.isFinite(v) && v >= 0 && v <= 100 ? {id, v} : null; };
+              const b = pick(/backup.*(soc|state_of_charge)/), c = pick(/discharg.*cut.?off.*(soc|state_of_charge)/);
+              const fb = Number(variables.reserve_soc ?? 10);
+              return {b, c, found: !!(b || c), floor: (b || c) ? Math.max(b ? b.v : 0, c ? c.v : 0) : fb, cutoff: c ? c.v : (b ? 0 : fb)};
+            })();
+            const reserve = rsv.floor, T = 0.05;
+              const solarOn = (pv ?? 0) > T, charging = (bp ?? 0) > T, discharging = (bp ?? 0) < -T;
+              const importing = (gi ?? 0) > T && (gi ?? 0) >= (ge ?? 0), exporting = (ge ?? 0) > T && (ge ?? 0) > (gi ?? 0);
+              const battKw = Math.abs(bp ?? 0), gridKw = importing ? gi : exporting ? ge : Math.max(gi ?? 0, ge ?? 0);
+              const hm = h => { if (!Number.isFinite(h) || h <= 0) return null; const m = Math.round(h * 60); return m >= 60 ? `${Math.floor(m / 60)}h ${m % 60}m` : `${m}m`; };
+              let msg;
+              if (pv === null || load === null || bp === null) msg = 'Some live sensors are unavailable, so these figures may be incomplete.';
+              else if (charging && importing) msg = `The battery is charging from the grid at ${f(battKw)} kW.`;
+              else if (charging) { const t = cap !== null && soc !== null ? hm(cap * (100 - soc) / 100 / battKw) : null; msg = `Solar is covering the house and charging the battery${t ? `. Full in about ${t} at this rate` : ''}.`; }
+              else if (discharging) { const t = cap !== null && soc !== null ? hm(Math.max(0, cap * (soc - reserve) / 100) / battKw) : null; msg = `The battery is carrying the house${t ? `, with about ${t} left above the ${reserve}% reserve at this rate` : ''}.`; }
+              else if (exporting && soc !== null && soc >= 98) msg = `The battery is full, so surplus solar (${f(ge)} kW) is going to the grid.`;
+              else if (exporting) msg = `Exporting ${f(ge)} kW of surplus solar.`;
+              else if (importing) msg = `Drawing ${f(gi)} kW from the grid${soc !== null && soc <= reserve + 1 ? ' because the battery is at its reserve' : ''}.`;
+              else msg = 'The system is idle and roughly balanced.';
+              const ar = (area, on, cls, color) => `<div class="ar ${area} ${cls} ${on ? 'on' : ''}" style="color:${on ? color : 'rgba(141,154,179,.3)'}"></div>`;
+              const socW = soc === null ? 0 : Math.max(0, Math.min(100, soc));
+              return `<div class="fw"><div class="fg">
+                <div class="nd solar"><ha-icon icon="mdi:white-balance-sunny"></ha-icon><span>Solar</span><b>${f(pv)} kW</b></div>
+                ${ar('a1 v', solarOn, 'down', '#ffc24a')}
+                <div class="nd grid"><ha-icon icon="mdi:transmission-tower"></ha-icon><span>Grid</span><b>${f(gridKw)} kW</b>
+                  <small class="${importing ? 'imp' : exporting ? 'exp' : 'idle'}">${importing ? 'importing' : exporting ? 'exporting' : 'idle'}</small></div>
+                ${ar('a2 h', importing || exporting, importing ? 'fwd' : 'rev', importing ? '#ff6b6b' : '#8ea6ff')}
+                <div class="nd home"><ha-icon icon="mdi:home-variant-outline"></ha-icon><span>Home</span><b>${f(load)} kW</b></div>
+                ${ar('a3 h', charging || discharging, charging ? 'fwd' : 'rev', '#3ee08f')}
+                <div class="nd batt"><ha-icon icon="mdi:home-battery-outline"></ha-icon><span>Battery ${soc === null ? '—' : soc.toFixed(0) + '%'}</span><b>${f(battKw)} kW</b>
+                  <small class="${charging ? 'chg' : discharging ? 'dis' : 'idle'}">${charging ? 'charging' : discharging ? 'supplying' : 'standby'}</small>
+                  <i class="socbar"><em style="width:${socW}%"></em></i></div>
+              </div><div class="msg">${msg}</div></div>`;
+
+            } catch (err) {
+              console.error('Energy Centre card failed: Live power', err);
+              return `<div style="padding:14px;border-radius:12px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.35);font-size:12px;line-height:1.5;color:#c9d3e4;text-align:left"><b style="color:#ff6b6b">Live power couldn’t draw.</b><br>${String(err && err.message || err).replace(/</g, '&lt;')}<br><span style="color:#8d9ab3">${String(err && err.stack || '').split('\n').slice(1, 3).join(' ').replace(/</g, '&lt;')}</span></div>`;
+            }
+            ]]]
+        extra_styles: >
+          .fw{height:100%;display:flex;flex-direction:column;gap:10px}
+
+          .fg{flex:1;display:grid;grid-template-columns:minmax(0,1fr)
+          minmax(26px,70px) minmax(0,1fr) minmax(26px,70px) minmax(0,1fr);
+              grid-template-rows:auto minmax(26px,1fr) auto;grid-template-areas:". . solar . ." ". . a1 . ." "grid a2 home a3 batt";align-items:center;justify-items:center}
+          .nd{display:flex;flex-direction:column;align-items:center;text-align:center;z-index:2}
+
+          .nd
+          ha-icon{width:24px;height:24px;--mdc-icon-size:24px;padding:10px;border-radius:50%;background:rgba(255,255,255,.05);border:1px
+          solid rgba(255,255,255,.1);margin-bottom:5px}
+
+          .nd span{font-size:11.5px;color:#8d9ab3}
+
+          .nd
+          b{font-size:18px;font-weight:300;margin-top:1px;white-space:nowrap;color:#eef3fb;font-variant-numeric:tabular-nums}
+
+          .nd small{font-size:11px;margin-top:1px}
+
+          .solar{grid-area:solar}.solar
+          ha-icon{color:#ffc24a;border-color:rgba(255,194,74,.45);box-shadow:0 0
+          24px rgba(255,194,74,.25)}
+
+          .grid{grid-area:grid}.grid ha-icon{color:#8ea6ff}
+
+          .home{grid-area:home}.home ha-icon{color:#e6edff}
+
+          .batt{grid-area:batt}.batt
+          ha-icon{color:#3ee08f;border-color:rgba(62,224,143,.45);box-shadow:0 0
+          24px rgba(62,224,143,.22)}
+
+          .imp{color:#ff6b6b}.exp{color:#8ea6ff}.chg{color:#3ee08f}.dis{color:#3ee08f}.idle{color:#6f7c95}
+
+          .socbar{display:block;width:60px;height:4px;border-radius:4px;background:rgba(255,255,255,.1);margin-top:6px;overflow:hidden}
+
+          .socbar em{display:block;height:100%;background:#3ee08f;box-shadow:0 0
+          8px #3ee08f}
+
+          .ar{position:relative;width:100%;height:100%}
+
+          .ar::before{content:'';position:absolute;opacity:.75}
+
+          .ar.h::before{left:0;right:0;top:50%;height:2px;margin-top:-1px;background:repeating-linear-gradient(90deg,currentColor
+          0 4px,transparent 4px 10px)}
+
+          .ar.v::before{top:0;bottom:0;left:50%;width:2px;margin-left:-1px;background:repeating-linear-gradient(180deg,currentColor
+          0 4px,transparent 4px 10px)}
+
+          .ar.on{filter:drop-shadow(0 0 5px currentColor)}
+
+          .ar.on.fwd::before{animation:sigR .8s linear
+          infinite}.ar.on.rev::before{animation:sigL .8s linear
+          infinite}.ar.on.down::before{animation:sigD .8s linear infinite}
+
+          .a1{grid-area:a1}.a2{grid-area:a2}.a3{grid-area:a3}
+
+          @keyframes sigR{to{background-position:10px 0}}@keyframes
+          sigL{to{background-position:-10px 0}}@keyframes
+          sigD{to{background-position:0 10px}}
+
+          .msg{padding:10px
+          13px;border-radius:14px;background:rgba(255,255,255,.04);border:1px
+          solid
+          rgba(255,255,255,.07);font-size:13px;line-height:1.45;color:#c9d3e4}
+
+          @media (prefers-reduced-motion:
+          reduce){.ar.on::before{animation:none!important}}
+
+          @media (max-width:700px){.nd
+          ha-icon{width:20px;height:20px;--mdc-icon-size:20px;padding:8px}.nd
+          b{font-size:15px}}
+      - type: custom:button-card
+        template: sig_card
+        view_layout:
+          grid-area: tou
+        name: Tariff today
+        icon: mdi:clock-outline
+        triggers_update: all
+        variables:
+          reserve_soc: 10
+        custom_fields:
+          body: >
+            [[[
+
+            try {
+
+              const num = id => { const v = parseFloat(states[id]?.state); return Number.isFinite(v) ? v : null; };
+              const tm = (id, def) => { const m = /^(\d{1,2}):(\d{2})/.exec(states[id]?.state || ''); return m ? (+m[1]) * 60 + (+m[2]) : def; };
+              const amS = tm('input_datetime.sigenergy_analytics_ui_peak_am_start', 420);
+              const amE = tm('input_datetime.sigenergy_analytics_ui_peak_am_end', 540);
+              const opS = tm('input_datetime.sigenergy_analytics_ui_off_peak_start', 660);
+              const opE = tm('input_datetime.sigenergy_analytics_ui_off_peak_end', 900);
+              const pmS = tm('input_datetime.sigenergy_analytics_ui_peak_pm_start', 1020);
+              const pmE = tm('input_datetime.sigenergy_analytics_ui_peak_pm_end', 1260);
+              const order = [amS, amE, opS, opE, pmS, pmE];
+              const sane = order.every((v, i) => i === 0 || v >= order[i - 1]);
+              const segs = [[0, amS, 'sh'], [amS, amE, 'pk'], [amE, opS, 'sh'], [opS, opE, 'off'],
+                            [opE, pmS, 'sh'], [pmS, pmE, 'pk'], [pmE, 1440, 'sh']].filter(x => x[1] > x[0]);
+              const NAME = {pk: 'Peak', sh: 'Shoulder', off: 'Off-peak'};
+              const RATE = {pk: num('sensor.sigenergy_peak_rate'), sh: num('sensor.sigenergy_shoulder_rate'), off: num('sensor.sigenergy_off_peak_rate')};
+              const cents = v => v === null ? '—' : (v * 100).toFixed(2) + 'c';
+              const dur = m => { m = Math.max(0, Math.round(m)); const h = Math.floor(m / 60), mm = m % 60; return h ? `${h}h ${String(mm).padStart(2, '0')}m` : `${mm}m`; };
+
+              // Tariff clock is fixed AEST (UTC+10), whatever the browser's time zone.
+              const d = new Date();
+              const now = ((d.getUTCHours() + 10) % 24) * 60 + d.getUTCMinutes();
+              const all = segs.concat(segs.map(x => [x[0] + 1440, x[1] + 1440, x[2]]));
+              const ci = Math.max(0, all.findIndex(x => now >= x[0] && now < x[1]));
+              const cur = all[ci];
+              let j = ci + 1; while (j < all.length - 1 && all[j][2] === cur[2]) j++;
+              const nxt = all[j];
+
+              // Cross-check against the live tariff sensor.
+              const live = String(states['sensor.sigenergy_current_tariff']?.state || '').toLowerCase().trim().replace(/[ _]+/g, '-');
+              const liveKey = live === 'peak' ? 'pk' : live === 'shoulder' ? 'sh' : live === 'off-peak' ? 'off' : null;
+              const nearEdge = Math.min(now - cur[0], cur[1] - now) < 3;
+              const mismatch = liveKey && liveKey !== cur[2] && !nearEdge;
+              const showKey = liveKey || cur[2];
+
+              // Peak readiness (estimate).
+              const soc = num('sensor.sigen_plant_battery_state_of_charge'), cap = num('sensor.sigen_plant_rated_energy_capacity');
+              const bp = num('sensor.sigen_plant_battery_power') ?? 0;
+              const rsv = (() => {
+              const pick = re => { const id = Object.keys(states).find(k => /^(number|sensor|input_number)\./.test(k) && /sigen/.test(k) && re.test(k));
+                const v = id ? parseFloat(states[id].state) : NaN; return Number.isFinite(v) && v >= 0 && v <= 100 ? {id, v} : null; };
+              const b = pick(/backup.*(soc|state_of_charge)/), c = pick(/discharg.*cut.?off.*(soc|state_of_charge)/);
+              const fb = Number(variables.reserve_soc ?? 10);
+              return {b, c, found: !!(b || c), floor: (b || c) ? Math.max(b ? b.v : 0, c ? c.v : 0) : fb, cutoff: c ? c.v : (b ? 0 : fb)};
+            })();
+
+            const reserve = rsv.floor;
+              const a = states['sensor.sigenergy_analytics_7_day_intelligence']?.attributes || {};
+              const avg = parseFloat(a.average_load_per_day_kwh);
+              const inPeak = cur[2] === 'pk';
+              const pk = inPeak ? cur : all.find(x => x[2] === 'pk' && x[0] > now);
+              const hrs = pk ? (inPeak ? pk[1] - now : pk[1] - pk[0]) / 60 : 0;
+              const need = Number.isFinite(avg) && pk ? avg / 24 * hrs : null;
+              const usable = soc !== null && cap !== null ? Math.max(0, cap * (soc - reserve) / 100) : null;
+              let lvl = 'na', word = 'No estimate yet';
+              if (need !== null && usable !== null) {
+                if (usable >= need * 1.25) { lvl = 'good'; word = 'Ready'; }
+                else if (usable >= need) { lvl = 'warn'; word = 'Tight'; }
+                else { lvl = 'bad'; word = 'Short'; }
+                if (!inPeak && pk && lvl !== 'good' && bp > 0.05) {
+                  const proj = Math.min(cap * (100 - reserve) / 100, usable + bp * (pk[0] - now) / 60);
+                  if (proj >= need) { lvl = 'good'; word = 'On track'; }
+                }
+              }
+              const pct = need && usable !== null ? Math.min(100, usable / need * 100) : 0;
+              const when = inPeak ? `Peak now, ends in ${dur(pk[1] - now)}` : pk ? `Next peak in ${dur(pk[0] - now)}` : '';
+
+              const delta = -d.getTimezoneOffset() - 600; let bar = '';
+            segs.forEach(([a, b, t]) => [-1440, 0, 1440].forEach(k => { const x0
+            = Math.max(0, a + delta + k), x1 = Math.min(1440, b + delta + k);
+              if (x1 > x0) bar += `<i class="${t}" style="left:${(x0 / 14.4).toFixed(2)}%;width:${((x1 - x0) / 14.4).toFixed(2)}%"></i>`; }));
+            const nowLocal = d.getHours() * 60 + d.getMinutes();
+                const tz = delta === 0 ? 'Your clock matches the AEST tariff clock' : 'Shown in your local time';
+              const src = states['sensor.sigenergy_analytics_tariff_source_status']?.state || 'unknown';
+              let warn = '';
+              if (!sane) warn = 'The tariff windows look out of order. Check the contract times.';
+              else if (mismatch) warn = `The live tariff says ${NAME[liveKey]} but these windows say ${NAME[cur[2]]}. The timeline may not match the live tariff source (${src}).`;
+              const fit = num('sensor.sigenergy_solar_feed_in_rate'), sup = num('sensor.sigenergy_supply_rate');
+
+              return `<div class="tw">
+                <div class="nowrow">
+                  <div><span class="lb">Now</span><b class="cur ${showKey}">${NAME[showKey]}</b><small>${cents(RATE[showKey])}/kWh</small></div>
+                  <div class="nx"><span class="lb">Next</span><b>${NAME[nxt[2]]}</b><small>in ${dur(nxt[0] - now)}</small></div>
+                </div>
+                <div class="tl"><div class="bar">${bar}</div><u style="left:${(nowLocal / 1440 * 100).toFixed(2)}%"></u></div>
+                <div class="ticks"><span>12a</span><span>6a</span><span>12p</span><span>6p</span><span>12a</span></div>
+                <div class="tz">${tz}</div>
+                <div class="rd ${lvl}">
+                  <div class="rh"><span>Peak readiness</span><b>${word}</b></div>
+                  <small>${when}</small>
+                  <i><em style="width:${pct.toFixed(0)}%"></em></i>
+                  <small>${usable !== null ? usable.toFixed(1) : '—'} kWh above ${reserve}% reserve, about ${need !== null ? need.toFixed(1) : '—'} kWh needed</small>
+                  <small class="fn">Estimate spreads your 7-day average use evenly; evening peaks often need more.</small>
+                </div>
+                ${warn ? `<div class="warn">${warn}</div>` : ''}
+                <div class="ft">Feed-in ${cents(fit)}/kWh, supply ${sup === null ? '—' : '$' + sup.toFixed(2)}/day</div>
+              </div>`;
+
+            } catch (err) {
+              console.error('Energy Centre card failed: Tariff today', err);
+              return `<div style="padding:14px;border-radius:12px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.35);font-size:12px;line-height:1.5;color:#c9d3e4;text-align:left"><b style="color:#ff6b6b">Tariff today couldn’t draw.</b><br>${String(err && err.message || err).replace(/</g, '&lt;')}<br><span style="color:#8d9ab3">${String(err && err.stack || '').split('\n').slice(1, 3).join(' ').replace(/</g, '&lt;')}</span></div>`;
+            }
+
+            ]]]
+        styles:
+          card:
+            - min-height: 300px
+        extra_styles: >
+          .tw{height:100%;display:flex;flex-direction:column;gap:7px}
+
+          .nowrow{display:flex;justify-content:space-between;align-items:flex-end}
+
+          .nowrow div{display:flex;flex-direction:column}
+
+          .nowrow .nx{align-items:flex-end}
+
+          .lb{font-size:11px;color:rgba(201,211,228,0.66)}
+
+          .nowrow b{font-size:24px;font-weight:300;line-height:1.15}
+
+          .nowrow .nx b{font-size:14px}
+
+          .nowrow small{font-size:11.5px;color:rgba(201,211,228,0.77)}
+
+          .cur.pk{color:#ff6b6b;text-shadow:0 0 12px rgba(255,107,107,0.35)}
+
+          .cur.sh{color:#ffb648;text-shadow:0 0 12px rgba(255,194,74,0.3)}
+
+          .cur.off{color:#3ee08f;text-shadow:0 0 12px rgba(62,224,143,0.3)}
+
+          .tl{position:relative;margin-top:4px}
+
+          .bar{position:relative;height:14px;border-radius:8px;overflow:hidden;box-shadow:inset
+          0 0 0 1px rgba(255,255,255,.08)}
+
+          .bar i{position:absolute;top:0;bottom:0}
+
+          .bar .pk{background:#ff6b6b}.bar .sh{background:#ffb648}.bar
+          .off{background:#3ee08f}
+
+          .tl
+          u{position:absolute;top:-5px;width:3px;height:24px;margin-left:-1px;border-radius:2px;background:#fff;
+                box-shadow:0 0 10px rgba(255,255,255,.9);text-decoration:none}
+          .ticks{display:flex;justify-content:space-between;font-size:10.5px;color:rgba(201,211,228,0.605)}
+
+          .tz{font-size:10.5px;color:rgba(201,211,228,0.495)}
+
+          .rd{margin-top:2px;padding:8px
+          10px;border-radius:11px;background:rgba(255,255,255,0.04);border:1px
+          solid rgba(255,255,255,0.09);
+              display:flex;flex-direction:column;gap:3px}
+          .rh{display:flex;justify-content:space-between;align-items:center}
+
+          .rh span{font-size:12px;color:rgba(201,211,228,0.825);font-weight:700}
+
+          .rh b{font-size:14px;font-weight:800}
+
+          .rd small{font-size:11px;color:rgba(201,211,228,0.682)}
+
+          .rd .fn{font-size:10.5px;color:rgba(201,211,228,0.462)}
+
+          .rd
+          i{display:block;height:7px;border-radius:6px;background:rgba(255,255,255,0.12);overflow:hidden;margin:2px
+          0}
+
+          .rd em{display:block;height:100%;border-radius:6px}
+
+          .rd.good b{color:#3ee08f}.rd.good
+          em{background:linear-gradient(90deg,#8ea6ff,#3ee08f);box-shadow:0 0
+          10px rgba(62,224,143,0.4)}
+
+          .rd.warn b{color:#ffb547}.rd.warn em{background:#ffb547}
+
+          .rd.bad b{color:#ff6b6b}.rd.bad em{background:#ff6b6b}
+
+          .rd.na b{color:rgba(201,211,228,0.66)}
+
+          .warn{padding:7px
+          9px;border-radius:9px;background:rgba(255,194,74,0.25);border:1px
+          solid rgba(255,194,74,0.3);
+                color:#ffb547;font-size:11px;line-height:1.35}
+          .ft{margin-top:auto;font-size:11px;color:rgba(201,211,228,0.55)}
+      - type: custom:button-card
+        template: sig_card
+        view_layout:
+          grid-area: flow
+        name: Where today’s energy went
+        icon: mdi:source-branch
+        custom_fields:
+          body: |
+            [[[
+            try {
+
+              const num = id => { const v = parseFloat(states[id]?.state); return Number.isFinite(v) ? Math.max(0, v) : null; };
+              const pv = num('sensor.sigenergy_analytics_daily_pv'), load = num('sensor.sigenergy_analytics_daily_load');
+              const imp = num('sensor.sigenergy_analytics_daily_import'), exp = num('sensor.sigenergy_analytics_daily_export');
+              const ch = num('sensor.sigenergy_analytics_daily_battery_charge'), dis = num('sensor.sigenergy_analytics_daily_battery_discharge');
+              if ([pv, load, imp, exp, ch, dis].some(v => v === null)) return '<div class="ld">Today’s energy totals are unavailable.</div>';
+              if (pv + dis + imp < 0.05) return '<div class="ld">Nothing to show yet today.</div>';
+              const sExp = Math.min(exp, pv), sBat = Math.min(ch, Math.max(0, pv - sExp)), sHome = Math.max(0, pv - sExp - sBat);
+              const L = [['Solar', sHome + sBat + sExp, '#ffc24a'], ['Battery', dis, '#3ee08f'], ['Grid', imp, '#ff6b6b']];
+              const R = [['Home', sHome + dis + imp, '#e6edff'], ['Battery', sBat, '#3ee08f'], ['Export', sExp, '#8ea6ff']];
+              const flows = [[0, 0, sHome], [0, 1, sBat], [0, 2, sExp], [1, 0, dis], [2, 0, imp]];
+              const top = 8, gap = 10, H = 184;
+              const tot = Math.max(L.reduce((a, n) => a + n[1], 0), R.reduce((a, n) => a + n[1], 0));
+              const k = (H - gap * 2) / Math.max(0.01, tot);
+              const hgt = v => v > 0 ? Math.max(2.5, v * k) : 0;
+              const lay = arr => { let y = top; return arr.map(n => { const o = {y, h: hgt(n[1])}; y += o.h + (n[1] > 0 ? gap : 0); return o; }); };
+              const LP = lay(L), RP = lay(R), lo = LP.map(p => p.y), ro = RP.map(p => p.y);
+              const x0 = 112, x1 = 348, xm = 230;
+              let paths = '';
+              flows.forEach(([a, b, v]) => { if (v <= 0) return; const hh = hgt(v);
+                const ya = lo[a], yb = ro[b]; lo[a] += hh; ro[b] += hh;
+                paths += `<path d="M${x0},${ya} C${xm},${ya} ${xm},${yb} ${x1},${yb} L${x1},${yb + hh} C${xm},${yb + hh} ${xm},${ya + hh} ${x0},${ya + hh} Z" fill="${L[a][2]}" fill-opacity="${a === 2 ? .7 : .32}"/>`; });
+              const fmt = v => v >= 10 ? v.toFixed(0) : v.toFixed(1);
+              const nodes = L.map((n, i) => n[1] > 0 ? `<rect x="${x0 - 8}" y="${LP[i].y}" width="8" height="${LP[i].h}" rx="3" fill="${n[2]}"/>
+                  <text x="${x0 - 14}" y="${LP[i].y + LP[i].h / 2 + 5}" text-anchor="end" fill="${n[2]}">${n[0]} <tspan fill="#c9d3e4">${fmt(n[1])}</tspan></text>` : '').join('')
+                + R.map((n, i) => n[1] > 0 ? `<rect x="${x1}" y="${RP[i].y}" width="8" height="${RP[i].h}" rx="3" fill="${n[2]}"/>
+                  <text x="${x1 + 14}" y="${RP[i].y + RP[i].h / 2 + 5}" fill="${n[2]}">${n[0]} <tspan fill="#c9d3e4">${fmt(n[1])}</tspan></text>` : '').join('');
+              const pct = pv > 0 ? Math.round(sExp / pv * 100) : 0;
+              return `<div class="fl"><svg viewBox="0 0 460 200" role="img" aria-label="Today's energy flow in kWh">${paths}${nodes}</svg>
+                <p>kWh today. ${pct}% of today’s solar was exported. Assumes the battery charged from solar and exports came from solar.</p></div>`;
+
+            } catch (err) {
+              console.error('Energy Centre card failed: Where today’s energy went', err);
+              return `<div style="padding:14px;border-radius:12px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.35);font-size:12px;line-height:1.5;color:#c9d3e4;text-align:left"><b style="color:#ff6b6b">Where today’s energy went couldn’t draw.</b><br>${String(err && err.message || err).replace(/</g, '&lt;')}<br><span style="color:#8d9ab3">${String(err && err.stack || '').split('\n').slice(1, 3).join(' ').replace(/</g, '&lt;')}</span></div>`;
+            }
+            ]]]
+        extra_styles: >
+          .fl{display:flex;flex-direction:column;align-items:center;gap:6px}
+
+          .fl svg{width:100%;max-width:560px;height:auto;overflow:visible}
+
+          .fl text{font-size:15px;font-weight:600}
+
+          .fl p{margin:0;align-self:stretch;font-size:11px;color:#6f7c95}
+
+          .ld{padding:40px
+          10px;text-align:center;font-size:12.5px;color:#8d9ab3}
+      - type: custom:button-card
+        template: sig_card
+        view_layout:
+          grid-area: money
+        name: Today’s money
+        icon: mdi:piggy-bank-outline
+        variables:
+          icon_color: '#3ee08f'
+        custom_fields:
+          body: |
+            [[[
+            try {
+
+              const num = id => { const v = parseFloat(states[id]?.state); return Number.isFinite(v) ? v : null; };
+              const ben = num('sensor.sigenergy_analytics_system_benefit_today');
+              const fi = num('sensor.sigenergy_analytics_daily_export_income');
+              const ic = num('sensor.sigenergy_analytics_daily_import_cost');
+              const sup = num('sensor.sigenergy_supply_rate');
+              const bill = num('sensor.sigenergy_analytics_actual_cost_today');
+              const $ = v => v === null ? '—' : '$' + Math.abs(v).toFixed(2);
+              const credit = v => v === null ? '—' : v < 0 ? `$${Math.abs(v).toFixed(2)} credit` : `$${v.toFixed(2)} to pay`;
+              const avoided = ben !== null && fi !== null ? ben - fi : null;
+              return `<div class="mo">
+                <div class="hero"><b>${$(ben)}</b><span>saved by solar and battery</span></div>
+                <p><span>Imports avoided</span><b>${$(avoided)}</b></p>
+                <p><span>Feed-in earned</span><b class="ex">${$(fi)}</b></p>
+                <p><span>Grid power bought</span><b>${$(ic)}</b></p>
+                <p><span>Supply charge</span><b>${$(sup)}</b></p>
+                <p class="tot"><span>Your bill today</span><b class="${bill !== null && bill < 0 ? 'cr' : 'pay'}">${credit(bill)}</b></p>
+              </div>`;
+
+            } catch (err) {
+              console.error('Energy Centre card failed: Today’s money', err);
+              return `<div style="padding:14px;border-radius:12px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.35);font-size:12px;line-height:1.5;color:#c9d3e4;text-align:left"><b style="color:#ff6b6b">Today’s money couldn’t draw.</b><br>${String(err && err.message || err).replace(/</g, '&lt;')}<br><span style="color:#8d9ab3">${String(err && err.stack || '').split('\n').slice(1, 3).join(' ').replace(/</g, '&lt;')}</span></div>`;
+            }
+            ]]]
+        extra_styles: >
+          .mo{display:flex;flex-direction:column}
+
+          .hero{margin-bottom:8px}
+
+          .hero
+          b{display:block;font-size:40px;line-height:1;font-weight:200;letter-spacing:-1px;color:#3ee08f;text-shadow:0
+          0 24px rgba(62,224,143,.25);font-variant-numeric:tabular-nums}
+
+          .hero span{font-size:12px;color:#8d9ab3}
+
+          .mo
+          p{margin:0;display:flex;justify-content:space-between;gap:10px;padding:7px
+          0;border-bottom:1px solid rgba(255,255,255,.07);font-size:13px}
+
+          .mo p span{color:#8d9ab3}
+
+          .mo p
+          b{font-weight:600;color:#eef3fb;font-variant-numeric:tabular-nums}
+
+          .mo .ex{color:#8ea6ff}
+
+          .mo .tot{border-bottom:0;padding-top:9px}
+
+          .mo .tot span{color:#c9d3e4}
+
+          .mo .cr{color:#3ee08f}.mo .pay{color:#ffb547}
+      - type: custom:button-card
+        template: sig_card
+        view_layout:
+          grid-area: alerts
+        name: What matters now
+        icon: mdi:shield-check-outline
+        variables:
+          admin_path: /dashboard-test2/diagnostics
+        tap_action:
+          action: navigate
+          navigation_path: '[[[ return variables.admin_path ]]]'
+        custom_fields:
+          body: >
+            [[[
+
+            try {
+
+              const s = id => states[id]?.state;
+              const n = id => { const v = parseFloat(s(id)); return Number.isFinite(v) ? v : null; };
+              const dead = v => v === undefined || v === 'unavailable' || v === 'unknown';
+              const items = []; let checks = 0;
+              const add = (lvl, t, m) => items.push([lvl, t, m]);
+              checks++; if (s('binary_sensor.sigenergy_analytics_data_problem') === 'on') add('bad', 'Analytics', 'A data problem is active, so financial totals may be wrong.');
+              checks++; const cv = s('sensor.sigenergy_analytics_active_contract_validation'); if (cv !== 'VALID') add('bad', 'Contract', `Active contract validation is ${cv ?? 'missing'}.`);
+              checks++; const days = n('sensor.sigenergy_analytics_pricing_days_remaining');
+              if (days !== null && days <= 0) add('bad', 'Pricing', 'Contract pricing has expired. Load the new rates.');
+              else if (days !== null && days <= 30) add('warn', 'Pricing', `Pricing expires in ${days.toFixed(0)} days. Stage the next contract.`);
+              checks++; const al = [['1', s('sensor.sigen_plant_general_alarm_1')], ['2', s('sensor.sigen_plant_general_alarm_2')], ['3', s('sensor.sigen_plant_general_alarm_3')],
+                ['4', s('sensor.sigen_plant_general_alarm_4')], ['5', s('sensor.sigen_plant_general_alarm_5')], ['6', s('sensor.sigen_plant_general_alarm_6')]].filter(([i, v]) => !dead(v) && v !== 'No Problem');
+              if (al.length) add('bad', 'Inverter alarm', al.map(([i, v]) => `Alarm ${i}: ${v}`).join('; '));
+              checks++; const err = n('sensor.sigenergy_analytics_daily_energy_balance_error'); if (err !== null && err > 0.25) add('warn', 'Data balance', `Today's energy balance is off by ${err.toFixed(2)} kWh.`);
+              checks++; const soh = n('sensor.sigen_plant_battery_state_of_health'); if (soh !== null && soh < 90) add('warn', 'Battery health', `State of health is ${soh.toFixed(1)}%.`);
+              checks++; const t = n('sensor.sigen_plant_ess_average_cell_temperature'); if (t !== null && (t < 5 || t > 45)) add('warn', 'Battery temperature', `${t.toFixed(1)} °C is outside the normal range.`);
+              checks++; if (s('input_boolean.sigenergy_analytics_rebuild_review') === 'on') add('warn', 'Analytics rebuild', 'The last rebuild priced some hours without a contract record. Check Contract History, then clear the flag in Admin.');
+            checks++; const bf =
+            s('sensor.sigenergy_analytics_backfill_status'); if (!dead(bf) && bf
+            !== 'Complete') add('warn', 'Analytics backfill', `Status: ${bf}.`);
+              checks++; const off = [['Solar', s('sensor.sigen_plant_pv_power')], ['House', s('sensor.sigen_plant_consumed_power')], ['Battery', s('sensor.sigen_plant_battery_power')],
+                ['SOC', s('sensor.sigen_plant_battery_state_of_charge')], ['Grid import', s('sensor.sigen_plant_grid_import_power')], ['Grid export', s('sensor.sigen_plant_grid_export_power')],
+                ['Tariff', s('sensor.sigenergy_current_tariff')]].filter(([k, v]) => dead(v)).map(([k]) => k);
+              if (off.length) add('warn', 'Sensors offline', `${off.join(', ')} unavailable.`);
+              const probs = items.sort((x, y) => (x[0] === 'bad' ? 0 : 1) - (y[0] === 'bad' ? 0 : 1));
+              const info = [];
+              if (n('sensor.sigenergy_analytics_reconciled_bills_count') === 0) info.push(['info', 'Retailer bill', 'No bill checked yet. Add your first one when it arrives.']);
+              info.push(['info', 'Tariff source', s('sensor.sigenergy_analytics_tariff_source_status') ?? 'unknown']);
+              const rows = (probs.length ? probs : [['good', 'All clear', `All ${checks} checks passed.`]]).concat(info);
+              return `<div class="mt">${rows.map(x => `<p class="${x[0]}"><i></i><span><b>${x[1]}</b><small>${x[2]}</small></span></p>`).join('')}</div>`;
+
+            } catch (err) {
+              console.error('Energy Centre card failed: What matters now', err);
+              return `<div style="padding:14px;border-radius:12px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.35);font-size:12px;line-height:1.5;color:#c9d3e4;text-align:left"><b style="color:#ff6b6b">What matters now couldn’t draw.</b><br>${String(err && err.message || err).replace(/</g, '&lt;')}<br><span style="color:#8d9ab3">${String(err && err.stack || '').split('\n').slice(1, 3).join(' ').replace(/</g, '&lt;')}</span></div>`;
+            }
+
+            ]]]
+        styles:
+          card:
+            - height: auto
+        extra_styles: >
+          .mt{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px}
+
+          .mt
+          p{margin:0;border-radius:14px;background:rgba(255,255,255,.035);border:1px
+          solid rgba(255,255,255,.07);padding:9px 12px;
+                display:grid;grid-template-columns:9px 1fr;gap:10px;align-items:center}
+          .mt i{width:8px;height:8px;border-radius:50%}
+
+          .mt .good i{background:#3ee08f;box-shadow:0 0 8px #3ee08f}.mt .warn
+          i{background:#ffb547;box-shadow:0 0 8px #ffb547}
+
+          .mt .bad i{background:#ff6b6b;box-shadow:0 0 8px #ff6b6b}.mt .info
+          i{background:#8ea6ff;box-shadow:0 0 8px #8ea6ff}
+
+          .mt .bad{border-color:rgba(255,107,107,.4)}.mt
+          .warn{border-color:rgba(255,181,71,.4)}
+
+          .mt span{display:flex;flex-direction:column;min-width:0}
+
+          .mt b{font-size:13px;font-weight:600;color:#f4f7fc}
+
+          .mt
+          small{font-size:12px;line-height:1.35;color:#8d9ab3;margin-top:2px}
+  - title: Battery
+    path: battery
+    icon: mdi:battery-heart-variant
+    type: custom:grid-layout
+    layout:
+      grid-template-columns: repeat(6, minmax(0, 1fr))
+      grid-template-rows: 58px 92px auto auto auto
+      grid-template-areas: |
+        "head  head  head  head  head   head"
+        "k1    k2    k3    k4    k5     k6"
+        "hero  hero  hero  hero  backup backup"
+        "hero  hero  hero  hero  health health"
+        "trend trend trend use   use    use"
+      grid-column-gap: 10px
+      grid-row-gap: 10px
+      margin: 6px 4px 8px
+      padding: 0px
+      card_margin: 0px
+      mediaquery:
+        '(min-width: 701px) and (max-width: 1100px)':
+          grid-template-rows: 58px 92px 92px auto auto auto auto
+          grid-template-areas: |
+            "head   head   head   head   head   head"
+            "k1     k1     k2     k2     k3     k3"
+            "k4     k4     k5     k5     k6     k6"
+            "hero   hero   hero   hero   hero   hero"
+            "backup backup backup health health health"
+            "trend  trend  trend  trend  trend  trend"
+            "use    use    use    use    use    use"
+        '(max-width: 700px)':
+          grid-template-columns: repeat(2, minmax(0, 1fr))
+          grid-template-rows: 58px 92px 92px 92px auto auto auto auto auto
+          grid-template-areas: |
+            "head   head"
+            "k1     k2"
+            "k3     k4"
+            "k5     k6"
+            "hero   hero"
+            "backup backup"
+            "health health"
+            "trend  trend"
+            "use    use"
+    cards:
+      - type: custom:button-card
+        template: sig_header
+        view_layout:
+          grid-area: head
+        icon: mdi:battery-heart-variant
+        name: Battery
+        label: Storage, health and backup
+      - type: custom:button-card
+        template: sig_kpi
+        view_layout:
+          grid-area: k1
+        entity: sensor.sigen_plant_battery_state_of_charge
+        name: State of charge
+        icon: mdi:battery-high
+        variables:
+          accent: '#3ee08f'
+          suffix: '%'
+          decimals: 0
+          sub: |
+            [[[
+              const soc = parseFloat(entity?.state), cap = parseFloat(states['sensor.sigen_plant_rated_energy_capacity']?.state);
+              return Number.isFinite(soc) && Number.isFinite(cap) ? `${(cap * soc / 100).toFixed(1)} of ${cap.toFixed(1)} kWh` : 'Stored energy —';
+            ]]]
+      - type: custom:button-card
+        template: sig_kpi
+        view_layout:
+          grid-area: k2
+        entity: sensor.sigen_plant_battery_power
+        name: Battery power
+        icon: mdi:swap-vertical-bold
+        state_display: |
+          [[[
+            const v = parseFloat(entity?.state);
+            return Number.isFinite(v) ? `${Math.abs(v).toFixed(2)} kW` : '—';
+          ]]]
+        variables:
+          accent: '#e6edff'
+          sub: |
+            [[[
+              const v = parseFloat(entity?.state);
+              if (!Number.isFinite(v)) return 'Unavailable';
+              return v > 0.05 ? 'Charging' : v < -0.05 ? 'Discharging' : 'Idle';
+            ]]]
+      - type: custom:button-card
+        template: sig_kpi
+        view_layout:
+          grid-area: k3
+        entity: sensor.sigen_plant_ess_average_cell_temperature
+        name: Cell temperature
+        icon: mdi:thermometer
+        variables:
+          accent: '#8ea6ff'
+          suffix: ' °C'
+          decimals: 1
+          sub: |
+            [[[
+              const t = parseFloat(entity?.state);
+              if (!Number.isFinite(t)) return 'Unavailable';
+              return t >= 5 && t <= 45 ? 'Normal range' : 'Outside normal range';
+            ]]]
+      - type: custom:button-card
+        template: sig_kpi
+        view_layout:
+          grid-area: k4
+        entity: sensor.sigen_plant_battery_state_of_health
+        name: Battery health
+        icon: mdi:battery-heart
+        variables:
+          accent: '#3ee08f'
+          suffix: '%'
+          decimals: 1
+          sub: State of health
+      - type: custom:button-card
+        template: sig_kpi
+        view_layout:
+          grid-area: k5
+        entity: sensor.sigenergy_analytics_battery_efc_today
+        name: Cycles today
+        icon: mdi:battery-sync
+        variables:
+          accent: '#a78bfa'
+          decimals: 2
+          suffix: ' EFC'
+      - type: custom:button-card
+        template: sig_kpi
+        view_layout:
+          grid-area: k6
+        entity: sensor.sigenergy_analytics_battery_throughput_today
+        name: Throughput today
+        icon: mdi:infinity
+        variables:
+          accent: '#3ee08f'
+          suffix: ' kWh'
+          decimals: 1
+      - type: custom:button-card
+        template: sig_card
+        view_layout:
+          grid-area: hero
+        name: Battery now
+        icon: mdi:battery-charging-high
+        variables:
+          reserve_soc: 10
+        custom_fields:
+          body: >
+            [[[
+
+            try {
+
+              const num = id => { const v = parseFloat(states[id]?.state); return Number.isFinite(v) ? v : null; };
+              const f = (v, d = 1) => v === null ? '—' : v.toFixed(d);
+              const clamp = v => Math.max(0, Math.min(100, v ?? 0));
+              const hm = h => { if (!Number.isFinite(h) || h <= 0) return null; const m = Math.round(h * 60);
+                                return m >= 60 ? `${Math.floor(m / 60)}h ${m % 60}m` : `${m}m`; };
+              const soc = num('sensor.sigen_plant_battery_state_of_charge');
+              const cap = num('sensor.sigen_plant_rated_energy_capacity');
+              const bp  = num('sensor.sigen_plant_battery_power');
+              const mn  = num('sensor.sigenergy_analytics_soc_minimum_last_24h');
+              const mx  = num('sensor.sigenergy_analytics_soc_maximum_last_24h');
+              const rc  = num('sensor.sigen_plant_ess_rated_charging_power');
+              const rd  = num('sensor.sigen_plant_ess_rated_discharging_power');
+              const pc  = num('sensor.sigenergy_analytics_peak_charge_power_last_24h');
+              const pd  = num('sensor.sigenergy_analytics_peak_discharge_power_last_24h');
+              const mode = states['sensor.sigen_plant_ems_work_mode']?.state || '—';
+              const rsv = (() => {
+              const pick = re => { const id = Object.keys(states).find(k => /^(number|sensor|input_number)\./.test(k) && /sigen/.test(k) && re.test(k));
+                const v = id ? parseFloat(states[id].state) : NaN; return Number.isFinite(v) && v >= 0 && v <= 100 ? {id, v} : null; };
+              const b = pick(/backup.*(soc|state_of_charge)/), c = pick(/discharg.*cut.?off.*(soc|state_of_charge)/);
+              const fb = Number(variables.reserve_soc ?? 10);
+              return {b, c, found: !!(b || c), floor: (b || c) ? Math.max(b ? b.v : 0, c ? c.v : 0) : fb, cutoff: c ? c.v : (b ? 0 : fb)};
+            })();
+
+            const reserve = rsv.floor;
+              const stored = soc !== null && cap !== null ? cap * soc / 100 : null;
+              const usable = soc !== null && cap !== null ? Math.max(0, cap * (soc - reserve) / 100) : null;
+              const kw = Math.abs(bp ?? 0), chg = (bp ?? 0) > 0.05, dis = (bp ?? 0) < -0.05;
+
+              let head, sub = '';
+              if (bp === null) head = 'Battery data unavailable';
+              else if (chg) { const t = cap !== null && soc !== null ? hm(cap * (100 - soc) / 100 / kw) : null;
+                head = `Charging at ${kw.toFixed(2)} kW`; sub = t ? `Full in about ${t} at this rate` : ''; }
+              else if (dis) { const t = usable !== null ? hm(usable / kw) : null;
+                head = `Discharging at ${kw.toFixed(2)} kW`; sub = t ? `Reaches the ${reserve}% reserve in about ${t} at this rate` : ''; }
+              else head = soc !== null && soc >= 99 ? 'Full and idle' : soc !== null && soc <= reserve + 1 ? 'At reserve and idle' : 'Idle';
+
+              const NM = 5, lvl = clamp(soc) / 100 * NM, bc = soc !== null && soc < 20 ? '#ff6b6b' : '#3ee08f';
+            const act = chg ? Math.min(NM - 1, Math.floor(lvl)) : dis ?
+            Math.max(0, Math.ceil(lvl) - 1) : -1;
+
+            let segs = ''; for (let m = NM - 1; m >= 0; m--) { const fill =
+            Math.max(0, Math.min(1, lvl - m));
+              segs += `<i class="seg ${m === act ? 'act' : ''}" style="--f:${fill.toFixed(2)}"></i>`; }
+            const pb = (lbl, v, max, cls) => `<div
+            class="pw"><div><span>${lbl}</span><b>${f(v, 2)} / ${f(max, 1)}
+            kW</b></div>
+                <i><em class="${cls}" style="width:${max ? clamp(v / max * 100) : 0}%"></em></i></div>`;
+
+              return `<div class="hero">
+                <div class="ringwrap">
+                  <div class="wallb" style="--bc:${bc}" title="Battery ${soc === null ? '—' : soc.toFixed(0) + '%'}"><i class="led"></i><div class="wbar">${segs}</div></div>
+                              <div class="socbig"><b>${soc === null ? '—' : soc.toFixed(0) + '%'}</b><span>${f(stored)} kWh stored</span></div>
+                              <span class="mode">${mode}</span>
+                </div>
+                <div class="side">
+                  <div class="st ${chg ? 'chg' : dis ? 'dis' : 'idle'}"><b>${head}</b><small>${sub}</small></div>
+                  <div class="facts">
+                    <p><span>Usable above reserve</span><b>${f(usable)} kWh</b></p>
+                    <p><span>Rated capacity</span><b>${f(cap, 2)} kWh</b></p>
+                  </div>
+                  <div class="rg">
+                    <div class="track"><span class="res" style="width:${clamp(reserve)}%"></span>
+                      <span class="band" style="left:${clamp(mn)}%;width:${Math.max(0, clamp(mx) - clamp(mn))}%"></span>
+                      <u style="left:${clamp(soc)}%"></u></div>
+                    <div class="rgl"><span>Last 24h: ${f(mn, 0)}% to ${f(mx, 0)}%</span><span class="rsrc">${rsv.found ? 'Reserve from ' + [rsv.b && (rsv.b.id + ' = ' + rsv.b.v + '%'), rsv.c && (rsv.c.id + ' = ' + rsv.c.v + '%')].filter(Boolean).join(', ') : 'Reserve assumed, no Sigenergy setting found'}</span><span title="${rsv.found ? 'From ' + [rsv.b && rsv.b.id, rsv.c && rsv.c.id].filter(Boolean).join(' and ') : 'Assumed: no Sigenergy reserve setting found'}">Reserve ${reserve}%${rsv.found ? '' : ' (assumed)'}</span></div>
+                  </div>
+                  ${pb(chg ? 'Charging now' : dis ? 'Discharging now' : 'Power now', kw, chg ? rc : rd, chg ? 'c' : 'd')}
+                  ${pb('Peak charge, 24h', pc, rc, 'c')}
+                  ${pb('Peak discharge, 24h', pd, rd, 'd')}
+                </div>
+              </div>`;
+
+            } catch (err) {
+              console.error('Energy Centre card failed: Battery now', err);
+              return `<div style="padding:14px;border-radius:12px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.35);font-size:12px;line-height:1.5;color:#c9d3e4;text-align:left"><b style="color:#ff6b6b">Battery now couldn’t draw.</b><br>${String(err && err.message || err).replace(/</g, '&lt;')}<br><span style="color:#8d9ab3">${String(err && err.stack || '').split('\n').slice(1, 3).join(' ').replace(/</g, '&lt;')}</span></div>`;
+            }
+
+            ]]]
+        extra_styles: >
+          .hero{height:100%;display:grid;grid-template-columns:200px
+          minmax(0,1fr);gap:16px;align-items:center}
+
+          .ringwrap{display:flex;flex-direction:column;align-items:center;gap:10px}
+
+          .mode{padding:4px
+          10px;border-radius:10px;background:rgba(62,224,143,0.32);color:#3ee08f;font-size:11.5px;font-weight:800;
+                text-align:center;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+          .side{display:flex;flex-direction:column;gap:8px;min-width:0}
+
+          .st b{display:block;font-size:19px;font-weight:800}
+
+          .st small{font-size:12px;color:rgba(201,211,228,0.748)}
+
+          .st.chg b{color:#3ee08f;text-shadow:0 0 12px rgba(62,224,143,0.3)}
+
+          .st.dis b{color:#ffb648;text-shadow:0 0 12px rgba(255,182,72,0.3)}
+
+          .st.idle b{color:#eef3fb}
+
+          .facts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+          .facts p{margin:0;padding:6px
+          9px;border-radius:9px;background:rgba(255,255,255,0.04);display:flex;flex-direction:column}
+
+          .facts span{font-size:11px;color:rgba(201,211,228,0.66)}
+
+          .facts b{font-size:15px}
+
+          .track{position:relative;height:10px;border-radius:6px;background:rgba(255,255,255,0.108)}
+
+          .track .res{position:absolute;left:0;top:0;bottom:0;border-radius:6px
+          0 0 6px;
+                background:repeating-linear-gradient(45deg,rgba(255,107,107,0.45) 0 4px,transparent 4px 8px)}
+          .track
+          .band{position:absolute;top:0;bottom:0;border-radius:6px;background:linear-gradient(90deg,#3ee08f,#8ea6ff);opacity:.55}
+
+          .track
+          u{position:absolute;top:-4px;width:3px;height:18px;margin-left:-1px;border-radius:2px;background:#fff;
+                box-shadow:0 0 8px #fff;text-decoration:none}
+          .rgl{display:flex;justify-content:space-between;font-size:11px;color:rgba(201,211,228,0.638);margin-top:4px}
+
+          .pw div{display:flex;justify-content:space-between;font-size:11.5px}
+
+          .pw span{color:rgba(201,211,228,0.715)}
+
+          .pw
+          i{display:block;height:7px;border-radius:5px;background:rgba(255,255,255,0.132);overflow:hidden;margin-top:3px}
+
+          .pw em{display:block;height:100%;border-radius:5px}
+
+          .pw
+          em.c{background:linear-gradient(90deg,#3ee08f,#8ea6ff);box-shadow:0 0
+          8px rgba(62,224,143,0.4)}
+
+          .pw
+          em.d{background:linear-gradient(90deg,#ffb648,#ff6b6b);box-shadow:0 0
+          8px rgba(255,107,107,0.4)}
+
+          @media (max-width:700px){
+            .hero{grid-template-columns:1fr}
+            .wallb{width:56px;height:128px}
+          }
+
+
+          .wallb{position:relative;width:70px;height:156px;border-radius:16px;background:linear-gradient(180deg,#f2f5f9,#cdd4df);
+            box-shadow:inset 0 -2px 0 rgba(0,0,0,.12),0 12px 24px rgba(0,0,0,.4)}
+          .wallb
+          .led{position:absolute;left:50%;top:10px;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:var(--bc);box-shadow:0
+          0 8px var(--bc)}
+
+          .wallb
+          .wbar{position:absolute;left:50%;top:26px;bottom:16px;width:14px;margin-left:-7px;display:flex;flex-direction:column;gap:4px}
+
+          .wallb
+          .seg{position:relative;flex:1;border-radius:4px;background:rgba(40,52,74,.28);overflow:hidden}
+
+          .wallb
+          .seg::after{content:'';position:absolute;left:0;right:0;bottom:0;height:calc(var(--f)
+          * 100%);background:var(--bc);box-shadow:0 0 8px var(--bc)}
+
+          .wallb .seg.act::after{animation:sigMod 1.6s ease-in-out infinite}
+
+          @keyframes sigMod{0%,100%{opacity:.3}50%{opacity:1}}
+
+          .socbig{text-align:center}
+
+          .socbig
+          b{display:block;font-size:40px;line-height:1;font-weight:200;letter-spacing:-1px;color:#eef3fb;font-variant-numeric:tabular-nums}
+
+          .socbig span{font-size:12px;color:#8d9ab3}
+
+          @media (prefers-reduced-motion: reduce){.wallb
+          .seg.act::after{animation:none}}
+
+
+          .rgl{flex-wrap:wrap;gap:2px
+          10px}.rsrc{flex-basis:100%;order:3;font-size:10.5px;color:#6f7c95;word-break:break-all}
+      - type: custom:button-card
+        template: sig_card
+        view_layout:
+          grid-area: backup
+        name: If the grid goes down
+        icon: mdi:shield-home-outline
+        variables:
+          reserve_soc: 10
+        custom_fields:
+          body: |
+            [[[
+            try {
+
+              const num = id => { const v = parseFloat(states[id]?.state); return Number.isFinite(v) ? v : null; };
+              const soc = num('sensor.sigen_plant_battery_state_of_charge'), cap = num('sensor.sigen_plant_rated_energy_capacity');
+              const load = num('sensor.sigen_plant_consumed_power');
+              const avgDay = parseFloat(states['sensor.sigenergy_analytics_7_day_intelligence']?.attributes?.average_load_per_day_kwh);
+              const rsv = (() => {
+              const pick = re => { const id = Object.keys(states).find(k => /^(number|sensor|input_number)\./.test(k) && /sigen/.test(k) && re.test(k));
+                const v = id ? parseFloat(states[id].state) : NaN; return Number.isFinite(v) && v >= 0 && v <= 100 ? {id, v} : null; };
+              const b = pick(/backup.*(soc|state_of_charge)/), c = pick(/discharg.*cut.?off.*(soc|state_of_charge)/);
+              const fb = Number(variables.reserve_soc ?? 10);
+              return {b, c, found: !!(b || c), floor: (b || c) ? Math.max(b ? b.v : 0, c ? c.v : 0) : fb, cutoff: c ? c.v : (b ? 0 : fb)};
+            })();
+            const reserve = rsv.cutoff;
+              const grid = states['sensor.sigen_plant_grid_connection_status']?.state || '—';
+              const usable = soc !== null && cap !== null ? Math.max(0, cap * (soc - reserve) / 100) : null;
+              const fmt = h => !Number.isFinite(h) ? '—' : h >= 48 ? `${(h / 24).toFixed(1)} days` : `${h.toFixed(1)} h`;
+              const hAvg = usable !== null && Number.isFinite(avgDay) && avgDay > 0 ? usable / (avgDay / 24) : NaN;
+              const hNow = usable !== null && load !== null && load > 0.05 ? usable / load : NaN;
+              return `<div class="bk">
+                <div class="big"><b>${fmt(hAvg)}</b><span>at your typical use, ${Number.isFinite(avgDay) ? (avgDay / 24).toFixed(2) : '—'} kW average</span></div>
+                <p><span>At current load (${load === null ? '—' : load.toFixed(2)} kW)</span><b>${fmt(hNow)}</b></p>
+                <p><span>Grid connection</span><b>${grid}</b></p>
+                <small>Battery only, no solar, down to ${rsv.c ? 'the ' + reserve + '% discharge cut-off set in Sigenergy' : rsv.b ? '0% (no discharge cut-off found)' : 'an assumed ' + reserve + '% (no Sigenergy reserve setting found)'}. Assumes your install is wired for backup.</small>
+              </div>`;
+
+            } catch (err) {
+              console.error('Energy Centre card failed: If the grid goes down', err);
+              return `<div style="padding:14px;border-radius:12px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.35);font-size:12px;line-height:1.5;color:#c9d3e4;text-align:left"><b style="color:#ff6b6b">If the grid goes down couldn’t draw.</b><br>${String(err && err.message || err).replace(/</g, '&lt;')}<br><span style="color:#8d9ab3">${String(err && err.stack || '').split('\n').slice(1, 3).join(' ').replace(/</g, '&lt;')}</span></div>`;
+            }
+            ]]]
+        extra_styles: >
+          .bk{height:100%;display:flex;flex-direction:column;gap:4px}
+
+          .big
+          b{display:block;font-size:24px;font-weight:800;color:#8ea6ff;text-shadow:0
+          0 14px rgba(142,166,255,0.3)}
+
+          .big
+          span{display:block;font-size:11px;line-height:1.3;color:rgba(201,211,228,0.66)}
+
+          .bk
+          p{margin:0;display:flex;justify-content:space-between;gap:8px;padding:4px
+          0;border-bottom:1px solid rgba(255,255,255,0.072);font-size:12px}
+
+          .bk p span{color:rgba(201,211,228,0.715)}
+
+          .bk
+          small{margin-top:auto;font-size:10.5px;color:rgba(201,211,228,0.495)}
+      - type: custom:button-card
+        template: sig_card
+        view_layout:
+          grid-area: health
+        name: Health
+        icon: mdi:heart-pulse
+        custom_fields:
+          body: |
+            [[[
+            try {
+
+              const s = id => states[id]?.state;
+              const num = id => { const v = parseFloat(s(id)); return Number.isFinite(v) ? v : null; };
+              const dead = v => v === undefined || v === 'unavailable' || v === 'unknown';
+              const soh = num('sensor.sigen_plant_battery_state_of_health');
+              const t = num('sensor.sigen_plant_ess_average_cell_temperature');
+              const alarms = [s('sensor.sigen_plant_general_alarm_1'), s('sensor.sigen_plant_general_alarm_2'),
+                              s('sensor.sigen_plant_general_alarm_3'), s('sensor.sigen_plant_general_alarm_4'),
+                              s('sensor.sigen_plant_general_alarm_5'), s('sensor.sigen_plant_general_alarm_6')]
+                             .filter(v => !dead(v) && v !== 'No Problem');
+              const fw = s('sensor.sigen_inverter_firmware_version') || '—';
+              const ok = soh !== null && soh >= 90 && t !== null && t >= 5 && t <= 45 && alarms.length === 0;
+              const tpos = t === null ? 0 : Math.max(0, Math.min(100, t / 50 * 100));
+              return `<div class="hl"><b class="pill ${ok ? 'good' : 'bad'}">${ok ? 'Healthy' : 'Check'}</b>
+                <p><span>State of health</span><b>${soh === null ? '—' : soh.toFixed(1) + '%'}</b></p>
+                <p><span>Cell temperature</span><b>${t === null ? '—' : t.toFixed(1) + ' °C'}</b></p>
+                <div class="tb"><i style="left:${tpos}%"></i></div>
+                <p><span>Inverter alarms</span><b class="${alarms.length ? 'red' : 'grn'}">${alarms.length ? alarms.join('; ') : 'None'}</b></p>
+                <p><span>Firmware</span><b>${fw}</b></p></div>`;
+
+            } catch (err) {
+              console.error('Energy Centre card failed: Health', err);
+              return `<div style="padding:14px;border-radius:12px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.35);font-size:12px;line-height:1.5;color:#c9d3e4;text-align:left"><b style="color:#ff6b6b">Health couldn’t draw.</b><br>${String(err && err.message || err).replace(/</g, '&lt;')}<br><span style="color:#8d9ab3">${String(err && err.stack || '').split('\n').slice(1, 3).join(' ').replace(/</g, '&lt;')}</span></div>`;
+            }
+            ]]]
+        extra_styles: >
+          .hl{position:relative;height:100%;display:flex;flex-direction:column}
+
+          .pill{position:absolute;right:0;top:-29px;padding:3px
+          9px;border-radius:10px;font-size:11px}
+
+          .pill.good{color:#3ee08f;background:rgba(62,224,143,0.18)}
+
+          .pill.bad{color:#ff6b6b;background:rgba(255,107,107,0.32)}
+
+          .hl
+          p{margin:0;display:flex;justify-content:space-between;gap:8px;padding:4px
+          0;border-bottom:1px solid rgba(255,255,255,0.072);font-size:12px}
+
+          .hl p span{color:rgba(201,211,228,0.715)}
+
+          .hl p
+          b{max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+          .hl .grn{color:#3ee08f}.hl .red{color:#ff6b6b}
+
+          .tb{position:relative;height:6px;border-radius:5px;margin:3px 0 4px;
+              background:linear-gradient(90deg,#8ea6ff 0 10%,#3ee08f 10% 70%,#ffb648 70% 90%,#ff6b6b 90%)}
+          .tb
+          i{position:absolute;top:-3px;width:3px;height:12px;margin-left:-1px;border-radius:2px;background:#fff;box-shadow:0
+          0 6px #fff}
+        variables: {}
+      - type: custom:button-card
+        template: sig_card
+        view_layout:
+          grid-area: trend
+        name: Last 7 days
+        icon: mdi:chart-bar
+        custom_fields:
+          body: |
+            [[[
+            try {
+
+              const a = states['sensor.sigenergy_analytics_7_day_intelligence']?.attributes || {};
+              const raw = a.daily_rows_json; let rows = Array.isArray(raw) ? raw : [];
+              if (!rows.length && typeof raw === 'string') { try { rows = JSON.parse(raw || '[]'); } catch (e) { rows = []; } }
+              if (!rows.length) return '<div class="empty">The 7-day report hasn’t run yet. It refreshes daily at 00:10.</div>';
+              const nz = v => { const x = parseFloat(v); return Number.isFinite(x) ? x : 0; };
+              const ch = rows.map(r => nz(r.battery_charge_kwh)), dc = rows.map(r => nz(r.battery_discharge_kwh));
+              const max = Math.max(1, ...ch, ...dc);
+              const day = s => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || ''); if (!m) return String(s || '');
+                return new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString('en-AU', {weekday: 'short'}) + ' ' + (+m[3]); };
+              const cols = rows.map((r, i) => `<div class="col" title="${r.date}: charged ${ch[i].toFixed(1)} kWh, discharged ${dc[i].toFixed(1)} kWh">
+                <div class="bars"><i class="c" style="height:${(ch[i] / max * 100).toFixed(1)}%"></i><i class="d" style="height:${(dc[i] / max * 100).toFixed(1)}%"></i></div>
+                <span>${day(r.date)}</span></div>`).join('');
+              const tc = ch.reduce((x, v) => x + v, 0), td = dc.reduce((x, v) => x + v, 0);
+              const ratio = tc > 0 ? td / tc * 100 : null;
+              return `<div class="tr">
+                <div class="cols">${cols}</div>
+                <div class="lg"><span class="c">Charged ${tc.toFixed(1)} kWh</span><span class="d">Discharged ${td.toFixed(1)} kWh</span>
+                  <span>Out ÷ in ${ratio === null ? '—' : ratio.toFixed(0) + '%'}</span><span>${nz(a.battery_efc).toFixed(2)} EFC</span></div>
+                <small>Out ÷ in roughly reflects losses, but a fuller or emptier battery at the end of the week shifts it.</small>
+              </div>`;
+
+            } catch (err) {
+              console.error('Energy Centre card failed: Last 7 days', err);
+              return `<div style="padding:14px;border-radius:12px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.35);font-size:12px;line-height:1.5;color:#c9d3e4;text-align:left"><b style="color:#ff6b6b">Last 7 days couldn’t draw.</b><br>${String(err && err.message || err).replace(/</g, '&lt;')}<br><span style="color:#8d9ab3">${String(err && err.stack || '').split('\n').slice(1, 3).join(' ').replace(/</g, '&lt;')}</span></div>`;
+            }
+            ]]]
+        extra_styles: >
+          .tr{display:flex;flex-direction:column;gap:6px}
+
+          .cols{display:flex;gap:4px;height:170px}
+
+          .col{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center}
+
+          .bars{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:3px;border-bottom:1px
+          solid rgba(255,255,255,0.15)}
+
+          .bars
+          i{display:block;width:30%;max-width:22px;min-height:2px;border-radius:4px
+          4px 0 0}
+
+          .bars i.c{background:#3ee08f;box-shadow:0 0 8px rgba(62,224,143,0.4)}
+
+          .bars i.d{background:#ffb648;box-shadow:0 0 8px rgba(255,182,72,0.4)}
+
+          .col
+          span{font-size:11px;margin-top:4px;white-space:nowrap;color:rgba(201,211,228,0.66)}
+
+          .lg{display:flex;flex-wrap:wrap;gap:6px
+          16px;font-size:12px;color:rgba(201,211,228,0.825)}
+
+          .lg .c::before,.lg .d::before{content:'●';margin-right:5px}
+
+          .lg .c::before{color:#3ee08f}.lg .d::before{color:#ffb648}
+
+          .tr small{font-size:10.5px;color:rgba(201,211,228,0.495)}
+
+          .empty{padding:30px
+          10px;text-align:center;font-size:12px;color:rgba(201,211,228,0.66)}
+        variables: {}
+      - type: custom:button-card
+        template: sig_card
+        view_layout:
+          grid-area: use
+        name: How hard it's working
+        icon: mdi:battery-sync-outline
+        triggers_update:
+          - sensor.sigenergy_analytics_battery_throughput_today
+          - sensor.sigenergy_analytics_battery_efc_today
+          - sensor.sigenergy_analytics_battery_efc_lifetime
+        variables:
+          warranty_cycles: 0
+        custom_fields:
+          body: |
+            [[[
+            try {
+
+              const num = id => { const v = parseFloat(states[id]?.state); return Number.isFinite(v) ? v : null; };
+              const f = (v, d) => v === null ? '—' : v.toFixed(d);
+              const rows = [
+                ['Today',         num('sensor.sigenergy_analytics_battery_throughput_today'),        num('sensor.sigenergy_analytics_battery_efc_today')],
+                ['This week',     num('sensor.sigenergy_analytics_battery_throughput_this_week'),    num('sensor.sigenergy_analytics_battery_efc_this_week')],
+                ['This month',    num('sensor.sigenergy_analytics_battery_throughput_this_month'),   num('sensor.sigenergy_analytics_battery_efc_this_month')],
+                ['This season',   num('sensor.sigenergy_analytics_battery_throughput_this_season'),  num('sensor.sigenergy_analytics_seasonal_battery_efc')],
+                ['This contract', num('sensor.sigenergy_analytics_contract_battery_throughput'),     num('sensor.sigenergy_analytics_contract_battery_efc')],
+                ['Lifetime',      num('sensor.sigenergy_analytics_battery_throughput_lifetime'),     num('sensor.sigenergy_analytics_battery_efc_lifetime')]
+              ];
+              const avgEfc = num('sensor.sigenergy_analytics_average_battery_efc_per_day');
+              const life = num('sensor.sigenergy_analytics_battery_efc_lifetime');
+              const wc = Number(variables.warranty_cycles || 0);
+              const wLine = wc > 0 && life !== null
+                ? `<p class="w"><span>Warranty cycles used</span><b>${(life / wc * 100).toFixed(1)}% of ${wc}</b></p>` : '';
+              return `<div class="us">
+                <div class="th"><span>Period</span><span>Throughput</span><span>Cycles</span></div>
+                ${rows.map(r => `<div class="tr2"><span>${r[0]}</span><b>${f(r[1], 1)} kWh</b><b>${f(r[2], 2)}</b></div>`).join('')}
+                <p><span>Average per day</span><b>${f(avgEfc, 2)} cycles, about ${avgEfc === null ? '—' : (avgEfc * 365).toFixed(0)} a year</b></p>
+                ${wLine}
+              </div>`;
+
+            } catch (err) {
+              console.error('Energy Centre card failed: How hard it’s working', err);
+              return `<div style="padding:14px;border-radius:12px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.35);font-size:12px;line-height:1.5;color:#c9d3e4;text-align:left"><b style="color:#ff6b6b">How hard it’s working couldn’t draw.</b><br>${String(err && err.message || err).replace(/</g, '&lt;')}<br><span style="color:#8d9ab3">${String(err && err.stack || '').split('\n').slice(1, 3).join(' ').replace(/</g, '&lt;')}</span></div>`;
+            }
+            ]]]
+        extra_styles: >
+          .us{display:flex;flex-direction:column}
+
+          .th,.tr2{display:grid;grid-template-columns:1.2fr 1fr
+          .7fr;align-items:center}
+
+          .th{font-size:11px;color:rgba(201,211,228,0.55);padding-bottom:3px;border-bottom:1px
+          solid rgba(255,255,255,0.108)}
+
+          .th span:not(:first-child),.tr2 b{text-align:right}
+
+          .tr2{padding:4px 0;border-bottom:1px solid
+          rgba(255,255,255,0.048);font-size:12px}
+
+          .tr2 span{color:rgba(201,211,228,0.77)}
+
+          .tr2:last-of-type b{color:#3ee08f}
+
+          .us p{margin:6px 0
+          0;display:flex;justify-content:space-between;gap:8px;font-size:12px}
+
+          .us p span{color:rgba(201,211,228,0.66)}
+
+          .us p b{color:#a78bfa;text-align:right}
+
+          .us p.w b{color:#ffb547}
+    background: >-
+      radial-gradient(900px 520px at 12% -8%, rgba(255,194,74,.10), transparent
+      60%), radial-gradient(900px 600px at 95% 110%, rgba(62,224,143,.08),
+      transparent 60%), #080c16
+  - title: Money
+    path: money
+    icon: mdi:cash-multiple
+    type: custom:grid-layout
+    layout:
+      grid-template-columns: repeat(6, minmax(0, 1fr))
+      grid-template-rows: 58px 92px auto auto auto
+      grid-template-areas: |
+        "head   head   head   head   head   head"
+        "k1     k2     k3     k4     k5     k6"
+        "month  month  month  month  pay    pay"
+        "month  month  month  month  pay    pay"
+        "period period bill   bill   plan   plan"
+      grid-column-gap: 10px
+      grid-row-gap: 10px
+      margin: 6px 4px 8px
+      padding: 0px
+      card_margin: 0px
+      mediaquery:
+        '(min-width: 701px) and (max-width: 1100px)':
+          grid-template-rows: 58px 92px 92px auto auto auto
+          grid-template-areas: |
+            "head   head   head   head   head   head"
+            "k1     k1     k2     k2     k3     k3"
+            "k4     k4     k5     k5     k6     k6"
+            "month  month  month  month  month  month"
+            "pay    pay    pay    period period period"
+            "bill   bill   bill   plan   plan   plan"
+        '(max-width: 700px)':
+          grid-template-columns: repeat(2, minmax(0, 1fr))
+          grid-template-rows: 58px 92px 92px 92px auto auto auto auto auto
+          grid-template-areas: |
+            "head   head"
+            "k1     k2"
+            "k3     k4"
+            "k5     k6"
+            "month  month"
+            "pay    pay"
+            "period period"
+            "bill   bill"
+            "plan   plan"
+    cards:
+      - type: custom:button-card
+        template: sig_header
+        view_layout:
+          grid-area: head
+        icon: mdi:cash-multiple
+        name: Money
+        label: Savings, bills and payback
+      - type: custom:button-card
+        template: sig_kpi
+        view_layout:
+          grid-area: k1
+        entity: sensor.sigenergy_analytics_system_benefit_today
+        name: Saved today
+        icon: mdi:piggy-bank-outline
+        variables:
+          accent: '#3ee08f'
+          prefix: $
+          sub: |
+            [[[
+              const v = parseFloat(states['sensor.sigenergy_analytics_actual_cost_today']?.state);
+              return !Number.isFinite(v) ? 'Bill today —' : v < 0 ? `Bill today $${Math.abs(v).toFixed(2)} credit` : `Bill today $${v.toFixed(2)} to pay`;
+            ]]]
+      - type: custom:button-card
+        template: sig_kpi
+        view_layout:
+          grid-area: k2
+        entity: sensor.sigenergy_analytics_system_benefit_this_month
+        name: Saved this month
+        icon: mdi:calendar-month-outline
+        variables:
+          accent: '#3ee08f'
+          prefix: $
+          sub: |
+            [[[
+              const b = parseFloat(states['sensor.sigenergy_analytics_monthly_baseline_cost']?.state);
+              return Number.isFinite(b) ? `vs $${b.toFixed(2)} grid-only usage` : 'Current month';
+            ]]]
+      - type: custom:button-card
+        template: sig_kpi
+        view_layout:
+          grid-area: k3
+        entity: sensor.sigenergy_analytics_actual_cost_this_month
+        name: Bill this month
+        icon: mdi:receipt-text-outline
+        variables:
+          accent: '#8ea6ff'
+          bill: true
+          sub: So far this month
+      - type: custom:button-card
+        template: sig_kpi
+        view_layout:
+          grid-area: k4
+        entity: sensor.sigenergy_analytics_monthly_export_income
+        name: Feed-in this month
+        icon: mdi:transmission-tower-export
+        variables:
+          accent: '#3ee08f'
+          prefix: $
+          sub: Export credit
+      - type: custom:button-card
+        template: sig_kpi
+        view_layout:
+          grid-area: k5
+        entity: sensor.sigenergy_analytics_system_benefit_lifetime
+        name: Lifetime benefit
+        icon: mdi:leaf
+        variables:
+          accent: '#8ea6ff'
+          prefix: $
+          sub: |
+            [[[
+              const p = parseFloat(states['sensor.sigenergy_analytics_payback_percent']?.state);
+              return Number.isFinite(p) ? `${p.toFixed(1)}% paid back` : 'Payback —';
+            ]]]
+      - type: custom:button-card
+        template: sig_kpi
+        view_layout:
+          grid-area: k6
+        entity: sensor.sigenergy_analytics_average_benefit_per_day
+        name: Run rate
+        icon: mdi:chart-timeline-variant-shimmer
+        variables:
+          accent: '#3ee08f'
+          prefix: $
+          suffix: /day
+          sub: |
+            [[[
+              const v = parseFloat(entity?.state);
+              return Number.isFinite(v) ? `About $${(v * 365).toFixed(0)} a year` : '—';
+            ]]]
+      - type: custom:button-card
+        template: sig_card
+        view_layout:
+          grid-area: month
+        name: This month, from grid-only to your bill
+        icon: mdi:chart-waterfall
+        custom_fields:
+          body: |
+            [[[
+            try {
+
+              const num = id => { const v = parseFloat(states[id]?.state); return Number.isFinite(v) ? v : null; };
+              const money = v => v === null || !Number.isFinite(v) ? '—' : `${v < 0 ? '−' : ''}$${Math.abs(v).toFixed(2)}`;
+              const credit = v => v === null || !Number.isFinite(v) ? '—' : v < 0 ? `$${Math.abs(v).toFixed(2)} credit` : `$${v.toFixed(2)} to pay`;
+                          const base = num('sensor.sigenergy_analytics_monthly_baseline_cost');
+              const imp  = num('sensor.sigenergy_analytics_monthly_import_cost');
+              const exp  = num('sensor.sigenergy_analytics_monthly_export_income');
+              const sup  = num('sensor.sigenergy_analytics_monthly_supply_cost');
+              const act  = num('sensor.sigenergy_analytics_actual_cost_this_month');
+              const ben  = num('sensor.sigenergy_analytics_system_benefit_this_month');
+              if ([base, imp, exp, sup].some(v => v === null)) return '<div class="empty">Monthly cost sensors are unavailable.</div>';
+
+              const A = base + sup, B = Math.max(0, base - imp), C = exp, R = A - B - C;
+              const hi = Math.max(A, 0), lo = Math.min(R, 0), span = Math.max(0.01, hi - lo);
+              const W = 640, top = 26, bot = 186, H = bot - top;
+              const y = v => top + (hi - v) / span * H;
+              const steps = [
+                ['Grid-only', 0, A, 'base'],
+                ['Imports avoided', A, A - B, 'save'],
+                ['Feed-in credit', A - B, R, 'fit'],
+                ['Your bill', 0, R, R < 0 ? 'credit' : 'bill']
+              ];
+              const bw = 96, gap = (W - bw * 4) / 4;
+              const bars = steps.map((s, i) => {
+                const x = gap / 2 + i * (bw + gap), y1 = y(Math.max(s[1], s[2])), hgt = Math.max(2, Math.abs(y(s[1]) - y(s[2])));
+                const val = i === 1 || i === 2 ? -(s[1] - s[2]) : s[2];
+                const conn = i < 3 ? `<line class="cn" x1="${x + bw}" y1="${y(s[2])}" x2="${x + bw + gap}" y2="${y(s[2])}"/>` : '';
+                return `<rect class="${s[3]}" x="${x}" y="${y1}" width="${bw}" height="${hgt}" rx="6"/>${conn}
+                  <text class="v" x="${x + bw / 2}" y="${y1 - 7}" text-anchor="middle">${i === 3 ? credit(val) : money(val)}</text>
+                  <text class="n" x="${x + bw / 2}" y="${bot + 24}" text-anchor="middle">${s[0]}</text>`;
+              }).join('');
+
+              const notes = [];
+              if (act !== null && Math.abs(R - act) > 0.05) notes.push(`The parts add up to ${credit(R)} but the bill sensor says ${credit(act)}. Fees or adjustments may not be shown here.`);
+              if (ben !== null && Math.abs(B + C - ben) > 0.05) notes.push(`Avoided imports plus feed-in come to ${money(B + C)} but the benefit sensor says ${money(ben)}.`);
+
+              const d = new Date(), dim = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+              const elapsed = (d.getDate() - 1) + (d.getHours() * 60 + d.getMinutes()) / 1440;
+              const pace = elapsed >= 3 && act !== null ? act / elapsed * dim : null;
+
+              return `<div class="wf">
+                <svg viewBox="0 0 ${W} ${bot + 34}" width="100%"><line class="zero" x1="0" y1="${y(0)}" x2="${W}" y2="${y(0)}"/>${bars}</svg>
+                <div class="foot">
+                  <span>Grid-only = what this month's usage would have cost from the grid, plus supply (${money(sup)}).</span>
+                  ${pace !== null ? `<b>On pace for about ${credit(pace)} by month end (estimate).</b>` : ''}
+                </div>
+                ${notes.map(n => `<div class="note">${n}</div>`).join('')}
+              </div>`;
+
+            } catch (err) {
+              console.error('Energy Centre card failed: This month, from grid-only to your bill', err);
+              return `<div style="padding:14px;border-radius:12px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.35);font-size:12px;line-height:1.5;color:#c9d3e4;text-align:left"><b style="color:#ff6b6b">This month, from grid-only to your bill couldn’t draw.</b><br>${String(err && err.message || err).replace(/</g, '&lt;')}<br><span style="color:#8d9ab3">${String(err && err.stack || '').split('\n').slice(1, 3).join(' ').replace(/</g, '&lt;')}</span></div>`;
+            }
+            ]]]
+        extra_styles: >
+          .wf{height:100%;display:flex;flex-direction:column;gap:6px}
+
+          .wf svg .zero{stroke:rgba(201,211,228,0.33);stroke-width:1}
+
+          .wf svg
+          .cn{stroke:rgba(201,211,228,0.385);stroke-width:1;stroke-dasharray:4
+          4}
+
+          .wf svg rect.base{fill:#8d9ab3}
+
+          .wf svg rect.save{fill:#3ee08f;filter:drop-shadow(0 0 8px
+          rgba(62,224,143,0.45))}
+
+          .wf svg rect.fit{fill:#8ea6ff;filter:drop-shadow(0 0 8px
+          rgba(142,166,255,0.45))}
+
+          .wf svg rect.credit{fill:#3ee08f;filter:drop-shadow(0 0 10px
+          rgba(62,224,143,0.55))}
+
+          .wf svg rect.bill{fill:#ff6b6b;filter:drop-shadow(0 0 10px
+          rgba(255,107,107,0.5))}
+
+          .wf svg text.v{fill:#eef3fb;font-size:15px;font-weight:800}
+
+          .wf svg text.n{fill:rgba(201,211,228,0.715);font-size:13px}
+
+          .foot{display:flex;flex-direction:column;gap:3px}
+
+          .foot span{font-size:11px;color:rgba(201,211,228,0.55)}
+
+          .foot b{font-size:12.5px;color:#3ee08f}
+
+          .note{padding:6px
+          9px;border-radius:9px;background:rgba(255,194,74,0.25);border:1px
+          solid rgba(255,194,74,0.3);color:#ffb547;font-size:11px}
+
+          .empty{padding:40px
+          10px;text-align:center;font-size:12px;color:rgba(201,211,228,0.66)}
+        variables: {}
+      - type: custom:button-card
+        template: sig_card
+        view_layout:
+          grid-area: pay
+        name: Payback
+        icon: mdi:bullseye-arrow
+        custom_fields:
+          body: >
+            [[[
+
+            try {
+
+              const num = id => { const v = parseFloat(states[id]?.state); return Number.isFinite(v) ? v : null; };
+              const money = (v, d = 2) => v === null ? '—' : `${v < 0 ? '−' : ''}$${Math.abs(v).toFixed(d)}`;
+              const pct  = num('sensor.sigenergy_analytics_payback_percent');
+              const ben  = num('sensor.sigenergy_analytics_system_benefit_lifetime');
+              const cost = num('sensor.sigenergy_analytics_system_cost');
+              const rem  = num('sensor.sigenergy_analytics_system_cost_remaining');
+              const avg  = num('sensor.sigenergy_analytics_average_benefit_per_day');
+              const profit = num('sensor.sigenergy_analytics_lifetime_profit');
+              const dRaw = states['sensor.sigenergy_analytics_projected_payback_date']?.state || '';
+            const dP = /^(\d{4})-(\d{2})-(\d{2})/.exec(dRaw);
+
+            const date = dP ? new Date(+dP[1], +dP[2] - 1,
+            +dP[3]).toLocaleDateString('en-AU', {month: 'long', year:
+            'numeric'}) : (dRaw || '—');
+              const conf = states['sensor.sigenergy_analytics_payback_projection_confidence']?.state || '—';
+              const season = String(states['sensor.sigenergy_analytics_current_season']?.state || '').toLowerCase();
+              const yrs = rem !== null && avg ? rem / (avg * 365) : null;
+              const sunny = season.includes('spring') || season.includes('summer');
+              const p = Math.max(0, Math.min(100, pct ?? 0));
+              return `<div class="pb">
+                <div class="top"><b>${date}</b><span>projected payoff, ${yrs === null ? '—' : 'about ' + yrs.toFixed(1) + ' years from now'}</span></div>
+                <div class="arc"><svg viewBox="0 0 140 78"><path d="M10,72 A60,60 0 0 1 130,72" class="tk"/><path d="M10,72 A60,60 0 0 1 130,72" class="pg" style="stroke-dasharray:${(188.5 * p / 100).toFixed(1)} 188.5"/></svg><b>${pct === null ? '—' : pct.toFixed(1) + '%'}</b><span>paid back</span></div>
+                <div class="lbl"><span>${money(ben, 0)} of ${money(cost, 0)}</span><b>${pct === null ? '—' : pct.toFixed(1) + '%'}</b></div>
+                <p><span>Still to recover</span><b>${money(rem, 0)}</b></p>
+                <p><span>Profit after payback</span><b>${money(profit, 0)}</b></p>
+                <p><span>Confidence</span><b>${conf}</b></p>
+                ${sunny ? '<small>Your data so far is mostly from spring and summer. Winter days earn less, so expect this date to move later.</small>' : ''}
+              </div>`;
+
+            } catch (err) {
+              console.error('Energy Centre card failed: Payback', err);
+              return `<div style="padding:14px;border-radius:12px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.35);font-size:12px;line-height:1.5;color:#c9d3e4;text-align:left"><b style="color:#ff6b6b">Payback couldn’t draw.</b><br>${String(err && err.message || err).replace(/</g, '&lt;')}<br><span style="color:#8d9ab3">${String(err && err.stack || '').split('\n').slice(1, 3).join(' ').replace(/</g, '&lt;')}</span></div>`;
+            }
+
+            ]]]
+        extra_styles: >
+          .pb{height:100%;display:flex;flex-direction:column;gap:5px}
+
+          .top
+          b{display:block;font-size:22px;font-weight:800;color:#3ee08f;text-shadow:0
+          0 14px rgba(62,224,143,0.3)}
+
+          .top span{font-size:11px;color:rgba(201,211,228,0.66)}
+
+          .bar{height:10px;border-radius:8px;background:rgba(255,255,255,0.132);overflow:hidden;margin-top:4px}
+
+          .bar
+          i{display:block;height:100%;min-width:3px;background:linear-gradient(90deg,#8ea6ff,#3ee08f);box-shadow:0
+          0 12px rgba(62,224,143,0.5)}
+
+          .lbl{display:flex;justify-content:space-between;font-size:11.5px;color:rgba(201,211,228,0.715)}
+
+          .lbl b{color:#3ee08f}
+
+          .pb
+          p{margin:0;display:flex;justify-content:space-between;gap:10px;padding:4px
+          0;border-bottom:1px solid rgba(255,255,255,0.072);font-size:12px}
+
+          .pb p span{color:rgba(201,211,228,0.715);flex-shrink:0}
+
+          .pb p b{text-align:right}
+
+          .pb small{margin-top:auto;padding:6px
+          8px;border-radius:8px;background:rgba(255,255,255,0.04);font-size:10.5px;line-height:1.35;color:rgba(201,211,228,0.66)}
+
+
+          .arc{position:relative;width:170px;margin:4px auto
+          0;text-align:center}
+
+          .arc svg{width:100%;height:auto;overflow:visible}
+
+          .arc
+          .tk{fill:none;stroke:rgba(255,255,255,.08);stroke-width:12;stroke-linecap:round}
+
+          .arc
+          .pg{fill:none;stroke:#3ee08f;stroke-width:12;stroke-linecap:round;filter:drop-shadow(0
+          0 6px rgba(62,224,143,.5))}
+
+          .arc
+          b{position:absolute;left:0;right:0;bottom:16px;font-size:24px;font-weight:300;color:#eef3fb}
+
+          .arc
+          span{position:absolute;left:0;right:0;bottom:0;font-size:11px;color:#8d9ab3}
+        variables: {}
+      - type: custom:button-card
+        template: sig_card
+        view_layout:
+          grid-area: period
+        name: Earnings per day
+        icon: mdi:calendar-range
+        custom_fields:
+          body: |
+            [[[
+            try {
+
+              const num = id => { const v = parseFloat(states[id]?.state); return Number.isFinite(v) ? v : null; };
+              const d = new Date(), MS = 86400000;
+              const sod = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+              const frac = (d - sod) / MS;
+              const dow = (d.getDay() + 6) % 7;                         // Monday = 0
+              const dWeek = dow + frac, dMonth = d.getDate() - 1 + frac;
+              const m = d.getMonth();                                   // AU seasons: Dec, Mar, Jun, Sep
+              const sm = [11, 0, 1].includes(m) ? 11 : [2, 3, 4].includes(m) ? 2 : [5, 6, 7].includes(m) ? 5 : 8;
+              const sYear = sm === 11 && m !== 11 ? d.getFullYear() - 1 : d.getFullYear();
+              const dSeason = (d - new Date(sYear, sm, 1)) / MS;
+              const per = (v, days) => v !== null && days >= 0.5 ? v / days : null;
+              const rows = [
+                ['This week',   per(num('sensor.sigenergy_analytics_system_benefit_this_week'), dWeek)],
+                ['This month',  per(num('sensor.sigenergy_analytics_system_benefit_this_month'), dMonth)],
+                ['This season', per(num('sensor.sigenergy_analytics_system_benefit_this_season'), dSeason)],
+                ['Run rate',    num('sensor.sigenergy_analytics_average_benefit_per_day')]
+              ];
+              const max = Math.max(0.01, ...rows.map(r => r[1] ?? 0));
+              return `<div class="pd">${rows.map(r => `<div class="r"><span>${r[0]}</span>
+                <i><em style="width:${r[1] === null ? 0 : Math.max(2, r[1] / max * 100)}%"></em></i>
+                <b>${r[1] === null ? '—' : '$' + r[1].toFixed(2)}</b></div>`).join('')}
+                <small>Totals divided by days elapsed, so periods of different lengths compare fairly. Early in a week or month these swing a lot.</small></div>`;
+
+            } catch (err) {
+              console.error('Energy Centre card failed: Earnings per day', err);
+              return `<div style="padding:14px;border-radius:12px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.35);font-size:12px;line-height:1.5;color:#c9d3e4;text-align:left"><b style="color:#ff6b6b">Earnings per day couldn’t draw.</b><br>${String(err && err.message || err).replace(/</g, '&lt;')}<br><span style="color:#8d9ab3">${String(err && err.stack || '').split('\n').slice(1, 3).join(' ').replace(/</g, '&lt;')}</span></div>`;
+            }
+            ]]]
+        extra_styles: >
+          .pd{height:100%;display:flex;flex-direction:column;gap:9px}
+
+          .r{display:grid;grid-template-columns:1fr
+          auto;column-gap:8px;row-gap:4px;align-items:center;font-size:12px}
+
+          .r span{color:rgba(201,211,228,0.77)}
+
+          .r
+          i{grid-column:1/-1;grid-row:2;display:block;height:9px;border-radius:7px;background:rgba(255,255,255,0.12);overflow:hidden}
+
+          .r
+          em{display:block;height:100%;border-radius:7px;background:linear-gradient(90deg,#3ee08f,#8ea6ff);box-shadow:0
+          0 10px rgba(62,224,143,0.35)}
+
+          .r span{grid-row:1;grid-column:1}
+
+          .r b{grid-row:1;grid-column:2;text-align:right}
+
+          .pd
+          small{margin-top:auto;font-size:10.5px;line-height:1.35;color:rgba(201,211,228,0.495)}
+        variables: {}
+      - type: custom:button-card
+        template: sig_card
+        view_layout:
+          grid-area: bill
+        name: Bill check
+        icon: mdi:receipt-text-check-outline
+        variables:
+          admin_path: /dashboard-test2/bills
+        tap_action:
+          action: navigate
+          navigation_path: '[[[ return variables.admin_path ]]]'
+        custom_fields:
+          body: |
+            [[[
+            try {
+
+              const e = states['sensor.sigenergy_analytics_latest_bill_reconciliation'];
+              const a = e?.attributes || {};
+              const count = parseFloat(states['sensor.sigenergy_analytics_reconciled_bills_count']?.state) || 0;
+              const pf = v => { const x = parseFloat(v); return Number.isFinite(x) ? x : null; };
+              const money = v => v === null ? '—' : `${v < 0 ? '−' : ''}$${Math.abs(v).toFixed(2)}`;
+              const dead = ['unknown', 'unavailable', 'none', undefined].includes(e?.state);
+              if (!count || dead) return `<div class="emp"><ha-icon icon="mdi:receipt-text-plus-outline"></ha-icon>
+                <b>No bill checked yet</b><span>When your first bill arrives, enter it in the admin dashboard to compare it with what Home Assistant measured.</span></div>`;
+              const score = pf(e.state), rb = pf(a.retailer_final_bill), hb = pf(a.ha_final_bill), df = pf(a.final_bill_difference);
+              const lines = [['Peak', pf(a.peak_kwh_difference)], ['Shoulder', pf(a.shoulder_kwh_difference)],
+                             ['Off-peak', pf(a.off_peak_kwh_difference)], ['Export', pf(a.export_kwh_difference)]]
+                            .filter(l => l[1] !== null).sort((x, y) => Math.abs(y[1]) - Math.abs(x[1]));
+              const worst = lines[0];
+              const good = df !== null && Math.abs(df) < 1;
+              return `<div class="bc">
+                <div class="hd"><div><b>${a.reference || 'Latest bill'}</b><span>${a.start_date || '—'} to ${a.end_date || '—'}</span></div>
+                  <strong class="${good ? 'g' : 'w'}">${score === null ? '—' : score.toFixed(1) + '%'}</strong></div>
+                <div class="g3"><p><span>Retailer</span><b>${money(rb)}</b></p><p><span>Home Assistant</span><b>${money(hb)}</b></p>
+                  <p><span>Difference</span><b class="${good ? 'g' : 'w'}">${money(df)}</b></p></div>
+                ${worst ? `<small>Biggest energy gap: ${worst[0]}, ${worst[1] > 0 ? '+' : ''}${worst[1].toFixed(2)} kWh</small>` : ''}
+                <footer>${count} bill${count === 1 ? '' : 's'} checked. Open admin to add another.</footer></div>`;
+
+            } catch (err) {
+              console.error('Energy Centre card failed: Bill check', err);
+              return `<div style="padding:14px;border-radius:12px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.35);font-size:12px;line-height:1.5;color:#c9d3e4;text-align:left"><b style="color:#ff6b6b">Bill check couldn’t draw.</b><br>${String(err && err.message || err).replace(/</g, '&lt;')}<br><span style="color:#8d9ab3">${String(err && err.stack || '').split('\n').slice(1, 3).join(' ').replace(/</g, '&lt;')}</span></div>`;
+            }
+            ]]]
+        extra_styles: >
+          .bc,.emp{min-height:100%;display:flex;flex-direction:column;gap:7px}
+
+          .emp{align-items:center;justify-content:center;text-align:center;padding:6px}
+
+          .emp ha-icon{width:30px;height:30px;color:#8ea6ff;filter:drop-shadow(0
+          0 8px rgba(142,166,255,0.5))}
+
+          .emp b{font-size:13px}
+
+          .emp
+          span{font-size:11.5px;line-height:1.35;color:rgba(201,211,228,0.66)}
+
+          .hd{display:flex;justify-content:space-between;align-items:center}
+
+          .hd div{display:flex;flex-direction:column;min-width:0}
+
+          .hd
+          b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+          .hd span{font-size:11px;color:rgba(201,211,228,0.605)}
+
+          .hd strong{font-size:22px;font-weight:800}
+
+          .g{color:#3ee08f}.w{color:#ffb547}
+
+          .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+
+          .g3 p{margin:0;padding:6px
+          4px;border-radius:8px;background:rgba(255,255,255,0.04);text-align:center}
+
+          .g3 span{display:block;font-size:10.5px;color:rgba(201,211,228,0.605)}
+
+          .g3 b{display:block;font-size:13px;margin-top:2px}
+
+          .bc small{font-size:11px;color:rgba(201,211,228,0.66)}
+
+          .bc footer{margin-top:auto;font-size:11px;color:#3ee08f}
+      - type: custom:button-card
+        template: sig_card
+        view_layout:
+          grid-area: plan
+        name: Your plan
+        icon: mdi:file-document-outline
+        variables:
+          admin_path: /dashboard-test2/contract
+        tap_action:
+          action: navigate
+          navigation_path: '[[[ return variables.admin_path ]]]'
+        custom_fields:
+          body: |
+            [[[
+            try {
+
+              const c = states['sensor.sigenergy_analytics_contract']?.attributes || {};
+              const num = id => { const v = parseFloat(states[id]?.state); return Number.isFinite(v) ? v : null; };
+              const cents = v => v === null ? '—' : (v * 100).toFixed(2) + 'c';
+              const days = num('sensor.sigenergy_analytics_pricing_days_remaining');
+              const sup = num('sensor.sigenergy_supply_rate');
+              const roll = states['sensor.sigenergy_analytics_contract_rollover_status']?.state;
+              const dcls = days === null ? '' : days <= 0 ? 'bad' : days <= 30 ? 'warn' : 'good';
+              const rate = (k, l, id) => `<p><i class="${k}"></i><span>${l}</span><b>${cents(num(id))}</b></p>`;
+              return `<div class="pl">
+                <div class="who"><b>${c.retailer || '—'}</b><span>${c.plan_name || '—'}</span></div>
+                <div class="rates">
+                  ${rate('pk', 'Peak', 'sensor.sigenergy_peak_rate')}
+                  ${rate('sh', 'Shoulder', 'sensor.sigenergy_shoulder_rate')}
+                  ${rate('off', 'Off-peak', 'sensor.sigenergy_off_peak_rate')}
+                  ${rate('fit', 'Feed-in', 'sensor.sigenergy_solar_feed_in_rate')}
+                </div>
+                <div class="meta"><span>Supply ${sup === null ? '—' : '$' + sup.toFixed(2)}/day</span>
+                  <span class="${dcls}">Pricing until ${c.pricing_valid_until || '—'}${days === null ? '' : ` (${days.toFixed(0)} days)`}</span></div>
+                ${roll && !['unknown', 'unavailable'].includes(roll) ? `<small>Next contract: ${roll}</small>` : ''}
+              </div>`;
+
+            } catch (err) {
+              console.error('Energy Centre card failed: Your plan', err);
+              return `<div style="padding:14px;border-radius:12px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.35);font-size:12px;line-height:1.5;color:#c9d3e4;text-align:left"><b style="color:#ff6b6b">Your plan couldn’t draw.</b><br>${String(err && err.message || err).replace(/</g, '&lt;')}<br><span style="color:#8d9ab3">${String(err && err.stack || '').split('\n').slice(1, 3).join(' ').replace(/</g, '&lt;')}</span></div>`;
+            }
+            ]]]
+        extra_styles: >
+          .pl{height:100%;display:flex;flex-direction:column;gap:7px}
+
+          .who b{display:block;font-size:14px}
+
+          .who span{font-size:11.5px;color:rgba(201,211,228,0.66)}
+
+          .rates{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:5px}
+
+          .rates p{margin:0;padding:5px
+          8px;border-radius:8px;background:rgba(255,255,255,0.04);display:grid;grid-template-columns:9px
+          1fr auto;gap:6px;align-items:center;font-size:12px}
+
+          .rates i{width:8px;height:8px;border-radius:50%}
+
+          .rates span{color:rgba(201,211,228,0.715)}
+
+          .pk{background:#ff6b6b;box-shadow:0 0 6px
+          #ff6b6b}.sh{background:#ffb648;box-shadow:0 0 6px #ffb648}
+
+          .off{background:#3ee08f;box-shadow:0 0 6px
+          #3ee08f}.fit{background:#8ea6ff;box-shadow:0 0 6px #8ea6ff}
+
+          .meta{display:flex;flex-direction:column;gap:2px;font-size:11.5px;line-height:1.35;color:rgba(201,211,228,0.715)}
+
+          .meta .good{color:#3ee08f}.meta .warn{color:#ffb547}.meta
+          .bad{color:#ff6b6b}
+
+          .pl small{margin-top:auto;font-size:11px;color:#3ee08f}
+    background: >-
+      radial-gradient(900px 520px at 12% -8%, rgba(255,194,74,.10), transparent
+      60%), radial-gradient(900px 600px at 95% 110%, rgba(62,224,143,.08),
+      transparent 60%), #080c16
+  - title: Trends
+    path: trends
+    icon: mdi:chart-timeline-variant
+    type: custom:grid-layout
+    layout:
+      grid-template-columns: repeat(6, minmax(0, 1fr))
+      grid-template-rows: 58px 92px auto auto auto auto
+      grid-template-areas: |
+        "head  head  head  head  head   head"
+        "k1    k2    k3    k4    k5     k6"
+        "cal   cal   cal   cal   cal    cal"
+        "chart chart chart chart hi     hi"
+        "chart chart chart chart hi     hi"
+        "table table table season season season"
+      grid-column-gap: 10px
+      grid-row-gap: 10px
+      margin: 6px 4px 8px
+      padding: 0px
+      card_margin: 0px
+      mediaquery:
+        '(min-width: 701px) and (max-width: 1100px)':
+          grid-template-rows: 58px 92px 92px auto auto auto auto
+          grid-template-areas: |
+            "head  head  head  head   head   head"
+            "k1    k1    k2    k2     k3     k3"
+            "k4    k4    k5    k5     k6     k6"
+            "cal   cal   cal   cal    cal    cal"
+            "chart chart chart chart  chart  chart"
+            "hi    hi    hi    season season season"
+            "table table table table  table  table"
+        '(max-width: 700px)':
+          grid-template-columns: repeat(2, minmax(0, 1fr))
+          grid-template-rows: 58px 92px 92px 92px auto auto auto auto auto
+          grid-template-areas: |
+            "head   head"
+            "k1     k2"
+            "k3     k4"
+            "k5     k6"
+            "cal    cal"
+            "chart  chart"
+            "hi     hi"
+            "table  table"
+            "season season"
+    cards:
+      - type: custom:button-card
+        template: sig_header
+        view_layout:
+          grid-area: head
+        icon: mdi:chart-timeline-variant
+        name: Trends
+        label: |
+          [[[
+            const s = states['sensor.sigenergy_analytics_7_day_intelligence']?.state;
+            return s && !['unknown', 'unavailable'].includes(s) ? `Last 7 complete days: ${s}` : 'Last 7 complete days';
+          ]]]
+      - type: custom:button-card
+        template: sig_kpi
+        view_layout:
+          grid-area: k1
+        entity: sensor.sigenergy_analytics_7_day_intelligence
+        name: Solar, 7 days
+        icon: mdi:white-balance-sunny
+        variables:
+          attr: solar_kwh
+          accent: '#ffc24a'
+          suffix: ' kWh'
+          decimals: 0
+          sub: |
+            [[[
+              const v = parseFloat(entity?.attributes?.average_solar_per_day_kwh);
+              return Number.isFinite(v) ? `${v.toFixed(1)} kWh a day` : '';
+            ]]]
+      - type: custom:button-card
+        template: sig_kpi
+        view_layout:
+          grid-area: k2
+        entity: sensor.sigenergy_analytics_7_day_intelligence
+        name: House, 7 days
+        icon: mdi:home-lightning-bolt
+        variables:
+          attr: load_kwh
+          accent: '#e6edff'
+          suffix: ' kWh'
+          decimals: 0
+          sub: |
+            [[[
+              const v = parseFloat(entity?.attributes?.average_load_per_day_kwh);
+              return Number.isFinite(v) ? `${v.toFixed(1)} kWh a day` : '';
+            ]]]
+      - type: custom:button-card
+        template: sig_kpi
+        view_layout:
+          grid-area: k3
+        entity: sensor.sigenergy_analytics_7_day_intelligence
+        name: Grid independence
+        icon: mdi:home-battery-outline
+        variables:
+          attr: grid_independence_pct
+          accent: '#3ee08f'
+          suffix: '%'
+          decimals: 1
+          sub: |
+            [[[
+              const d = parseFloat(entity?.attributes?.days_with_meaningful_grid_import);
+              return Number.isFinite(d) ? `Imported on ${d} of 7 days` : '';
+            ]]]
+      - type: custom:button-card
+        template: sig_kpi
+        view_layout:
+          grid-area: k4
+        entity: sensor.sigenergy_analytics_7_day_intelligence
+        name: Solar used at home
+        icon: mdi:solar-power-variant-outline
+        variables:
+          attr: solar_self_consumption_pct
+          accent: '#e6edff'
+          suffix: '%'
+          decimals: 1
+          sub: Rest was exported
+      - type: custom:button-card
+        template: sig_kpi
+        view_layout:
+          grid-area: k5
+        entity: sensor.sigenergy_analytics_7_day_intelligence
+        name: Exported, 7 days
+        icon: mdi:transmission-tower-export
+        variables:
+          attr: grid_export_kwh
+          accent: '#8ea6ff'
+          suffix: ' kWh'
+          decimals: 0
+          sub: |
+            [[[
+              const v = parseFloat(entity?.attributes?.export_credit_aud);
+              return Number.isFinite(v) ? `Earned $${v.toFixed(2)}` : '';
+            ]]]
+      - type: custom:button-card
+        template: sig_kpi
+        view_layout:
+          grid-area: k6
+        entity: sensor.sigenergy_analytics_7_day_intelligence
+        name: Saved, 7 days
+        icon: mdi:cash-plus
+        variables:
+          attr: system_benefit_aud
+          accent: '#3ee08f'
+          prefix: $
+          decimals: 2
+          sub: |
+            [[[
+              const v = parseFloat(entity?.attributes?.net_electricity_cost_aud);
+              return !Number.isFinite(v) ? '' : v < 0 ? `Bill $${Math.abs(v).toFixed(2)} credit` : `Bill $${v.toFixed(2)} to pay`;
+            ]]]
+      - type: custom:button-card
+        template: sig_card
+        view_layout:
+          grid-area: cal
+        name: Solar calendar
+        icon: mdi:calendar-month-outline
+        variables:
+          icon_color: '#ffc24a'
+          weeks: 16
+          pv_kw: 35
+        triggers_update: all
+        custom_fields:
+          body: |
+            [[[
+            try {
+
+              const E = typeof window !== 'undefined' ? window.sigE : null;
+              if (!E || E.v !== 3) return '<div class="ld">Loading solar history…</div>';
+              const A = E.calIds[0], B = E.calIds[1];
+              const MAXW = Number(variables.weeks || 16), CAP = Number(variables.pv_kw || 30) * 9;
+              const today = new Date(); today.setHours(0, 0, 0, 0);
+              const T = today.getTime(), dow = (today.getDay() + 6) % 7;
+              const fetchStart = new Date(E.calStart(MAXW));
+              const st = E.stats(typeof hass !== 'undefined' ? hass : null, MAXW === 16 ? 'cal2' : 'cal' + MAXW, E.calIds, fetchStart.getTime(), 3600000);
+              if (!st) return '<div class="ld">Loading solar history…</div>';
+              if (st.err) return '<div class="ld">Solar history couldn’t be loaded. It will retry within the hour.</div>';
+              const read = id => { const m = {}; (st.data[id] || []).forEach(r => {
+                const t = typeof r.start === 'number' ? r.start : Date.parse(r.start);
+                const v = Number.isFinite(r.max) ? r.max : Number.isFinite(r.change) ? r.change : null;
+                if (v !== null && Number.isFinite(t)) { const k = new Date(t); k.setHours(0, 0, 0, 0); m[k.getTime()] = v; } });
+                const live = parseFloat(states[id]?.state); if (Number.isFinite(live)) m[T] = live; return m; };
+              const ma = read(A), mb = read(B);
+              // Two independent counters: if they disagree by more than 10%, trust the lower one and flag the day.
+              const day = {}, flag = {};
+              new Set(Object.keys(ma).concat(Object.keys(mb))).forEach(k => {
+                const a = ma[k], b = mb[k];
+                if (a !== undefined && b !== undefined && a > 0 && b > 0) {
+                  const lo = Math.min(a, b), hi = Math.max(a, b);
+                  day[k] = lo; if (+k < T && hi - lo > Math.max(2, lo * 0.1)) flag[k] = `counters disagreed (${a.toFixed(1)} vs ${b.toFixed(1)} kWh), lower value used`;
+                } else {
+                  const v = a !== undefined ? a : b;
+                  if (v > CAP) flag[k] = `${v.toFixed(1)} kWh is above the ${CAP.toFixed(0)} kWh plausibility limit, left out`;
+                  else if (v > 0) day[k] = v;
+                }
+              });
+              const keys = Object.keys(day).map(Number).filter(k => day[k] > 0).sort((x, y) => x - y);
+              if (!keys.length) return '<div class="ld">No daily solar statistics yet. This needs long-term statistics for a daily solar sensor.</div>';
+              // Start at the week of the first day with data, up to the configured number of weeks.
+              const first = new Date(keys[0]), fdow = (first.getDay() + 6) % 7;
+              let start = new Date(first.getFullYear(), first.getMonth(), first.getDate() - fdow);
+              let W = Math.round((T - dow * 864e5 - start.getTime()) / (7 * 864e5)) + 1;
+              if (W > MAXW) { start = fetchStart; W = MAXW; }
+              const cols = `grid-template-columns:22px repeat(${W},minmax(10px,40px))`;
+              const max = Math.max(...keys.map(k => day[k]));
+              const fmtD = t => new Date(+t).toLocaleDateString('en-AU', {weekday: 'short', day: 'numeric', month: 'short'});
+              let cells = '', months = '', lastLabel = -9;
+              for (let w = 0; w < W; w++) {
+                let label = null;
+                for (let d = 0; d < 7; d++) { const dt = new Date(start.getFullYear(), start.getMonth(), start.getDate() + w * 7 + d); if (dt.getDate() === 1) label = dt; }
+                if (w === 0 && !label) { const nx = new Date(start.getFullYear(), start.getMonth() + 1, 1); if ((nx - start) / (7 * 864e5) >= 2) label = start; }
+                if (label && w - lastLabel >= 2) { months += `<span style="grid-column:${w + 2}">${label.toLocaleDateString('en-AU', {month: 'short'})}</span>`; lastLabel = w; }
+                for (let d = 0; d < 7; d++) {
+                  const t = new Date(start.getFullYear(), start.getMonth(), start.getDate() + w * 7 + d).getTime();
+                  const pos = `grid-column:${w + 2};grid-row:${d + 1}`, v = day[t], f = flag[t];
+                  if (t > T) { cells += `<i class="fu" style="${pos}"></i>`; continue; }
+                  if (v === undefined) { cells += `<i class="na ${f ? 'sus' : ''}" style="${pos}" title="${fmtD(t)}: ${f || 'no data'}"></i>`; continue; }
+                  const r = Math.max(0, Math.min(1, v / max));
+                  cells += `<i class="${t === T ? 'td' : ''} ${f ? 'sus' : ''}" style="${pos};--c:rgba(255,194,74,${(0.1 + 0.9 * r).toFixed(2)});box-shadow:0 0 ${Math.round(10 * r)}px rgba(255,194,74,${(0.45 * r).toFixed(2)})" title="${fmtD(t)}: ${v.toFixed(1)} kWh${f ? ' — ' + f : ''}"></i>`;
+                }
+              }
+              const done = keys.filter(k => k < T && day[k] >= 1);
+              const tot = done.reduce((a, k) => a + day[k], 0), avg = done.length ? tot / done.length : 0;
+              const best = done.reduce((a, k) => day[k] > a[1] ? [k, day[k]] : a, [0, 0]);
+              const low = done.reduce((a, k) => day[k] < a[1] ? [k, day[k]] : a, [0, Infinity]);
+              const fl = Object.keys(flag).map(Number).filter(k => k >= start.getTime()).sort((x, y) => x - y);
+              const note = fl.length ? `<div class="nt"><b>${fl.length} day${fl.length > 1 ? 's' : ''} with suspect readings</b> (hatched): ${fl.map(k => `${fmtD(k)}, ${flag[k]}`).join('; ')}.</div>` : '';
+              return `<div class="cw">
+                <div class="cal"><div class="mo" style="${cols}">${months}</div>
+                  <div class="gr" style="${cols}"><span class="dl" style="grid-row:1">M</span><span class="dl" style="grid-row:3">W</span><span class="dl" style="grid-row:5">F</span><span class="dl" style="grid-row:7">S</span>${cells}</div>
+                  <div class="sc"><span>Less</span><i style="--c:rgba(255,194,74,.1)"></i><i style="--c:rgba(255,194,74,.4)"></i><i style="--c:rgba(255,194,74,.7)"></i><i style="--c:rgba(255,194,74,1)"></i><span>More</span></div>
+                  ${note}</div>
+                <div class="cs">
+                  <p><span>Best day</span><b>${best[1] ? fmtD(best[0]) : '—'}</b><small>${best[1] ? best[1].toFixed(1) + ' kWh' : ''}</small></p>
+                  <p><span>Lowest day</span><b>${Number.isFinite(low[1]) ? fmtD(low[0]) : '—'}</b><small>${Number.isFinite(low[1]) ? low[1].toFixed(1) + ' kWh' : ''}</small></p>
+                  <p><span>Daily average</span><b>${avg.toFixed(1)} kWh</b><small>over ${done.length} complete day${done.length === 1 ? '' : 's'}</small></p>
+                  <p><span>Total so far</span><b>${tot >= 1000 ? (tot / 1000).toFixed(2) + ' MWh' : tot.toFixed(0) + ' kWh'}</b><small>since ${fmtD(keys[0])}, excluding today</small></p>
+                </div></div>`;
+
+            } catch (err) {
+              console.error('Energy Centre card failed: Solar calendar', err);
+              return `<div style="padding:14px;border-radius:12px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.35);font-size:12px;line-height:1.5;color:#c9d3e4;text-align:left"><b style="color:#ff6b6b">Solar calendar couldn’t draw.</b><br>${String(err && err.message || err).replace(/</g, '&lt;')}<br><span style="color:#8d9ab3">${String(err && err.stack || '').split('\n').slice(1, 3).join(' ').replace(/</g, '&lt;')}</span></div>`;
+            }
+            ]]]
+        extra_styles: >
+          .ld{padding:30px
+          10px;text-align:center;font-size:12.5px;color:#8d9ab3}
+
+          .cw{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:flex-start}
+
+          .cal{flex:1 1 420px;min-width:0;max-width:640px}
+
+          .mo{display:grid;gap:4px;font-size:10.5px;color:#6f7c95;margin-bottom:4px;white-space:nowrap}
+
+          .gr{display:grid;grid-template-rows:repeat(7,auto);gap:4px}
+
+          .gr
+          i{display:block;aspect-ratio:1;border-radius:5px;background:var(--c,transparent)}
+
+          .gr i.na{background:rgba(255,255,255,.035)}
+
+          .gr i.fu{background:transparent;border:1px dashed
+          rgba(255,255,255,.06)}
+
+          .gr i.td{outline:2px solid #eef3fb;outline-offset:1px}
+
+          .dl{grid-column:1;font-size:10.5px;color:#6f7c95;align-self:center}
+
+          .sc{display:flex;align-items:center;justify-content:flex-end;gap:4px;margin-top:8px;font-size:10.5px;color:#6f7c95}
+
+          .sc
+          i{display:block;width:12px;height:12px;border-radius:3px;background:var(--c)}
+
+          .cs{flex:1 1
+          220px;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+
+          .cs p{margin:0;padding:10px
+          12px;border-radius:14px;background:rgba(255,255,255,.035);border:1px
+          solid rgba(255,255,255,.07);display:flex;flex-direction:column}
+
+          .cs span{font-size:11px;color:#8d9ab3}
+
+          .cs b{font-size:16px;font-weight:600;color:#ffc24a;margin-top:2px}
+
+          .cs small{font-size:11px;color:#8d9ab3}
+
+          .gr
+          i.sus{background-image:repeating-linear-gradient(135deg,rgba(255,107,107,.75)
+          0 2px,transparent 2px 6px);outline:1px solid
+          rgba(255,107,107,.6);outline-offset:-1px}
+
+          .gr i.na.sus{background-color:rgba(255,255,255,.035)}
+
+          .nt{margin-top:10px;padding:8px
+          11px;border-radius:12px;background:rgba(255,107,107,.08);border:1px
+          solid
+          rgba(255,107,107,.3);font-size:11.5px;line-height:1.45;color:#c9d3e4}
+
+          .nt b{color:#ff6b6b;font-weight:600}
+      - type: custom:button-card
+        template: sig_card
+        view_layout:
+          grid-area: chart
+        name: Each day
+        icon: mdi:chart-bar
+        custom_fields:
+          body: |
+            [[[
+            try {
+
+              const a = states['sensor.sigenergy_analytics_7_day_intelligence']?.attributes || {};
+              const raw = a.daily_rows_json; let rows = Array.isArray(raw) ? raw : [];
+              if (!rows.length && typeof raw === 'string') { try { rows = JSON.parse(raw || '[]'); } catch (e) { rows = []; } }
+              if (!rows.length) return '<div class="empty">The 7-day report hasn’t run yet. It refreshes daily at 00:10, or tap the highlights card to run it now.</div>';
+              const nz = v => { const x = parseFloat(v); return Number.isFinite(x) ? x : 0; };
+              const day = s => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || ''); if (!m) return String(s || '');
+                return new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString('en-AU', {weekday: 'short'}) + ' ' + (+m[3]); };
+              const max = Math.max(1, ...rows.flatMap(r => [nz(r.solar_kwh), nz(r.load_kwh), nz(r.grid_export_kwh)]));
+              const nice = Math.ceil(max / 10) * 10;
+              const pct = v => (v / nice * 100).toFixed(1);
+              const cols = rows.map(r => {
+                const s = nz(r.solar_kwh), l = nz(r.load_kwh), e = nz(r.grid_export_kwh), im = nz(r.grid_import_kwh);
+                return `<div class="col" title="${r.date}: solar ${s.toFixed(1)}, house ${l.toFixed(1)}, export ${e.toFixed(1)}, import ${im.toFixed(2)} kWh">
+                  <div class="bars"><i class="s" style="height:${pct(s)}%"></i><i class="l" style="height:${pct(l)}%"></i><i class="e" style="height:${pct(e)}%"></i></div>
+                  <b class="imp ${im > 0.1 ? 'on' : ''}">${im > 0.1 ? im.toFixed(1) : '0'}</b>
+                  <span>${day(r.date)}</span></div>`; }).join('');
+              return `<div class="ed">
+                <div class="plot"><div class="yax"><span>${nice}</span><span>${nice / 2}</span><span>0</span></div><div class="cols">${cols}</div></div>
+                <div class="lg"><span class="s">Solar</span><span class="l">House</span><span class="e">Export</span><span class="i">Grid import (kWh, under each day)</span></div>
+              </div>`;
+
+            } catch (err) {
+              console.error('Energy Centre card failed: Each day', err);
+              return `<div style="padding:14px;border-radius:12px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.35);font-size:12px;line-height:1.5;color:#c9d3e4;text-align:left"><b style="color:#ff6b6b">Each day couldn’t draw.</b><br>${String(err && err.message || err).replace(/</g, '&lt;')}<br><span style="color:#8d9ab3">${String(err && err.stack || '').split('\n').slice(1, 3).join(' ').replace(/</g, '&lt;')}</span></div>`;
+            }
+            ]]]
+        extra_styles: >
+          .ed{height:100%;display:flex;flex-direction:column;gap:8px}
+
+          .plot{flex:1;min-height:200px;display:grid;grid-template-columns:28px
+          1fr;gap:6px}
+
+          .yax{display:flex;flex-direction:column;justify-content:space-between;padding-bottom:38px;font-size:10.5px;color:rgba(201,211,228,0.495);text-align:right}
+
+          .cols{display:flex;gap:4px;
+                background:linear-gradient(rgba(255,255,255,0.072) 1px,transparent 1px) 0 0/100% calc((100% - 38px) / 2) no-repeat,
+                           linear-gradient(rgba(255,255,255,0.072) 1px,transparent 1px) 0 calc((100% - 38px) / 2)/100% 1px no-repeat}
+          .col{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center}
+
+          .bars{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:2px;border-bottom:1px
+          solid rgba(255,255,255,0.18)}
+
+          .bars
+          i{display:block;width:26%;max-width:18px;min-height:2px;border-radius:4px
+          4px 0 0}
+
+          .bars .s{background:#ffc24a;box-shadow:0 0 8px rgba(255,194,74,0.35)}
+
+          .bars .l{background:#e6edff;box-shadow:0 0 8px rgba(142,166,255,0.35)}
+
+          .bars .e{background:#8ea6ff;box-shadow:0 0 8px rgba(62,224,143,0.35)}
+
+          .imp{font-size:11px;margin-top:3px;color:rgba(201,211,228,0.385)}
+
+          .imp.on{color:#ff6b6b;text-shadow:0 0 8px rgba(255,107,107,0.45)}
+
+          .col
+          span{font-size:11px;white-space:nowrap;color:rgba(201,211,228,0.66)}
+
+          .lg{display:flex;flex-wrap:wrap;justify-content:center;gap:4px
+          14px;font-size:11.5px;color:rgba(201,211,228,0.77)}
+
+          .lg span::before{content:'●';margin-right:5px}
+
+          .lg .s::before{color:#ffc24a}.lg .l::before{color:#e6edff}.lg
+          .e::before{color:#8ea6ff}.lg .i::before{color:#ff6b6b}
+
+          .empty{padding:40px
+          10px;text-align:center;font-size:12px;color:rgba(201,211,228,0.66)}
+        variables: {}
+      - type: custom:button-card
+        template: sig_card
+        view_layout:
+          grid-area: hi
+        name: What stood out
+        icon: mdi:star-four-points-outline
+        tap_action:
+          action: call-service
+          service: input_button.press
+          service_data:
+            entity_id: input_button.sigenergy_analytics_refresh_7day
+          confirmation:
+            text: Refresh the 7-day report now?
+        custom_fields:
+          body: |
+            [[[
+            try {
+
+              const a = states['sensor.sigenergy_analytics_7_day_intelligence']?.attributes || {};
+              const raw = a.daily_rows_json; let rows = Array.isArray(raw) ? raw : [];
+              if (!rows.length && typeof raw === 'string') { try { rows = JSON.parse(raw || '[]'); } catch (e) { rows = []; } }
+              const pf = v => { const x = parseFloat(v); return Number.isFinite(x) ? x : null; };
+              const day = s => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || ''); if (!m) return s || '—';
+                return new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString('en-AU', {weekday: 'short', day: 'numeric', month: 'short'}); };
+              const bs = pf(a.best_solar_day_kwh), hl = pf(a.highest_load_day_kwh), imp = pf(a.days_with_meaningful_grid_import);
+              let vs = '';
+              if (rows.length) {
+                const r = rows[rows.length - 1];
+                const cmp = (v, avg) => { v = pf(v); avg = pf(avg); if (v === null || !avg) return '—';
+                  const p = (v - avg) / avg * 100; return `<em class="${p >= 0 ? 'up' : 'dn'}">${p >= 0 ? '↑' : '↓'} ${Math.abs(p).toFixed(0)}%</em>`; };
+                vs = `<p><span>${day(r.date)} vs average</span><b>Solar ${cmp(r.solar_kwh, a.average_solar_per_day_kwh)}, house ${cmp(r.load_kwh, a.average_load_per_day_kwh)}</b></p>`;
+              }
+              const summary = a.summary ? `<div class="sum">${String(a.summary).replace(/cost was \$-(\d+(?:\.\d+)?)/g, 'cost was a $$$1 credit').replace(/\$-(\d+(?:\.\d+)?)/g, '$$$1 credit')}</div>` : '';
+              return `<div class="hi">${summary}
+                <p><span>Best solar day</span><b>${day(a.best_solar_day)}, ${bs === null ? '—' : bs.toFixed(1)} kWh</b></p>
+                <p><span>Highest use day</span><b>${day(a.highest_load_day)}, ${hl === null ? '—' : hl.toFixed(1)} kWh</b></p>
+                <p><span>Days needing the grid</span><b>${imp === null ? '—' : imp + ' of 7'}</b></p>
+                ${vs}
+                <footer>Updates daily at 00:10. Tap to refresh now.</footer></div>`;
+
+            } catch (err) {
+              console.error('Energy Centre card failed: What stood out', err);
+              return `<div style="padding:14px;border-radius:12px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.35);font-size:12px;line-height:1.5;color:#c9d3e4;text-align:left"><b style="color:#ff6b6b">What stood out couldn’t draw.</b><br>${String(err && err.message || err).replace(/</g, '&lt;')}<br><span style="color:#8d9ab3">${String(err && err.stack || '').split('\n').slice(1, 3).join(' ').replace(/</g, '&lt;')}</span></div>`;
+            }
+            ]]]
+        extra_styles: >
+          .hi{height:100%;display:flex;flex-direction:column;gap:2px}
+
+          .sum{padding:7px
+          9px;margin-bottom:4px;border-radius:9px;background:rgba(255,255,255,0.04);border:1px
+          solid rgba(62,224,143,0.18);
+               font-size:12px;line-height:1.4;color:rgba(201,211,228,0.935)}
+          .hi
+          p{margin:0;display:flex;justify-content:space-between;gap:10px;padding:5px
+          0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:12px}
+
+          .hi p span{color:rgba(201,211,228,0.715);flex-shrink:0}
+
+          .hi p b{text-align:right}
+
+          .hi em{font-style:normal}.hi .up{color:#3ee08f}.hi .dn{color:#ff6b6b}
+
+          .hi
+          footer{margin-top:auto;padding-top:6px;font-size:11px;color:#3ee08f}
+        variables: {}
+      - type: custom:button-card
+        template: sig_card
+        view_layout:
+          grid-area: table
+        name: Day by day
+        icon: mdi:table-large
+        custom_fields:
+          body: |
+            [[[
+            try {
+
+              const a = states['sensor.sigenergy_analytics_7_day_intelligence']?.attributes || {};
+              const raw = a.daily_rows_json; let rows = Array.isArray(raw) ? raw : [];
+              if (!rows.length && typeof raw === 'string') { try { rows = JSON.parse(raw || '[]'); } catch (e) { rows = []; } }
+              if (!rows.length) return '<div class="empty">Waiting for the 7-day report.</div>';
+              const nz = v => { const x = parseFloat(v); return Number.isFinite(x) ? x : 0; };
+              const day = s => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || ''); if (!m) return String(s || '');
+                return new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString('en-AU', {weekday: 'short'}) + ' ' + (+m[3]); };
+              const t = {s: 0, l: 0, i: 0, e: 0, b: 0};
+              const body = rows.slice().reverse().map(r => {
+                const s = nz(r.solar_kwh), l = nz(r.load_kwh), i = nz(r.grid_import_kwh), e = nz(r.grid_export_kwh), b = nz(r.battery_discharge_kwh), bal = nz(r.balance_error_kwh);
+                t.s += s; t.l += l; t.i += i; t.e += e; t.b += b;
+                return `<div class="tr3"><span>${day(r.date)}</span><b class="s">${s.toFixed(1)}</b><b>${l.toFixed(1)}</b>
+                  <b class="${i > 0.1 ? 'i' : ''}">${i.toFixed(2)}</b><b class="e">${e.toFixed(1)}</b><b>${b.toFixed(1)}</b>
+                  <b class="${bal <= 0.25 ? 'ok' : 'warn'}">${bal.toFixed(2)}</b></div>`; }).join('');
+              return `<div class="dd">
+                <div class="tr3 th"><span>Day</span><b>Solar</b><b>House</b><b>Import</b><b>Export</b><b>Batt out</b><b>Check</b></div>
+                ${body}
+                <div class="tr3 tot"><span>Total</span><b>${t.s.toFixed(0)}</b><b>${t.l.toFixed(0)}</b><b>${t.i.toFixed(2)}</b><b>${t.e.toFixed(0)}</b><b>${t.b.toFixed(0)}</b><b></b></div>
+                <small>kWh. Check is the daily energy-balance gap; green means under 0.25 kWh.</small></div>`;
+
+            } catch (err) {
+              console.error('Energy Centre card failed: Day by day', err);
+              return `<div style="padding:14px;border-radius:12px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.35);font-size:12px;line-height:1.5;color:#c9d3e4;text-align:left"><b style="color:#ff6b6b">Day by day couldn’t draw.</b><br>${String(err && err.message || err).replace(/</g, '&lt;')}<br><span style="color:#8d9ab3">${String(err && err.stack || '').split('\n').slice(1, 3).join(' ').replace(/</g, '&lt;')}</span></div>`;
+            }
+            ]]]
+        extra_styles: >
+          .dd{display:flex;flex-direction:column}
+
+          .tr3{display:grid;grid-template-columns:1.15fr
+          repeat(6,minmax(0,1fr));gap:4px;align-items:center;padding:5px 0;
+               border-bottom:1px solid rgba(255,255,255,0.048);font-size:12px;font-variant-numeric:tabular-nums}
+          .tr3 b{text-align:right;font-weight:700}
+
+          .tr3 span{color:rgba(201,211,228,0.77);white-space:nowrap}
+
+          .th{font-size:10.5px;color:rgba(201,211,228,0.55);border-bottom:1px
+          solid rgba(255,255,255,0.12)}
+
+          .th b{font-weight:600;color:rgba(201,211,228,0.55)}
+
+          .tot{border-bottom:0;border-top:1px solid rgba(255,255,255,0.12)}
+
+          .tot b,.tot span{color:#3ee08f}
+
+          .tr3 .s{color:#ffc24a}.tr3 .e{color:#8ea6ff}.tr3 .i{color:#ff6b6b}
+
+          .tr3 .ok{color:#3ee08f}.tr3 .warn{color:#ffb547}
+
+          .dd
+          small{margin-top:6px;font-size:10.5px;color:rgba(201,211,228,0.495)}
+
+          .empty{padding:30px
+          10px;text-align:center;font-size:12px;color:rgba(201,211,228,0.66)}
+
+          @media (max-width:700px){.tr3{font-size:11px;gap:2px}}
+        variables: {}
+      - type: custom:button-card
+        template: sig_card
+        view_layout:
+          grid-area: season
+        name: Season so far
+        icon: mdi:weather-partly-cloudy
+        custom_fields:
+          body: |
+            [[[
+            try {
+
+              const s = id => states[id]?.state;
+              const num = id => { const v = parseFloat(s(id)); return Number.isFinite(v) ? v : null; };
+              const kwh = (v, d = 0) => v === null ? '—' : v.toFixed(d) + ' kWh';
+              const money = v => v === null ? '—' : `${v < 0 ? '−' : ''}$${Math.abs(v).toFixed(2)}`;
+              const name = s('sensor.sigenergy_analytics_current_season') || '—';
+              const cov = s('sensor.sigenergy_analytics_current_season_coverage') || '—';
+              const pv = num('sensor.sigenergy_analytics_seasonal_pv'), ld = num('sensor.sigenergy_analytics_seasonal_load');
+              const im = num('sensor.sigenergy_analytics_seasonal_import'), ex = num('sensor.sigenergy_analytics_seasonal_export');
+              const efc = num('sensor.sigenergy_analytics_seasonal_battery_efc');
+              const ben = num('sensor.sigenergy_analytics_system_benefit_this_season'), net = num('sensor.sigenergy_analytics_actual_cost_this_season');
+              const arch = num('sensor.sigenergy_analytics_archived_seasons_count');
+              const ind = ld && im !== null ? Math.max(0, (1 - im / ld) * 100) : null;
+              return `<div class="sn">
+                <div class="top"><b>${name}</b><span>${cov}</span></div>
+                <div class="g2">
+                  <p><span>Solar</span><b>${kwh(pv)}</b></p><p><span>House</span><b>${kwh(ld)}</b></p>
+                  <p><span>Grid import</span><b>${kwh(im, 1)}</b></p><p><span>Export</span><b>${kwh(ex)}</b></p>
+                  <p><span>Battery cycles</span><b>${efc === null ? '—' : efc.toFixed(1)}</b></p><p><span>Grid independence</span><b>${ind === null ? '—' : ind.toFixed(1) + '%'}</b></p>
+                </div>
+                <div class="money"><p><span>Saved</span><b class="g">${money(ben)}</b></p><p><span>Bill</span><b class="${net !== null && net < 0 ? 'g' : ''}">${net === null ? '—' : net < 0 ? '$' + Math.abs(net).toFixed(2) + ' credit' : '$' + net.toFixed(2) + ' to pay'}</b></p></div>
+                <small>${arch ? `${arch} earlier season${arch === 1 ? '' : 's'} archived. Comparisons arrive once a full season is stored.` : 'This is your first season. Comparisons arrive once a full season is stored.'}</small>
+              </div>`;
+
+            } catch (err) {
+              console.error('Energy Centre card failed: Season so far', err);
+              return `<div style="padding:14px;border-radius:12px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.35);font-size:12px;line-height:1.5;color:#c9d3e4;text-align:left"><b style="color:#ff6b6b">Season so far couldn’t draw.</b><br>${String(err && err.message || err).replace(/</g, '&lt;')}<br><span style="color:#8d9ab3">${String(err && err.stack || '').split('\n').slice(1, 3).join(' ').replace(/</g, '&lt;')}</span></div>`;
+            }
+            ]]]
+        extra_styles: >
+          .sn{display:flex;flex-direction:column;gap:7px}
+
+          .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+
+          .top b{font-size:17px;font-weight:800;color:#3ee08f;text-shadow:0 0
+          12px rgba(62,224,143,0.3)}
+
+          .top
+          span{font-size:11px;color:rgba(201,211,228,0.605);text-align:right}
+
+          .g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));column-gap:14px}
+
+          .sn
+          p{margin:0;display:flex;justify-content:space-between;gap:8px;padding:4px
+          0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:12px}
+
+          .sn p span{color:rgba(201,211,228,0.715)}
+
+          .money{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+          .money p{flex-direction:column;border:0;padding:7px
+          9px;border-radius:9px;background:rgba(255,255,255,0.04)}
+
+          .money b{font-size:17px;font-weight:800}
+
+          .money .g{color:#3ee08f}
+
+          .sn
+          small{font-size:10.5px;line-height:1.35;color:rgba(201,211,228,0.495)}
+        variables: {}
+    background: >-
+      radial-gradient(900px 520px at 12% -8%, rgba(255,194,74,.10), transparent
+      60%), radial-gradient(900px 600px at 95% 110%, rgba(62,224,143,.08),
+      transparent 60%), #080c16
