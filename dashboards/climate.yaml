@@ -1,0 +1,985 @@
+title: Climate
+button_card_templates:
+  at_base:
+    show_icon: false
+    show_name: false
+    show_state: false
+    show_label: false
+    tap_action:
+      action: none
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+    variables:
+      lib: |
+        [[[
+          if (!window.atU || window.atU.v !== 6) {
+            window.atU = {
+              v: 6,
+              // Auto mode: the AirTouch doesn't report heating vs cooling, so estimate it from inside vs target.
+              eff(S) {
+                const ac = S['climate.ac_0'];
+                if (this.dead(ac)) return 'off';
+                if (!['auto', 'heat_cool'].includes(ac.state)) return ac.state;
+                const cur = this.num(ac.attributes.current_temperature), set = this.num(ac.attributes.temperature);
+                if (cur === null || set === null) return 'auto';
+                return cur - set > 2 ? 'cool' : set - cur > 2 ? 'heat' : 'auto';
+              },
+              M: {off: '#8d9ab3', cool: '#8ea6ff', heat: '#ffb648', auto: '#3ee08f', heat_cool: '#3ee08f', fan_only: '#c9d3e4', dry: '#a78bfa'},
+              dead: s => !s || ['unavailable', 'unknown'].includes(s.state),
+              num(v) { const n = parseFloat(v); return Number.isFinite(n) ? n : null; },
+              rgba(h, a) { const n = parseInt(String(h).slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; },
+              zone(S, z) {
+                const zc = S['climate.' + z], dv = S['cover.' + z + '_damper'], hb = S['input_boolean.' + z + '_damper_manual'], ac = S['climate.ac_0'];
+                const ok = !this.dead(zc), run = !this.dead(ac) && ac.state !== 'off', on = ok && zc.state !== 'off';
+                const accent = on && run ? (this.M[this.eff(S)] || '#8d9ab3') : '#8d9ab3';
+                const manual = !!hb && hb.state === 'on', boost = ok && zc.attributes.preset_mode === 'boost';
+                const pos = this.dead(dv) ? 0 : (this.num(dv.attributes.current_position) ?? 0);
+                let lab = `${pos}% open`, fg = '#eef3fb';
+                if (!ok) { lab = 'Unavailable'; fg = '#ff6b6b'; }
+                else if (!run) { lab = 'System off'; fg = '#8d9ab3'; }
+                else if (!on) { lab = 'Zone off'; fg = '#8d9ab3'; }
+                else if (manual) { lab = `Manual, ${pos}%`; fg = '#a78bfa'; }
+                else if (boost) { lab = `Boost, ${pos}% open`; fg = '#ffb648'; }
+                else if (pos === 0) { lab = 'Set point reached'; fg = '#3ee08f'; }
+                return {ok, run, on, accent, manual, boost, pos, lab, fg,
+                        t: ok ? this.num(zc.attributes.current_temperature) : null,
+                        set: ok ? this.num(zc.attributes.temperature) : null};
+              }
+            };
+          }
+          return 1;
+        ]]]
+    styles:
+      card:
+        - height: 100%
+        - box-sizing: border-box
+        - border-radius: 24px
+        - padding: 14px 16px 16px
+        - background: linear-gradient(160deg, rgba(22,30,48,.78), rgba(12,17,30,.86))
+        - backdrop-filter: blur(18px)
+        - -webkit-backdrop-filter: blur(18px)
+        - border: 1px solid rgba(255,255,255,.07)
+        - box-shadow: 0 18px 40px rgba(0,0,0,.35)
+        - overflow: hidden
+        - color: '#eef3fb'
+        - cursor: default
+      grid:
+        - grid-template-areas: '"body"'
+        - grid-template-columns: minmax(0, 1fr)
+        - grid-template-rows: auto
+      custom_fields:
+        body:
+          - justify-self: stretch
+          - min-width: 0
+          - text-align: left
+          - white-space: normal
+    extra_styles: >
+      .tn{font-variant-numeric:tabular-nums}
+
+      .hd{display:flex;align-items:center;gap:8px;height:32px;min-width:0}
+
+      .ic{width:30px;height:30px;flex:none;border-radius:10px;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center}
+
+      .ic ha-icon{--mdc-icon-size:18px}
+
+      .tt{font-size:15px;font-weight:600;color:#f4f7fc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+      .lb{font-size:12px;font-weight:600;color:#c9d3e4;text-align:left}
+
+      .mu{font-size:12px;color:#8d9ab3;text-align:left}
+
+      .sm{font-size:10.5px;font-weight:500;color:#8d9ab3}
+
+      .big{font-size:64px;font-weight:200;letter-spacing:-2px;line-height:1;text-align:center}
+
+      .nt{font-size:30px;font-weight:300;letter-spacing:-.5px;line-height:1.1}
+
+      .sv{display:flex;flex-direction:column;align-items:center}
+
+      .sv b{font-size:16px;font-weight:500}
+
+      .dl{font-size:11.5px;font-weight:500;text-align:right;white-space:nowrap}
+
+      .bar{height:7px;border-radius:7px;background:rgba(255,255,255,.08);overflow:hidden}
+
+      .bar em{display:block;height:100%;border-radius:7px}
+
+      .row{display:flex;justify-content:space-between;padding:8px
+      10px;border-radius:12px;background:rgba(255,255,255,.04);font-size:12.5px;margin-top:6px}
+
+      .row span{color:#8d9ab3}.row b{font-weight:500}
+
+      .hw{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+
+      .hl{display:flex;align-items:center;gap:10px}
+
+      .hl .ic{width:42px;height:42px;border-radius:13px}.hl .ic
+      ha-icon{--mdc-icon-size:22px}
+
+      .hn{display:flex;flex-direction:column;text-align:left}
+
+      .hn
+      b{font-size:28px;font-weight:300;letter-spacing:-.5px;color:#f4f7fc;line-height:32px}
+
+      .hn small{font-size:12px;color:#8d9ab3}
+
+      .hp{display:flex;align-items:center;gap:9px;padding:8px
+      14px;border-radius:16px;background:rgba(10,16,32,.42);border:1px solid
+      rgba(255,255,255,.1);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+
+      .hp i{width:8px;height:8px;border-radius:50%}
+
+      .hp span{display:flex;flex-direction:column;text-align:left}
+
+      .hp b{font-size:12.5px;font-weight:600;color:#eef3fb}
+
+      .hp small{font-size:11px;color:#8d9ab3;margin-top:1px}
+
+      @media (max-width:700px){ .hn b{font-size:22px} .big{font-size:52px} }
+  at_ctl:
+    show_icon: true
+    show_name: false
+    show_state: false
+    show_label: false
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+    variables:
+      'on': false
+      c: '#c9d3e4'
+      w: 44px
+    styles:
+      card:
+        - height: 44px
+        - width: '[[[ return variables.w ]]]'
+        - padding: 0
+        - border-radius: 14px
+        - box-shadow: none
+        - background: >-
+            [[[ if (!variables.on) return "rgba(255,255,255,.04)"; const n =
+            parseInt(String(variables.c).slice(1), 16); return `rgba(${n >>
+            16},${(n >> 8) & 255},${n & 255},.14)`; ]]]
+        - border: >-
+            [[[ if (!variables.on) return "1px solid rgba(255,255,255,.08)";
+            const n = parseInt(String(variables.c).slice(1), 16); return `1px
+            solid rgba(${n >> 16},${(n >> 8) & 255},${n & 255},.4)`; ]]]
+      icon:
+        - width: 18px
+        - color: '[[[ return variables.on ? variables.c : "#c9d3e4" ]]]'
+      name:
+        - font-size: 11.5px
+        - font-weight: 600
+        - color: '[[[ return variables.on ? variables.c : "#c9d3e4" ]]]'
+  at_seg:
+    template: at_ctl
+    show_name: true
+    variables:
+      w: 100cqw
+    styles:
+      card:
+        - height: 54px
+      grid:
+        - grid-template-areas: '"i" "n"'
+        - grid-template-rows: 22px 16px
+        - align-content: center
+        - row-gap: 2px
+      icon:
+        - width: 17px
+      name:
+        - font-size: 11px
+  at_txt:
+    template: at_ctl
+    show_icon: false
+    show_name: true
+    variables:
+      w: 100cqw
+    styles:
+      card:
+        - height: 44px
+  at_bar:
+    show_icon: false
+    show_name: false
+    show_state: false
+    show_label: false
+    tap_action:
+      action: more-info
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+    variables:
+      pos: 0
+      c: '#8d9ab3'
+    styles:
+      card:
+        - width: 100cqw
+        - height: 32px
+        - padding: 0 2px
+        - box-sizing: border-box
+        - background: transparent
+        - border: none
+        - box-shadow: none
+        - border-radius: 10px
+      grid:
+        - grid-template-areas: '"b"'
+        - grid-template-columns: minmax(0, 1fr)
+      custom_fields:
+        b:
+          - width: 100%
+          - align-self: center
+    custom_fields:
+      b: |
+        [[[
+          const n = parseInt(String(variables.c).slice(1), 16), p = Math.max(0, Math.min(100, Number(variables.pos) || 0));
+          return `<div style="height:7px;border-radius:7px;background:rgba(255,255,255,.08);overflow:hidden">
+            <div style="height:100%;width:${p}%;border-radius:7px;background:${variables.c};box-shadow:0 0 8px rgba(${n >> 16},${(n >> 8) & 255},${n & 255},.5)"></div></div>`;
+        ]]]
+  at_pair:
+    show_icon: false
+    show_name: false
+    show_state: false
+    show_label: false
+    tap_action:
+      action: none
+    hold_action:
+      action: none
+    styles:
+      card:
+        - width: fit-content
+        - padding: 0
+        - box-shadow: none
+        - border: none
+        - background: transparent
+      grid:
+        - grid-template-areas: '"a b"'
+        - grid-template-columns: 44px 52px
+        - column-gap: 0
+        - align-items: center
+  at_pill:
+    show_icon: false
+    show_name: false
+    show_state: false
+    show_label: false
+    tap_action:
+      action: none
+    hold_action:
+      action: none
+    styles:
+      card:
+        - width: fit-content
+        - padding: 3px
+        - border-radius: 12px
+        - box-shadow: none
+        - background: rgba(255,255,255,.04)
+        - border: 1px solid rgba(255,255,255,.07)
+      grid:
+        - grid-template-areas: '"a b"'
+        - grid-template-columns: auto auto
+        - column-gap: 2px
+  at_pbtn:
+    template: at_txt
+    styles:
+      card:
+        - height: 38px
+        - border-radius: 9px
+        - border: none
+        - background: >-
+            [[[ if (!variables.on) return "transparent"; const n =
+            parseInt(String(variables.c).slice(1), 16); return `rgba(${n >>
+            16},${(n >> 8) & 255},${n & 255},.16)`; ]]]
+      name:
+        - color: '[[[ return variables.on ? variables.c : "#8d9ab3" ]]]'
+  at_sw:
+    template: at_ctl
+    show_icon: false
+    styles:
+      card:
+        - width: 52px
+        - border: none
+        - background: transparent
+      grid:
+        - grid-template-areas: '"s"'
+    custom_fields:
+      s: |
+        [[[
+          const on = variables.on, n = parseInt(String(variables.c).slice(1), 16);
+          const rg = a => `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`;
+          const bg = on ? rg(.14) : 'rgba(255,255,255,.06)', bd = on ? rg(.4) : 'rgba(255,255,255,.1)';
+          return `<span style="position:relative;display:block;width:40px;height:24px;border-radius:12px;box-sizing:border-box;border:1px solid ${bd};background:${bg}">
+            <span style="position:absolute;top:3px;left:${on ? 19 : 3}px;width:16px;height:16px;border-radius:50%;background:${on ? variables.c : '#6f7c95'}"></span></span>`;
+        ]]]
+  at_head:
+    template: at_base
+    styles:
+      card:
+        - background: transparent
+        - box-shadow: none
+        - border: 0
+        - backdrop-filter: none
+        - -webkit-backdrop-filter: none
+        - padding: 4px 6px
+    custom_fields:
+      body: |
+        [[[
+          variables.lib; const U = window.atU, ac = states['climate.ac_0'];
+          const VERB = {off: 'System off', cool: 'Cooling to', heat: 'Heating to', auto: 'Auto, target', heat_cool: 'Auto, target', fan_only: 'Fan only', dry: 'Drying'};
+          const onN = ['living', 'master', 'alessia', 'bed_2', 'office'].filter(z => U.zone(states, z).on).length;
+          let status = 'AC unavailable', sub = 'Check the AirTouch integration', col = '#ff6b6b';
+          if (!U.dead(ac)) {
+            const m = ac.state, run = m !== 'off', t = ac.attributes.temperature;
+            const e = U.eff(states);
+            col = run ? (U.M[e] || '#8d9ab3') : '#8d9ab3';
+            const AUTO = {cool: 'Auto, likely cooling to', heat: 'Auto, likely heating to', auto: 'Auto, near target'};
+            status = (['auto', 'heat_cool'].includes(m) ? AUTO[e] : (VERB[m] || m)) + (['cool', 'heat', 'auto', 'heat_cool'].includes(m) ? ` ${t}°` : '');
+            sub = run ? `${onN} of 5 zones on, fan ${ac.attributes.fan_mode || '—'}` : 'All zones idle';
+          }
+          return `<div class="hw">
+            <div class="hl"><span class="ic"><ha-icon icon="mdi:air-conditioner" style="color:#ffb648"></ha-icon></span>
+              <span class="hn"><b>Climate</b><small>AirTouch 5 ducted system, 5 zones</small></span></div>
+            <div class="hp"><i style="background:${col};box-shadow:0 0 10px ${col}"></i><span><b>${status}</b><small>${sub}</small></span></div>
+          </div>`;
+        ]]]
+  at_main:
+    template: at_base
+    styles:
+      grid:
+        - grid-template-columns: |
+            [[[ return window.matchMedia('(max-width: 700px)').matches
+                  ? '44px repeat(4, minmax(0, 1fr)) 44px'
+                  : '44px minmax(120px, 1.2fr) 44px minmax(16px, .6fr) repeat(6, minmax(0, 1fr))'; ]]]
+        - grid-template-areas: |
+            [[[ return window.matchMedia('(max-width: 700px)').matches
+                  ? '"hd hd hd hd hd hd" "lb lb lb lb lb lb" "dn big big big big up" "mu mu mu mu mu mu" "ml ml ml ml ml ml" "m1 m1 m2 m2 m3 m3" "m4 m4 m5 m5 m6 m6" "fl fl fl fl fl fl" "f1 f1 f2 f2 f3 f3"'
+                  : '"hd hd hd . . . . . . ." "lb lb lb . ml ml ml ml ml ml" "dn big up . m1 m2 m3 m4 m5 m6" "mu mu mu . fl fl fl fl fl fl" ". . . . f1 f1 f2 f2 f3 f3"'; ]]]
+        - grid-template-rows: auto
+        - column-gap: 8px
+        - row-gap: 8px
+      custom_fields:
+        hd:
+          - justify-self: start
+          - margin-bottom: 6px
+        lb:
+          - justify-self: start
+        ml:
+          - justify-self: start
+        fl:
+          - justify-self: start
+          - margin-top: 6px
+        mu:
+          - justify-self: start
+          - align-self: start
+        big:
+          - justify-self: center
+          - align-self: center
+        dn:
+          - align-self: center
+        up:
+          - align-self: center
+        m1:
+          - justify-self: stretch
+          - width: 100%
+          - container-type: inline-size
+        m2:
+          - justify-self: stretch
+          - width: 100%
+          - container-type: inline-size
+        m3:
+          - justify-self: stretch
+          - width: 100%
+          - container-type: inline-size
+        m4:
+          - justify-self: stretch
+          - width: 100%
+          - container-type: inline-size
+        m5:
+          - justify-self: stretch
+          - width: 100%
+          - container-type: inline-size
+        m6:
+          - justify-self: stretch
+          - width: 100%
+          - container-type: inline-size
+        f1:
+          - justify-self: stretch
+          - width: 100%
+          - container-type: inline-size
+        f2:
+          - justify-self: stretch
+          - width: 100%
+          - container-type: inline-size
+        f3:
+          - justify-self: stretch
+          - width: 100%
+          - container-type: inline-size
+    custom_fields:
+      hd: |
+        [[[
+          variables.lib; const U = window.atU, ac = states['climate.ac_0'];
+          const run = !U.dead(ac) && ac.state !== 'off', col = run ? (U.M[U.eff(states)] || '#8d9ab3') : '#8d9ab3';
+          const ic = {off: 'mdi:power', cool: 'mdi:snowflake', heat: 'mdi:fire', auto: 'mdi:autorenew', fan_only: 'mdi:fan', dry: 'mdi:water-percent'}[ac?.state] || 'mdi:hvac';
+          return `<div class="hd"><span class="ic"><ha-icon icon="${ic}" style="color:${col}"></ha-icon></span><span class="tt">Main unit</span></div>`;
+        ]]]
+      lb: <span class="lb">Target temperature</span>
+      ml: <span class="lb">Mode</span>
+      fl: <span class="lb">Fan speed</span>
+      big: |
+        [[[
+          variables.lib; const U = window.atU, ac = states['climate.ac_0'];
+          const run = !U.dead(ac) && ac.state !== 'off', set = U.dead(ac) ? null : U.num(ac.attributes.temperature);
+          return `<span class="big tn" style="color:${run ? '#eef3fb' : '#8d9ab3'}">${set === null ? '—' : set + '°'}</span>`;
+        ]]]
+      mu: |
+        [[[
+          variables.lib; const U = window.atU, ac = states['climate.ac_0'];
+          if (U.dead(ac)) return '<span class="mu">climate.ac_0 is unavailable</span>';
+          const cur = U.num(ac.attributes.current_temperature);
+          return `<span class="mu">Inside now <b class="tn" style="color:#eef3fb;font-weight:500">${cur === null ? '—' : cur.toFixed(1) + '°'}</b>, range ${ac.attributes.min_temp}–${ac.attributes.max_temp}°</span>`;
+        ]]]
+      dn:
+        card:
+          type: custom:button-card
+          template: at_ctl
+          icon: mdi:minus
+          styles:
+            card:
+              - border-radius: 50%
+          tap_action:
+            action: call-service
+            service: script.airtouch_ac_temp
+            service_data:
+              step: -1
+      up:
+        card:
+          type: custom:button-card
+          template: at_ctl
+          icon: mdi:plus
+          styles:
+            card:
+              - border-radius: 50%
+          tap_action:
+            action: call-service
+            service: script.airtouch_ac_temp
+            service_data:
+              step: 1
+      m1:
+        card:
+          type: custom:button-card
+          template: at_seg
+          name: 'Off'
+          icon: mdi:power
+          variables:
+            'on': '[[[ return states[''climate.ac_0'']?.state === ''off'' ]]]'
+            c: '#8d9ab3'
+          tap_action:
+            action: call-service
+            service: climate.set_hvac_mode
+            service_data:
+              entity_id: climate.ac_0
+              hvac_mode: 'off'
+      m2:
+        card:
+          type: custom:button-card
+          template: at_seg
+          name: Cool
+          icon: mdi:snowflake
+          variables:
+            'on': '[[[ return states[''climate.ac_0'']?.state === ''cool'' ]]]'
+            c: '#8ea6ff'
+          tap_action:
+            action: call-service
+            service: climate.set_hvac_mode
+            service_data:
+              entity_id: climate.ac_0
+              hvac_mode: cool
+      m3:
+        card:
+          type: custom:button-card
+          template: at_seg
+          name: Heat
+          icon: mdi:fire
+          variables:
+            'on': '[[[ return states[''climate.ac_0'']?.state === ''heat'' ]]]'
+            c: '#ffb648'
+          tap_action:
+            action: call-service
+            service: climate.set_hvac_mode
+            service_data:
+              entity_id: climate.ac_0
+              hvac_mode: heat
+      m4:
+        card:
+          type: custom:button-card
+          template: at_seg
+          name: Auto
+          icon: mdi:autorenew
+          variables:
+            'on': '[[[ return states[''climate.ac_0'']?.state === ''auto'' ]]]'
+            c: '#3ee08f'
+          tap_action:
+            action: call-service
+            service: climate.set_hvac_mode
+            service_data:
+              entity_id: climate.ac_0
+              hvac_mode: auto
+      m5:
+        card:
+          type: custom:button-card
+          template: at_seg
+          name: Fan
+          icon: mdi:fan
+          variables:
+            'on': '[[[ return states[''climate.ac_0'']?.state === ''fan_only'' ]]]'
+            c: '#c9d3e4'
+          tap_action:
+            action: call-service
+            service: climate.set_hvac_mode
+            service_data:
+              entity_id: climate.ac_0
+              hvac_mode: fan_only
+      m6:
+        card:
+          type: custom:button-card
+          template: at_seg
+          name: Dry
+          icon: mdi:water-percent
+          variables:
+            'on': '[[[ return states[''climate.ac_0'']?.state === ''dry'' ]]]'
+            c: '#a78bfa'
+          tap_action:
+            action: call-service
+            service: climate.set_hvac_mode
+            service_data:
+              entity_id: climate.ac_0
+              hvac_mode: dry
+      f1:
+        card:
+          type: custom:button-card
+          template: at_txt
+          name: Low
+          variables:
+            'on': >-
+              [[[ return states['climate.ac_0']?.attributes?.fan_mode === 'low'
+              ]]]
+            c: >-
+              [[[ variables.lib; const e = window.atU.eff(states); return e !==
+              'off' ? (window.atU.M[e] || '#8d9ab3') : '#8d9ab3' ]]]
+          tap_action:
+            action: call-service
+            service: climate.set_fan_mode
+            service_data:
+              entity_id: climate.ac_0
+              fan_mode: low
+      f2:
+        card:
+          type: custom:button-card
+          template: at_txt
+          name: Medium
+          variables:
+            'on': >-
+              [[[ return states['climate.ac_0']?.attributes?.fan_mode ===
+              'medium' ]]]
+            c: >-
+              [[[ variables.lib; const e = window.atU.eff(states); return e !==
+              'off' ? (window.atU.M[e] || '#8d9ab3') : '#8d9ab3' ]]]
+          tap_action:
+            action: call-service
+            service: climate.set_fan_mode
+            service_data:
+              entity_id: climate.ac_0
+              fan_mode: medium
+      f3:
+        card:
+          type: custom:button-card
+          template: at_txt
+          name: High
+          variables:
+            'on': >-
+              [[[ return states['climate.ac_0']?.attributes?.fan_mode === 'high'
+              ]]]
+            c: >-
+              [[[ variables.lib; const e = window.atU.eff(states); return e !==
+              'off' ? (window.atU.M[e] || '#8d9ab3') : '#8d9ab3' ]]]
+          tap_action:
+            action: call-service
+            service: climate.set_fan_mode
+            service_data:
+              entity_id: climate.ac_0
+              fan_mode: high
+  at_summary:
+    template: at_base
+    custom_fields:
+      body: |
+        [[[
+          variables.lib; const U = window.atU;
+          const Z = ['living', 'master', 'alessia', 'bed_2', 'office'].map(z => states['climate.' + z]).filter(s => !U.dead(s));
+          const t = s => U.num(s.attributes.current_temperature);
+          const on = Z.filter(s => s.state !== 'off');
+          const onT = on.filter(s => t(s) !== null);
+          const avg = onT.length ? onT.reduce((a, s) => a + t(s), 0) / onT.length : null;
+          const byT = Z.filter(s => t(s) !== null).sort((a, b) => t(b) - t(a));
+          const nm = s => s.attributes.friendly_name || s.entity_id;
+          const warm = byT.length ? `${nm(byT[0])} ${t(byT[0]).toFixed(1)}°` : '—';
+          const cool = byT.length ? `${nm(byT[byT.length - 1])} ${t(byT[byT.length - 1]).toFixed(1)}°` : '—';
+          return `<div class="hd"><span class="ic"><ha-icon icon="mdi:home-thermometer-outline" style="color:#3ee08f"></ha-icon></span><span class="tt">Zones</span></div>
+            <div style="display:flex;align-items:baseline;gap:6px;margin:12px 0 6px">
+              <span class="tn" style="font-size:44px;font-weight:200;letter-spacing:-1px;line-height:1">${on.length}</span>
+              <span style="font-size:13px;color:#8d9ab3">of 5 zones on</span></div>
+            <div class="row"><span>Average of zones on</span><b class="tn">${avg === null ? 'None on' : avg.toFixed(1) + '°'}</b></div>
+            <div class="row"><span>Warmest</span><b class="tn" style="color:#ffb648">${warm}</b></div>
+            <div class="row"><span>Coolest</span><b class="tn" style="color:#8ea6ff">${cool}</b></div>`;
+        ]]]
+  at_zone:
+    template: at_base
+    styles:
+      card:
+        - border-radius: 22px
+        - padding: 12px 14px 16px
+      grid:
+        - grid-template-columns: auto minmax(0, 1fr) 44px 44px 44px
+        - grid-template-rows: auto
+        - row-gap: 12px
+        - column-gap: 4px
+        - grid-template-areas: |
+            [[[
+              const m = states['input_boolean.' + variables.zone + '_damper_manual']?.state === 'on';
+              return m ? '"hdr hdr hb hb hb" "now now dn sv up" "am am lab lab lab" "dd bar bar bar du"'
+                       : '"hdr hdr hb hb hb" "now now dn sv up" "am am lab lab lab" "bar bar bar bar bar"';
+            ]]]
+      custom_fields:
+        hdr:
+          - justify-self: start
+          - min-width: 0
+        now:
+          - justify-self: start
+          - text-align: left
+        sv:
+          - justify-self: center
+        up:
+          - justify-self: end
+          - width: 44px
+        am:
+          - justify-self: start
+        hb:
+          - justify-self: end
+          - align-self: center
+        dn:
+          - align-self: center
+        lab:
+          - justify-self: end
+        bar:
+          - justify-self: stretch
+          - align-self: center
+          - min-width: 0
+          - width: 100%
+          - container-type: inline-size
+        dd:
+          - display: >-
+              [[[ return states['input_boolean.' + variables.zone +
+              '_damper_manual']?.state === 'on' ? 'block' : 'none' ]]]
+          - justify-self: start
+        du:
+          - display: >-
+              [[[ return states['input_boolean.' + variables.zone +
+              '_damper_manual']?.state === 'on' ? 'block' : 'none' ]]]
+          - justify-self: end
+    custom_fields:
+      hdr: |
+        [[[
+          variables.lib; const Z = window.atU.zone(states, variables.zone);
+          return `<div class="hd"><span class="ic"><ha-icon icon="${variables.icon}" style="color:${Z.accent}"></ha-icon></span><span class="tt">${variables.name}</span></div>`;
+        ]]]
+      now: |
+        [[[
+          variables.lib; const Z = window.atU.zone(states, variables.zone);
+          return `<div class="sm">Now</div><div class="nt tn">${Z.t === null ? '—' : Z.t.toFixed(1) + '°'}</div>`;
+        ]]]
+      sv: |
+        [[[
+          variables.lib; const Z = window.atU.zone(states, variables.zone);
+          return `<span class="sv"><span class="sm">Set</span><b class="tn" style="color:${Z.accent}">${Z.set === null ? '—' : Z.set + '°'}</b></span>`;
+        ]]]
+      lab: |
+        [[[
+          variables.lib; const Z = window.atU.zone(states, variables.zone);
+          return `<span class="dl tn" style="color:${Z.fg}">${Z.lab}</span>`;
+        ]]]
+      bar:
+        card:
+          type: custom:button-card
+          template: at_bar
+          entity: '[[[ return ''cover.'' + variables.zone + ''_damper'' ]]]'
+          variables:
+            pos: >-
+              [[[ variables.lib; return window.atU.zone(states,
+              variables.zone).pos ]]]
+            c: >-
+              [[[ variables.lib; const Z = window.atU.zone(states,
+              variables.zone); return Z.manual ? '#a78bfa' : Z.accent ]]]
+      hb:
+        card:
+          type: custom:button-card
+          template: at_pair
+          custom_fields:
+            a:
+              card:
+                type: custom:button-card
+                template: at_ctl
+                icon: mdi:lightning-bolt-outline
+                variables:
+                  'on': >-
+                    [[[ return states['climate.' +
+                    variables.zone]?.attributes?.preset_mode === 'boost' ]]]
+                  c: '#ffb648'
+                tap_action:
+                  action: call-service
+                  service: climate.set_preset_mode
+                  service_data:
+                    entity_id: '[[[ return ''climate.'' + variables.zone ]]]'
+                    preset_mode: >-
+                      [[[ return states['climate.' +
+                      variables.zone]?.attributes?.preset_mode === 'boost' ?
+                      'none' : 'boost' ]]]
+            b:
+              card:
+                type: custom:button-card
+                template: at_sw
+                variables:
+                  'on': >-
+                    [[[ const s = states['climate.' + variables.zone]?.state;
+                    return !!s && !['off', 'unavailable', 'unknown'].includes(s)
+                    ]]]
+                  c: >-
+                    [[[ variables.lib; return window.atU.zone(states,
+                    variables.zone).on ? window.atU.zone(states,
+                    variables.zone).accent : '#8d9ab3' ]]]
+                tap_action:
+                  action: call-service
+                  service: climate.set_hvac_mode
+                  service_data:
+                    entity_id: '[[[ return ''climate.'' + variables.zone ]]]'
+                    hvac_mode: >-
+                      [[[ return states['climate.' + variables.zone]?.state ===
+                      'off' ? 'fan_only' : 'off' ]]]
+      dn:
+        card:
+          type: custom:button-card
+          template: at_ctl
+          icon: mdi:minus
+          tap_action:
+            action: call-service
+            service: script.airtouch_zone_temp
+            service_data:
+              zone: '[[[ return variables.zone ]]]'
+              step: -1
+      up:
+        card:
+          type: custom:button-card
+          template: at_ctl
+          icon: mdi:plus
+          tap_action:
+            action: call-service
+            service: script.airtouch_zone_temp
+            service_data:
+              zone: '[[[ return variables.zone ]]]'
+              step: 1
+      am:
+        card:
+          type: custom:button-card
+          template: at_pill
+          custom_fields:
+            a:
+              card:
+                type: custom:button-card
+                template: at_pbtn
+                name: Auto
+                variables:
+                  'on': >-
+                    [[[ return states['input_boolean.' + variables.zone +
+                    '_damper_manual']?.state !== 'on' ]]]
+                  c: '#eef3fb'
+                  w: 60px
+                tap_action:
+                  action: call-service
+                  service: script.airtouch_zone_temp
+                  service_data:
+                    zone: '[[[ return variables.zone ]]]'
+                    step: 0
+            b:
+              card:
+                type: custom:button-card
+                template: at_pbtn
+                name: Manual
+                variables:
+                  'on': >-
+                    [[[ return states['input_boolean.' + variables.zone +
+                    '_damper_manual']?.state === 'on' ]]]
+                  c: '#a78bfa'
+                  w: 74px
+                tap_action:
+                  action: call-service
+                  service: script.airtouch_zone_manual
+                  service_data:
+                    zone: '[[[ return variables.zone ]]]'
+      dd:
+        card:
+          type: custom:button-card
+          template: at_txt
+          name: −5%
+          variables:
+            w: 44px
+          tap_action:
+            action: call-service
+            service: script.airtouch_zone_damper
+            service_data:
+              zone: '[[[ return variables.zone ]]]'
+              step: -5
+      du:
+        card:
+          type: custom:button-card
+          template: at_txt
+          name: +5%
+          variables:
+            w: 44px
+          tap_action:
+            action: call-service
+            service: script.airtouch_zone_damper
+            service_data:
+              zone: '[[[ return variables.zone ]]]'
+              step: 5
+views:
+  - title: Climate
+    path: climate
+    icon: mdi:air-conditioner
+    type: custom:grid-layout
+    background: >-
+      radial-gradient(900px 520px at 12% -8%, rgba(255,194,74,.10), transparent
+      60%), radial-gradient(900px 600px at 95% 110%, rgba(62,224,143,.08),
+      transparent 60%), #080c16
+    layout:
+      grid-template-columns: repeat(6, minmax(0, 1fr))
+      grid-template-rows: auto
+      grid-template-areas: |
+        "head head head head head head"
+        "main main main main sum  sum"
+        "z1   z1   z2   z2   z3   z3"
+        "z4   z4   z5   z5   .    ."
+      grid-column-gap: 10px
+      grid-row-gap: 10px
+      margin: 8px 6px 10px
+      padding: 0px
+      card_margin: 0px
+      mediaquery:
+        '(min-width: 701px) and (max-width: 1100px)':
+          grid-template-areas: |
+            "head head head head head head"
+            "main main main main main main"
+            "sum  sum  sum  z1   z1   z1"
+            "z2   z2   z2   z3   z3   z3"
+            "z4   z4   z4   z5   z5   z5"
+        '(max-width: 700px)':
+          grid-template-columns: minmax(0, 1fr)
+          grid-template-areas: |
+            "head"
+            "main"
+            "z1"
+            "z2"
+            "z3"
+            "z4"
+            "z5"
+            "sum"
+    cards:
+      - type: custom:button-card
+        template: at_head
+        view_layout:
+          grid-area: head
+        triggers_update:
+          - climate.ac_0
+          - climate.living
+          - climate.master
+          - climate.alessia
+          - climate.bed_2
+          - climate.office
+      - type: custom:button-card
+        template: at_main
+        view_layout:
+          grid-area: main
+        triggers_update:
+          - climate.ac_0
+      - type: custom:button-card
+        template: at_summary
+        view_layout:
+          grid-area: sum
+        triggers_update:
+          - climate.living
+          - climate.master
+          - climate.alessia
+          - climate.bed_2
+          - climate.office
+      - type: custom:button-card
+        template: at_zone
+        view_layout:
+          grid-area: z1
+        variables:
+          zone: living
+          name: Living
+          icon: mdi:sofa-outline
+        triggers_update:
+          - climate.ac_0
+          - climate.living
+          - cover.living_damper
+          - input_boolean.living_damper_manual
+      - type: custom:button-card
+        template: at_zone
+        view_layout:
+          grid-area: z2
+        variables:
+          zone: master
+          name: Master
+          icon: mdi:bed-king-outline
+        triggers_update:
+          - climate.ac_0
+          - climate.master
+          - cover.master_damper
+          - input_boolean.master_damper_manual
+      - type: custom:button-card
+        template: at_zone
+        view_layout:
+          grid-area: z3
+        variables:
+          zone: alessia
+          name: Alessia
+          icon: mdi:bed-outline
+        triggers_update:
+          - climate.ac_0
+          - climate.alessia
+          - cover.alessia_damper
+          - input_boolean.alessia_damper_manual
+      - type: custom:button-card
+        template: at_zone
+        view_layout:
+          grid-area: z4
+        variables:
+          zone: bed_2
+          name: Bed 2
+          icon: mdi:bed-single-outline
+        triggers_update:
+          - climate.ac_0
+          - climate.bed_2
+          - cover.bed_2_damper
+          - input_boolean.bed_2_damper_manual
+      - type: custom:button-card
+        template: at_zone
+        view_layout:
+          grid-area: z5
+        variables:
+          zone: office
+          name: Office
+          icon: mdi:desk
+        triggers_update:
+          - climate.ac_0
+          - climate.office
+          - cover.office_damper
+          - input_boolean.office_damper_manual
